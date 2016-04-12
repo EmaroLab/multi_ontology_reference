@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#"
+     xml:base="http://www.semanticweb.org/luca-buoncompagni/aMor/examples"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#hasObjectProperty_renamed -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#hasObjectProperty_renamed"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#hasDataProperty_renamed -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#hasDataProperty_renamed"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#ClassRenamed -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#ClassRenamed"/>
+    
+
+
+    <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#subClass -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#subClass"/>
+    
+
+
+    <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#superClass -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#superClass"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#NEW_individualObjectPropertyValue -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#NEW_individualObjectPropertyValue"/>
+    
+
+
+    <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#RENAMED_individual -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#RENAMED_individual">
+        <hasDataProperty_renamed rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</hasDataProperty_renamed>
+        <hasObjectProperty_renamed rdf:resource="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#NEW_individualObjectPropertyValue"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#ind1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#ind1">
+        <rdf:type rdf:resource="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#subClass"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#ind2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#ind2">
+        <rdf:type rdf:resource="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#superClass"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#newIndividualName1 -->
+
+    <owl:Thing rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#newIndividualName1">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#newIndividualName2 -->
+
+    <owl:Thing rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#newIndividualName2">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#newIndividualName3 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#newIndividualName3">
+        <rdf:type rdf:resource="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#ClassRenamed"/>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.4.3) http://owlapi.sourceforge.net -->
+
