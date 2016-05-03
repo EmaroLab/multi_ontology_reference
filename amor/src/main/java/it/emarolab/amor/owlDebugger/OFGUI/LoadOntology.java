@@ -44,8 +44,8 @@ public class LoadOntology {
 		} else {
 			// show a dialog box
 			JOptionPane a = new JOptionPane();
-			String message = "Does not exist any instance of OntologyManager loaded with the name : " + ontoName + ".\n no changes will take place.";
-			String title = "Ontology name not known"; 
+			String message = "No innstance of OntologyManager exists with name : " + ontoName + ".\n No changes will take place.";
+			String title = "Unknown ontology name";
 			JOptionPane.showMessageDialog( a, message, title, JOptionPane.ERROR_MESSAGE);
 		}
 		

@@ -83,7 +83,7 @@ class Runner implements Runnable {
         	//create and show GUI
 			ClassExchange.getFrameObj().setBounds( 70, 70, 160, 100);
 			ClassExchange.getFrameObj().setPreferredSize( new Dimension( 340, 650));
-			
+
 			LoadOntology.updateOntology( init);
     	}
     	
