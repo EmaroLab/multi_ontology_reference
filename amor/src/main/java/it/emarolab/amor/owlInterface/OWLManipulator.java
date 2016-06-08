@@ -211,7 +211,6 @@ public class OWLManipulator{
 	 * @return the order set of changes to remove a given axiom.
 	 */
 	public synchronized OWLOntologyChange getRemoveAxiom( OWLAxiom axiom, boolean addToChangeList){
-		//OWLOntologyChange addAxiom = new AddAxiom( ontoRef.getOntology(), axiom);
 		long initialTime = System.nanoTime();
 		RemoveAxiom removeAxiom = null;
 		try{

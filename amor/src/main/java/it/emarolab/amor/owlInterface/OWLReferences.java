@@ -1,5 +1,6 @@
 package it.emarolab.amor.owlInterface;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
@@ -98,18 +99,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of all the individuals into the root ontology class.
 	 */
 	public Set<OWLNamedIndividual> getIndividualB2Thing(){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexIndividualB2Class.lock();
-		try{
-			Set<OWLNamedIndividual> out = getOWLEnquirer().getIndividualB2Thing();
-			long t1 = System.nanoTime();
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexIndividualB2Class.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
+		return new OWLReferencesCaller< Set< OWLNamedIndividual>>(  mutexes, this) {
+			@Override
+			protected Set< OWLNamedIndividual> perfromSynchronisedCall() {
+				return getOWLEnquirer().getIndividualB2Thing();
+			}
+		}.call();
 	}
 	/**
 	 * This method search for one individual in the root class {@link OWLDataFactory#getOWLThing()}. 
@@ -119,18 +115,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return one individual into the root ontology class.
 	 */
 	public OWLNamedIndividual getOnlyIndividualB2Thing(){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexIndividualB2Class.lock();
-		try{
-			OWLNamedIndividual out = getOWLEnquirer().getOnlyIndividualB2Thing();
-			long t1 = System.nanoTime();
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexIndividualB2Class.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
+		return new OWLReferencesCaller< OWLNamedIndividual>(  mutexes, this) {
+			@Override
+			protected OWLNamedIndividual perfromSynchronisedCall() {
+				return getOWLEnquirer().getOnlyIndividualB2Thing();
+			}
+		}.call();
 	}
 	
 	/**
@@ -142,18 +133,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of individuals into the given class.
 	 */
 	public Set<OWLNamedIndividual> getIndividualB2Class( String className){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexIndividualB2Class.lock();
-		try{
-			Set<OWLNamedIndividual> out = getOWLEnquirer().getIndividualB2Class( className);
-			long t1 = System.nanoTime();
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexIndividualB2Class.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
+		return new OWLReferencesCaller< Set< OWLNamedIndividual>>(  mutexes, this) {
+			@Override
+			protected Set< OWLNamedIndividual> perfromSynchronisedCall() {
+				return getOWLEnquirer().getIndividualB2Class( className);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for individuals in a specified class. 
@@ -164,18 +150,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of individuals into the given class.
 	 */
 	public Set<OWLNamedIndividual> getIndividualB2Class( OWLClass ontoClass){ 
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexIndividualB2Class.lock();
-		try{
-			long t1 = System.nanoTime();
-			Set<OWLNamedIndividual> out = getOWLEnquirer().getIndividualB2Class( ontoClass);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexIndividualB2Class.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
+		return new OWLReferencesCaller< Set< OWLNamedIndividual>>(  mutexes, this) {
+			@Override
+			protected Set< OWLNamedIndividual> perfromSynchronisedCall() {
+				return getOWLEnquirer().getIndividualB2Class( ontoClass);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for individuals in a specified class. 
@@ -186,18 +167,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return an individuals into the given class.
 	 */
 	public OWLNamedIndividual getOnlyIndividualB2Class( String className){ 
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexIndividualB2Class.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLNamedIndividual out = getOWLEnquirer().getOnlyIndividualB2Class( className);
-			loggLockTime( t, t1);
-			return  out;
-		} finally{
-			mutexIndividualB2Class.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
+		return new OWLReferencesCaller< OWLNamedIndividual>(  mutexes, this) {
+			@Override
+			protected OWLNamedIndividual perfromSynchronisedCall() {
+				return getOWLEnquirer().getOnlyIndividualB2Class( className);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for individuals in a specified class. 
@@ -208,18 +184,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return an individuals into the given class.
 	 */
 	public OWLNamedIndividual getOnlyIndividualB2Class( OWLClass ontoClass){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexIndividualB2Class.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLNamedIndividual out = getOWLEnquirer().getOnlyIndividualB2Class(ontoClass);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexIndividualB2Class.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
+		return new OWLReferencesCaller< OWLNamedIndividual>(  mutexes, this) {
+			@Override
+			protected OWLNamedIndividual perfromSynchronisedCall() {
+				return getOWLEnquirer().getOnlyIndividualB2Class(ontoClass);
+			}
+		}.call();
 	}
 
 	/**
@@ -231,18 +202,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of classes in which the given individual is belonging to.
 	 */
 	public Set< OWLClass> getIndividualClasses( OWLNamedIndividual individual){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexIndivClasses.lock();
-		try{
-			long t1 = System.nanoTime();
-			Set<OWLClass> out = getOWLEnquirer().getIndividualClasses( individual);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexIndivClasses.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndivClasses);
+		return new OWLReferencesCaller< Set< OWLClass>>(  mutexes, this) {
+			@Override
+			protected Set< OWLClass> perfromSynchronisedCall() {
+				return getOWLEnquirer().getIndividualClasses( individual);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for the classes in which an individuals is belonging to. 
@@ -253,18 +219,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of classes in which the given individual is belonging to.
 	 */
 	public Set< OWLClass> getIndividualClasses( String individual){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexIndivClasses.lock();
-		try{
-			long t1 = System.nanoTime();
-			Set<OWLClass> out = getOWLEnquirer().getIndividualClasses( individual);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexIndivClasses.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndivClasses);
+		return new OWLReferencesCaller< Set< OWLClass>>(  mutexes, this) {
+			@Override
+			protected Set< OWLClass> perfromSynchronisedCall() {
+				return getOWLEnquirer().getIndividualClasses( individual);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for a class in which an individuals is belonging to. 
@@ -275,18 +236,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of classes in which the given individual is belonging to.
 	 */
 	public OWLClass getOnlyIndividualClasses( OWLNamedIndividual individual){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexIndivClasses.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLClass out = getOWLEnquirer().getOnlyIndividualClasses( individual);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexIndivClasses.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndivClasses);
+		return new OWLReferencesCaller< OWLClass>(  mutexes, this) {
+			@Override
+			protected OWLClass perfromSynchronisedCall() {
+				return getOWLEnquirer().getOnlyIndividualClasses( individual);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for a class in which an individuals is belonging to. 
@@ -297,18 +253,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of classes in which the given individual is belonging to.
 	 */
 	public OWLClass getOnlyIndividualClasses( String individual){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexIndivClasses.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLClass out = getOWLEnquirer().getOnlyIndividualClasses( individual);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexIndivClasses.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndivClasses);
+		return new OWLReferencesCaller< OWLClass>(  mutexes, this) {
+			@Override
+			protected OWLClass perfromSynchronisedCall() {
+				return getOWLEnquirer().getOnlyIndividualClasses( individual);
+			}
+		}.call();
 	}
 	
 	
@@ -322,18 +273,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of values of the specified data property assigned to an individual.
 	 */
 	public Set<OWLLiteral> getDataPropertyB2Individual( String individualName, String propertyName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexDataPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			Set<OWLLiteral> out = getOWLEnquirer().getDataPropertyB2Individual( individualName, propertyName);
-			loggLockTime( t, t1);
-			return out; 
-		} finally{
-			mutexDataPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexDataPropB2Ind);
+		return new OWLReferencesCaller< Set< OWLLiteral>>(  mutexes, this) {
+			@Override
+			protected Set< OWLLiteral> perfromSynchronisedCall() {
+				return getOWLEnquirer().getDataPropertyB2Individual( individualName, propertyName);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for the data properties assigned to a specified individual. 
@@ -345,18 +291,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of values of the specified data property assigned to an individual.
 	 */
 	public Set<OWLLiteral> getDataPropertyB2Individual( OWLNamedIndividual individual, OWLDataProperty property){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexDataPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			Set<OWLLiteral> out = getOWLEnquirer().getDataPropertyB2Individual( individual, property);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexDataPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexDataPropB2Ind);
+		return new OWLReferencesCaller< Set< OWLLiteral>>(  mutexes, this) {
+			@Override
+			protected Set< OWLLiteral> perfromSynchronisedCall() {
+				return getOWLEnquirer().getDataPropertyB2Individual( individual, property);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for a data property assigned to a specified individual. 
@@ -368,18 +309,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return a value of the specified data property assigned to an individual.
 	 */
 	public OWLLiteral getOnlyDataPropertyB2Individual( String individualName, String propertyName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexDataPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLLiteral out = getOWLEnquirer().getOnlyDataPropertyB2Individual( individualName, propertyName);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexDataPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexDataPropB2Ind);
+		return new OWLReferencesCaller< OWLLiteral>(  mutexes, this) {
+			@Override
+			protected OWLLiteral perfromSynchronisedCall() {
+				return getOWLEnquirer().getOnlyDataPropertyB2Individual( individualName, propertyName);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for a data property assigned to a specified individual. 
@@ -391,18 +327,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return a value of the specified data property assigned to an individual.
 	 */
 	public OWLLiteral getOnlyDataPropertyB2Individual( OWLNamedIndividual individual, OWLDataProperty property){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexDataPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLLiteral out = getOWLEnquirer().getOnlyDataPropertyB2Individual( individual, property);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexDataPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexDataPropB2Ind);
+		return new OWLReferencesCaller< OWLLiteral>(  mutexes, this) {
+			@Override
+			protected OWLLiteral perfromSynchronisedCall() {
+				return getOWLEnquirer().getOnlyDataPropertyB2Individual( individual, property);
+			}
+		}.call();
 	}
 
 	/**
@@ -414,18 +345,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of a container of all the data properties with relative values.
 	 */
 	public Set<DataPropertyRelatios> getDataPropertyB2Individual( OWLNamedIndividual individual){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAllDataPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			Set<DataPropertyRelatios> out = getOWLEnquirer().getDataPropertyB2Individual( individual);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAllDataPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAllDataPropB2Ind);
+		return new OWLReferencesCaller< Set<DataPropertyRelatios>>(  mutexes, this) {
+			@Override
+			protected Set<DataPropertyRelatios> perfromSynchronisedCall() {
+				return getOWLEnquirer().getDataPropertyB2Individual( individual);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for the all the data properties assigned to a specified individual.  
@@ -436,18 +362,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of a container of all the data properties with relative values.
 	 */
 	public Set<DataPropertyRelatios> getDataPropertyB2Individual( String individualName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAllObjPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			Set<DataPropertyRelatios> out = getOWLEnquirer().getDataPropertyB2Individual( individualName);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAllObjPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAllObjPropB2Ind);
+		return new OWLReferencesCaller< Set<DataPropertyRelatios>>(  mutexes, this) {
+			@Override
+			protected Set<DataPropertyRelatios> perfromSynchronisedCall() {
+				return getOWLEnquirer().getDataPropertyB2Individual( individualName);
+			}
+		}.call();
 	}
 	
 	/**
@@ -460,18 +381,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of values of the specified object property assigned to an individual.
 	 */
 	public Set<OWLNamedIndividual> getObjectPropertyB2Individual( String individualName, String propertyName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexObjPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			Set<OWLNamedIndividual> out = getOWLEnquirer().getObjectPropertyB2Individual( individualName, propertyName);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexObjPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexObjPropB2Ind);
+		return new OWLReferencesCaller<  Set<OWLNamedIndividual>>(  mutexes, this) {
+			@Override
+			protected  Set<OWLNamedIndividual> perfromSynchronisedCall() {
+				return getOWLEnquirer().getObjectPropertyB2Individual( individualName, propertyName);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for the object properties assigned to a specified individual. 
@@ -483,18 +399,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of values of the specified object property assigned to an individual.
 	 */
 	public Set<OWLNamedIndividual> getObjectPropertyB2Individual( OWLNamedIndividual individual, OWLObjectProperty property){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexObjPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			Set<OWLNamedIndividual> out = getOWLEnquirer().getObjectPropertyB2Individual( individual, property);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexObjPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexObjPropB2Ind);
+		return new OWLReferencesCaller<  Set<OWLNamedIndividual>>(  mutexes, this) {
+			@Override
+			protected  Set<OWLNamedIndividual> perfromSynchronisedCall() {
+				return getOWLEnquirer().getObjectPropertyB2Individual( individual, property);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for the object properties assigned to a specified individual. 
@@ -506,18 +417,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return a value of the specified object property assigned to an individual.
 	 */
 	public OWLNamedIndividual getOnlyObjectPropertyB2Individual( String individualName, String propertyName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexObjPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLNamedIndividual out = getOWLEnquirer().getOnlyObjectPropertyB2Individual( individualName, propertyName);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexObjPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexObjPropB2Ind);
+		return new OWLReferencesCaller< OWLNamedIndividual>(  mutexes, this) {
+			@Override
+			protected OWLNamedIndividual perfromSynchronisedCall() {
+				return getOWLEnquirer().getOnlyObjectPropertyB2Individual( individualName, propertyName);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for the object properties assigned to a specified individual. 
@@ -529,18 +435,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return a value of the specified object property assigned to an individual.
 	 */
 	public OWLNamedIndividual getOnlyObjectPropertyB2Individual( OWLNamedIndividual individual, OWLObjectProperty property){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexObjPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLNamedIndividual out = getOWLEnquirer().getOnlyObjectPropertyB2Individual( individual, property);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexObjPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexObjPropB2Ind);
+		return new OWLReferencesCaller< OWLNamedIndividual>(  mutexes, this) {
+			@Override
+			protected OWLNamedIndividual perfromSynchronisedCall() {
+				return getOWLEnquirer().getOnlyObjectPropertyB2Individual( individual, property);
+			}
+		}.call();
 	}
 	
 	/**
@@ -552,18 +453,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of a container of all the object properties with relative values.
 	 */
 	public Set<ObjectPropertyRelatios> getObjectPropertyB2Individual( OWLNamedIndividual individual){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAllObjPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			Set<ObjectPropertyRelatios> out = getOWLEnquirer().getObjectPropertyB2Individual( individual);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAllObjPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAllObjPropB2Ind);
+		return new OWLReferencesCaller< Set<ObjectPropertyRelatios>>(  mutexes, this) {
+			@Override
+			protected Set<ObjectPropertyRelatios> perfromSynchronisedCall() {
+				return getOWLEnquirer().getObjectPropertyB2Individual( individual);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for the all the object properties assigned to a specified individual. 
@@ -574,18 +470,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of a container of all the object properties with relative values.
 	 */
 	public Set< ObjectPropertyRelatios> getObjectPropertyB2Individual( String individualName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAllObjPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			Set<ObjectPropertyRelatios> out = getOWLEnquirer().getObjectPropertyB2Individual( individualName);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAllObjPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAllObjPropB2Ind);
+		return new OWLReferencesCaller< Set<ObjectPropertyRelatios>>(  mutexes, this) {
+			@Override
+			protected Set<ObjectPropertyRelatios> perfromSynchronisedCall() {
+				return getOWLEnquirer().getObjectPropertyB2Individual( individualName);
+			}
+		}.call();
 	}
 
 	/**
@@ -597,18 +488,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of all the data properties that are sub-properties of the specified parameter.
 	 */
 	public Set<OWLDataProperty> getSubDataPropertyOf( String propName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexSubDataProp.lock();
-		try{
-			long t2 = System.nanoTime();
-			Set<OWLDataProperty> out = getOWLEnquirer().getSubDataPropertyOf( propName);
-			loggLockTime( t, t2);
-			return out;
-		} finally{
-			mutexSubDataProp.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubDataProp);
+		return new OWLReferencesCaller< Set<OWLDataProperty>>(  mutexes, this) {
+			@Override
+			protected Set<OWLDataProperty> perfromSynchronisedCall() {
+				return getOWLEnquirer().getSubDataPropertyOf( propName);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for the sub data properties of a specified property. 
@@ -619,18 +505,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of all the data properties that are sub-properties of the specified parameter.
 	 */
 	public Set<OWLDataProperty> getSubDataPropertyOf( OWLDataProperty prop){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexSubDataProp.lock();
-		try{
-			long t2 = System.nanoTime();
-			Set<OWLDataProperty> out = getOWLEnquirer().getSubDataPropertyOf( prop);
-			loggLockTime( t, t2);
-			return out;
-		} finally{
-			mutexSubDataProp.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubDataProp);
+		return new OWLReferencesCaller< Set<OWLDataProperty>>(  mutexes, this) {
+			@Override
+			protected Set<OWLDataProperty> perfromSynchronisedCall() {
+				return getOWLEnquirer().getSubDataPropertyOf( prop);
+			}
+		}.call();
 	}
 
 	/** This method search for the super data properties of a specified property. 
@@ -641,18 +522,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of all the data properties that are super-properties of the specified parameter.
 	 */
 	public Set<OWLDataProperty> getSuperDataPropertyOf( String propName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexSuperDataProp.lock();
-		try{
-			long t2 = System.nanoTime();
-			Set<OWLDataProperty> out = getOWLEnquirer().getSuperDataPropertyOf( propName);
-			loggLockTime( t, t2);
-			return out;
-		} finally{
-			mutexSuperDataProp.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperDataProp);
+		return new OWLReferencesCaller< Set<OWLDataProperty>>(  mutexes, this) {
+			@Override
+			protected Set<OWLDataProperty> perfromSynchronisedCall() {
+				return getOWLEnquirer().getSuperDataPropertyOf( propName);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for the super data properties of a specified property. 
@@ -663,18 +539,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of all the data properties that are super-properties of the specified parameter.
 	 */
 	public Set<OWLDataProperty> getSuperDataPropertyOf( OWLDataProperty prop){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexSuperDataProp.lock();
-		try{
-			long t2 = System.nanoTime();
-			Set<OWLDataProperty> out = getOWLEnquirer().getSuperDataPropertyOf( prop);
-			loggLockTime( t, t2);
-			return out;
-		} finally{
-			mutexSuperDataProp.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperDataProp);
+		return new OWLReferencesCaller< Set<OWLDataProperty>>(  mutexes, this) {
+			@Override
+			protected Set<OWLDataProperty> perfromSynchronisedCall() {
+				return getOWLEnquirer().getSuperDataPropertyOf( prop);
+			}
+		}.call();
 	}
 	
 	/**
@@ -686,18 +557,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of all the object properties that are sub-properties of the specified parameter.
 	 */
 	public Set<OWLObjectProperty> getSubObjectPropertyOf( String propName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexSubObjProp.lock();
-		try{
-			long t2 = System.nanoTime();
-			Set<OWLObjectProperty> out = getOWLEnquirer().getSubObjectPropertyOf( propName);
-			loggLockTime( t, t2);
-			return out;
-		} finally{
-			mutexSubObjProp.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubObjProp);
+		return new OWLReferencesCaller< Set<OWLObjectProperty>>(  mutexes, this) {
+			@Override
+			protected Set<OWLObjectProperty> perfromSynchronisedCall() {
+				return getOWLEnquirer().getSubObjectPropertyOf( propName);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for the sub object properties of a specified property. 
@@ -708,18 +574,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of all the object properties that are sub-properties of the specified parameter.
 	 */
 	public Set<OWLObjectProperty> getSubObjectPropertyOf( OWLObjectProperty prop){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexSubObjProp.lock();
-		try{
-			long t2 = System.nanoTime();
-			Set<OWLObjectProperty> out = getOWLEnquirer().getSubObjectPropertyOf( prop);
-			loggLockTime( t, t2);
-			return out;
-		} finally{
-			mutexSubObjProp.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubObjProp);
+		return new OWLReferencesCaller< Set<OWLObjectProperty>>(  mutexes, this) {
+			@Override
+			protected Set<OWLObjectProperty> perfromSynchronisedCall() {
+				return getOWLEnquirer().getSubObjectPropertyOf( prop);
+			}
+		}.call();
 	}	
 	
 	/** This method search for the super object properties of a specified property. 
@@ -730,18 +591,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of all the object properties that are super-properties of the specified parameter.
 	 */
 	public Set<OWLObjectProperty> getSuperObjectPropertyOf( String propName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexSuperObjProp.lock();
-		try{
-			long t2 = System.nanoTime();
-			Set<OWLObjectProperty> out = getOWLEnquirer().getSuperObjectPropertyOf( propName);
-			loggLockTime( t, t2);
-			return out;
-		} finally{
-			mutexSuperObjProp.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperObjProp);
+		return new OWLReferencesCaller< Set<OWLObjectProperty>>(  mutexes, this) {
+			@Override
+			protected Set<OWLObjectProperty> perfromSynchronisedCall() {
+				return getOWLEnquirer().getSuperObjectPropertyOf( propName);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for the super object properties of a specified property. 
@@ -752,18 +608,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of all the object properties that are super-properties of the specified parameter.
 	 */
 	public Set<OWLObjectProperty> getSuperObjectPropertyOf( OWLObjectProperty prop){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexSuperObjProp.lock();
-		try{
-			long t2 = System.nanoTime();
-			Set<OWLObjectProperty> out = getOWLEnquirer().getSuperObjectPropertyOf( prop);
-			loggLockTime( t, t2);
-			return out;
-		} finally{
-			mutexSuperObjProp.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperObjProp);
+		return new OWLReferencesCaller< Set<OWLObjectProperty>>(  mutexes, this) {
+			@Override
+			protected Set<OWLObjectProperty> perfromSynchronisedCall() {
+				return getOWLEnquirer().getSuperObjectPropertyOf( prop);
+			}
+		}.call();
 	}	
 		
 	/**
@@ -775,18 +626,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of all the classes that are sub-classes of the specified parameter.
 	 */
 	public Set<OWLClass> getSubClassOf( String className){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexSubClass.lock();
-		try{
-			long t2 = System.nanoTime();
-			Set<OWLClass> out = getOWLEnquirer().getSubClassOf( className);
-			loggLockTime( t, t2);
-			return out;
-		} finally{
-			mutexSubClass.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubClass);
+		return new OWLReferencesCaller< Set<OWLClass>>(  mutexes, this) {
+			@Override
+			protected Set<OWLClass> perfromSynchronisedCall() {
+				return getOWLEnquirer().getSubClassOf( className);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for the sub classes of a specified class. 
@@ -797,18 +643,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of all the classes that are sub-classes of the specified parameter.
 	 */
 	public Set<OWLClass> getSubClassOf( OWLClass cl){
-		long t = System.nanoTime(); 
-		mutexReasoner.lock();
-		mutexSubClass.lock();
-		try{
-			long t1 = System.nanoTime(); 
-			Set<OWLClass> out = getOWLEnquirer().getSubClassOf( cl);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexSubClass.unlock();
-			mutexReasoner.unlock();
-		}	
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubClass);
+		return new OWLReferencesCaller< Set<OWLClass>>(  mutexes, this) {
+			@Override
+			protected Set<OWLClass> perfromSynchronisedCall() {
+				return getOWLEnquirer().getSubClassOf( cl);
+			}
+		}.call();
 	}
 
 	/**
@@ -820,18 +661,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of all the classes that are super-classes of the specified parameter.
 	 */
 	public Set<OWLClass> getSuperClassOf( String className){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexSuperClass.lock();
-		try{
-			long t1 = System.nanoTime();
-			Set<OWLClass> out = getOWLEnquirer().getSuperClassOf( className);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexSuperClass.unlock();
-			mutexReasoner.unlock();
-		}	
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperClass);
+		return new OWLReferencesCaller< Set<OWLClass>>(  mutexes, this) {
+			@Override
+			protected Set<OWLClass> perfromSynchronisedCall() {
+				return getOWLEnquirer().getSuperClassOf( className);
+			}
+		}.call();
 	}
 	/**
 	 * This method search for the super classes of a specified class. 
@@ -842,18 +678,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the set of all the classes that are super-classes of the specified parameter.
 	 */
 	public Set<OWLClass> getSuperClassOf( OWLClass cl){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexSuperClass.lock();
-		try{
-			long t1 = System.nanoTime();
-			Set<OWLClass> out = getOWLEnquirer().getSuperClassOf( cl);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexSuperClass.unlock();
-			mutexReasoner.unlock();
-		}	
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperClass);
+		return new OWLReferencesCaller< Set<OWLClass>>(  mutexes, this) {
+			@Override
+			protected Set<OWLClass> perfromSynchronisedCall() {
+				return getOWLEnquirer().getSuperClassOf( cl);
+			}
+		}.call();
 	}
 
 	
@@ -895,18 +726,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add an object property to an individual. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange addObjectPropertyB2Individual( OWLNamedIndividual ind, OWLObjectProperty prop,  OWLNamedIndividual value){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAddObjPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().addObjectPropertyB2Individual( ind, prop, value);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAddObjPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddObjPropB2Ind);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().addObjectPropertyB2Individual( ind, prop, value);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#addObjectPropertyB2Individual(String, String, String)}
@@ -917,18 +743,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add an object property to an individual. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange addObjectPropertyB2Individual( String individualName, String propName, String valueName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAddObjPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().addObjectPropertyB2Individual( individualName, propName, valueName);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAddObjPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddObjPropB2Ind);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().addObjectPropertyB2Individual( individualName, propName, valueName);
+			}
+		}.call();
 	}
 
 
@@ -941,18 +762,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add an data property to an individual. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange addDataPropertyB2Individual(OWLNamedIndividual ind,  OWLDataProperty prop, OWLLiteral value){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAddDataPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().addDataPropertyB2Individual(ind, prop, value);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAddDataPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDataPropB2Ind);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().addDataPropertyB2Individual(ind, prop, value);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#addDataPropertyB2Individual(String, String, Object)}
@@ -963,18 +779,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add an data property to an individual. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange addDataPropertyB2Individual( String individualName, String propertyName, Object value){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAddDataPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().addDataPropertyB2Individual( individualName, propertyName, value);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAddDataPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDataPropB2Ind);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().addDataPropertyB2Individual( individualName, propertyName, value);
+			}
+		}.call();
 	}
 
 	/**
@@ -984,18 +795,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add an individual into a class. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange addIndividual(OWLNamedIndividual ind){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAddInd.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().addIndividual(ind);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAddInd.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddInd);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().addIndividual(ind);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#addIndividual(String)}
@@ -1004,18 +810,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add an individual into a class. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange addIndividual(String individualName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAddInd.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().addIndividual( individualName);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAddInd.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddInd);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().addIndividual( individualName);
+			}
+		}.call();
 	}
 	
 	/**
@@ -1026,18 +827,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add an individual into a class. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange addIndividualB2Class(OWLNamedIndividual ind, OWLClass cls){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAddIndB2Class.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().addIndividualB2Class(ind, cls);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAddIndB2Class.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddIndB2Class);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().addIndividualB2Class(ind, cls);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#addIndividualB2Class(String, String)}
@@ -1047,18 +843,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add an individual into a class. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange addIndividualB2Class(String individualName, String className){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAddIndB2Class.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().addIndividualB2Class(individualName, className);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAddIndB2Class.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddIndB2Class);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().addIndividualB2Class(individualName, className);
+			}
+		}.call();
 	}
 
 	/**
@@ -1068,18 +859,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add a class into the ontology. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange addClass( String className){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAddClass.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().addClass( className);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAddClass.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddClass);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().addClass( className);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#addClass(OWLClass)}
@@ -1088,18 +874,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add a class into the ontology. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange addClass( OWLClass cls){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAddClass.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().addClass( cls);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAddClass.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddClass);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().addClass( cls);
+			}
+		}.call();
 	}
 	
 	/**
@@ -1110,18 +891,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add a class by specifying its super class. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange addSubClassOf( String superClassName, String subClassName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAddSubClass.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().addSubClassOf( superClassName, subClassName);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAddSubClass.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddSubClass);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().addSubClassOf( superClassName, subClassName);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#addSubClassOf(OWLClass, OWLClass)}
@@ -1131,18 +907,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add a class by specifying its super class. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange addSubClassOf( OWLClass supClass, OWLClass subClass){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAddSubClass.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().addSubClassOf( supClass, subClass);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAddSubClass.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddSubClass);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().addSubClassOf( supClass, subClass);
+			}
+		}.call();
 	}
 	
 	// ------------------------------------------------------------   methods for REMOVING entities
@@ -1155,18 +926,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove an object property from an individual. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange removeObjectPropertyB2Individual( OWLNamedIndividual ind, OWLObjectProperty prop, OWLNamedIndividual value){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRemoveObjPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().removeObjectPropertyB2Individual( ind, prop,value);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRemoveObjPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveObjPropB2Ind);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().removeObjectPropertyB2Individual( ind, prop,value);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#removeObjectPropertyB2Individual(String, String, String)}
@@ -1177,18 +943,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove an object property from an individual. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange removeObjectPropertyB2Individual( String individualName, String propName, String valueName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRemoveObjPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().removeObjectPropertyB2Individual( individualName, propName,valueName);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRemoveObjPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveObjPropB2Ind);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().removeObjectPropertyB2Individual( individualName, propName,valueName);
+			}
+		}.call();
 	}
 
 	/**
@@ -1200,18 +961,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove a data property from an individual. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange removeDataPropertyB2Individual(OWLNamedIndividual ind, OWLDataProperty prop, OWLLiteral value){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRemoveDataPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().removeDataPropertyB2Individual( ind, prop, value);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRemoveDataPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDataPropB2Ind);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().removeDataPropertyB2Individual( ind, prop, value);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#removeDataPropertyB2Individual(String, String, Object)}
@@ -1222,18 +978,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove a data property from an individual. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange removeDataPropertyB2Individual( String individualName, String propertyName, Object value){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRemoveDataPropB2Ind.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().removeDataPropertyB2Individual( individualName, propertyName, value);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRemoveDataPropB2Ind.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDataPropB2Ind);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().removeDataPropertyB2Individual( individualName, propertyName, value);
+			}
+		}.call();
 	}
 
 
@@ -1245,18 +996,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove an individual from a class. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange removeIndividualB2Class(OWLNamedIndividual ind, OWLClass cls){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRemoveIndB2Class.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().removeIndividualB2Class(ind, cls);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRemoveIndB2Class.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveIndB2Class);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().removeIndividualB2Class(ind, cls);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#removeIndividualB2Class(String, String)}
@@ -1266,18 +1012,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove an individual from a class. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange removeIndividualB2Class(String individualName, String className){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRemoveIndB2Class.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().removeIndividualB2Class( individualName, className);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRemoveIndB2Class.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveIndB2Class);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().removeIndividualB2Class( individualName, className);
+			}
+		}.call();
 	}
 
 	/**
@@ -1287,18 +1028,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove an individual from the ontology. (see {@link OWLManipulator} for more info)
 	 */
 	public List<OWLOntologyChange> removeIndividual( OWLNamedIndividual individual){ 
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRemoveInd.lock();
-		try{
-			long t1 = System.nanoTime();
-			List<OWLOntologyChange> out = getOWLManipulator().removeIndividual(individual);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRemoveInd.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveInd);
+		return new OWLReferencesCaller< List< OWLOntologyChange>>(  mutexes, this) {
+			@Override
+			protected List< OWLOntologyChange> perfromSynchronisedCall() {
+				return getOWLManipulator().removeIndividual(individual);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#removeIndividual(OWLNamedIndividual)}
@@ -1307,18 +1043,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove an individual from the ontology. (see {@link OWLManipulator} for more info)
 	 */
 	public List<OWLOntologyChange> removeIndividual( String indName){ 
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRemoveInd.lock();
-		try{
-			long t1 = System.nanoTime();
-			List<OWLOntologyChange> out = getOWLManipulator().removeIndividual( indName);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRemoveInd.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveInd);
+		return new OWLReferencesCaller< List< OWLOntologyChange>>(  mutexes, this) {
+			@Override
+			protected List< OWLOntologyChange> perfromSynchronisedCall() {
+				return getOWLManipulator().removeIndividual( indName);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#removeIndividual(Set)}
@@ -1327,18 +1058,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove the set of individuals from the ontology. (see {@link OWLManipulator} for more info)
 	 */
 	public List<OWLOntologyChange> removeIndividual( Set< OWLNamedIndividual> individuals){ 
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRemoveInd.lock();
-		try{
-			long t1 = System.nanoTime();
-			List<OWLOntologyChange> out = getOWLManipulator().removeIndividual(individuals);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRemoveInd.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveInd);
+		return new OWLReferencesCaller< List< OWLOntologyChange>>(  mutexes, this) {
+			@Override
+			protected List< OWLOntologyChange> perfromSynchronisedCall() {
+				return getOWLManipulator().removeIndividual(individuals);
+			}
+		}.call();
 	}
 
 	/** This method calls {@link OWLManipulator#removeClass(String)}
@@ -1347,18 +1073,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove a class from the ontology. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange removeClass( String className){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRemoveClass.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().removeClass( className);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRemoveClass.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveClass);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().removeClass( className);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#removeClass(OWLClass)}
@@ -1367,18 +1088,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove a class from the ontology an individual into a class. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange removeClass( OWLClass cls){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRemoveClass.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().removeClass( cls);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRemoveClass.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveClass);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().removeClass( cls);
+			}
+		}.call();
 	}
 	
 	/**
@@ -1389,18 +1105,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove a sub class assertion by specifying its super class. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange removeSubClassOf( String superClassName, String subClassName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRemoveSubClass.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().removeSubClassOf( superClassName, subClassName);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRemoveSubClass.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveSubClass);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().removeSubClassOf( superClassName, subClassName);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#removeSubClassOf(OWLClass, OWLClass)}
@@ -1410,18 +1121,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove a sub class assertion by specifying its super class. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange removeSubClassOf( OWLClass supClass, OWLClass subClass){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRemoveSubClass.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().removeSubClassOf( supClass, subClass);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRemoveSubClass.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveSubClass);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().removeSubClassOf( supClass, subClass);
+			}
+		}.call();
 	}
 	
 
@@ -1459,21 +1165,14 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to replace a data property value attached to an individual. (see {@link OWLManipulator} for more info) 
 	 */
 	public List<OWLOntologyChange> replaceDataProperty( OWLNamedIndividual ind, OWLDataProperty prop, OWLLiteral oldValue, OWLLiteral newValue){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexReplaceDataProp.lock();
-		try{
-			long t1 = System.nanoTime();
-			List<OWLOntologyChange> out = getOWLManipulator().replaceDataPropertyB2Individual( ind, prop, oldValue, newValue);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexReplaceDataProp.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexReplaceDataProp);
+		return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
+			@Override
+			protected List<OWLOntologyChange> perfromSynchronisedCall() {
+				return getOWLManipulator().replaceDataPropertyB2Individual( ind, prop, oldValue, newValue);
+			}
+		}.call();
 	}
-
-
 	/**
 	 * This method calls {@link OWLManipulator#replaceObjectProperty(OWLNamedIndividual, OWLObjectProperty, OWLNamedIndividual, OWLNamedIndividual)}
 	 * in order to replace an object property of an individual with a new value.
@@ -1484,16 +1183,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to replace a object property value attached to an individual. (see {@link OWLManipulator} for more info) 
 	 */
 	public List<OWLOntologyChange> replaceObjectProperty( OWLNamedIndividual ind, OWLObjectProperty prop, OWLNamedIndividual oldValue, OWLNamedIndividual newValue){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		try{
-			long t1 = System.nanoTime();
-			List<OWLOntologyChange> out = getOWLManipulator().replaceObjectProperty(ind, prop, oldValue, newValue);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner);
+		return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
+			@Override
+			protected List<OWLOntologyChange> perfromSynchronisedCall() {
+				return getOWLManipulator().replaceObjectProperty(ind, prop, oldValue, newValue);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#replaceIndividualClass(OWLNamedIndividual, OWLClass, OWLClass)}
@@ -1504,16 +1200,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to replace a object property value attached to an individual. (see {@link OWLManipulator} for more info) 
 	 */
 	public List<OWLOntologyChange> replaceIndividualClass( OWLNamedIndividual ind,	OWLClass oldValue, OWLClass newValue){
-		mutexReasoner.lock();
-		long t = System.nanoTime();
-		try{
-			long t1 = System.nanoTime();
-			List<OWLOntologyChange> out = getOWLManipulator().replaceIndividualClass(ind, oldValue, newValue);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner);
+		return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
+			@Override
+			protected List<OWLOntologyChange> perfromSynchronisedCall() {
+				return getOWLManipulator().replaceIndividualClass(ind, oldValue, newValue);
+			}
+		}.call();
 	}
 
 
@@ -1525,18 +1218,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to rename an ontological entity. (see {@link OWLManipulator} for more info)
 	 */
 	public List< OWLOntologyChange> renameEntity( OWLEntity entity, IRI newIRI){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRename.lock();
-		try{
-			long t1 = System.nanoTime();
-			List<OWLOntologyChange> out = getOWLManipulator().renameEntity(entity, newIRI);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRename.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRename);
+		return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
+			@Override
+			protected List<OWLOntologyChange> perfromSynchronisedCall() {
+				return getOWLManipulator().renameEntity(entity, newIRI);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#renameEntity(String, String)}
@@ -1546,18 +1234,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to rename an ontological entity. (see {@link OWLManipulator} for more info)
 	 */
 	public List< OWLOntologyChange> renameEntity( OWLEntity entity, String newName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRename.lock();
-		try{
-			long t1 = System.nanoTime();
-			List<OWLOntologyChange> out = getOWLManipulator().renameEntity(entity, newName);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRename.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRename);
+		return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
+			@Override
+			protected List<OWLOntologyChange> perfromSynchronisedCall() {
+				return getOWLManipulator().renameEntity(entity, newName);
+			}
+		}.call();
 	}
 	
 	// ------------------------------------------------------------   methods for DISJOINT individuals
@@ -1569,18 +1252,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add the disjoint individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange makeDisjointIndividualName( Set< String> individualNames){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAddDisjoinedInd.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().makeDisjointIndividualName( individualNames);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAddDisjoinedInd.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjoinedInd);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().makeDisjointIndividualName( individualNames);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#makeDisjointIndividuals(Set)}
@@ -1590,18 +1268,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add the disjoint individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange makeDisjointIndividuals( Set< OWLNamedIndividual> individuals){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAddDisjoinedInd.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().makeDisjointIndividuals( individuals);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAddDisjoinedInd.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjoinedInd);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().makeDisjointIndividuals( individuals);
+			}
+		}.call();
 	}
 	
 	/**
@@ -1612,18 +1285,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove the disjoint individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange removeDisjointIndividualName( Set< String> individualNames){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRemoveDisjoinedInd.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().removeDisjointIndividualName( individualNames);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRemoveDisjoinedInd.unlock();
-			mutexReasoner.unlock();
-		}
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjoinedInd);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return  getOWLManipulator().removeDisjointIndividualName( individualNames);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#removeDisjointIndividuals(Set)}
@@ -1633,18 +1301,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove the disjoint individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange removeDisjointIndividuals( Set< OWLNamedIndividual> individuals){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRemoveDisjoinedInd.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().removeDisjointIndividuals( individuals);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRemoveDisjoinedInd.unlock();
-			mutexReasoner.unlock();
-		}	
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjoinedInd);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return  getOWLManipulator().removeDisjointIndividuals( individuals);
+			}
+		}.call();
 	}
 
 	/**
@@ -1655,18 +1318,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add the disjoint classes axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange makeDisjointClassName( Set< String> classesName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAddDisjoinedCls.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().makeDisjointClassName( classesName);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAddDisjoinedCls.unlock();
-			mutexReasoner.unlock();
-		}	
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjoinedCls);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().makeDisjointClassName( classesName);
+			}
+		}.call();		
 	}
 	/**
 	 * This method calls {@link OWLManipulator#makeDisjointClasses(Set)}
@@ -1676,18 +1334,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add the disjoint classes axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange makeDisjointClasses( Set< OWLClass> classes){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexAddDisjoinedCls.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().makeDisjointClasses( classes);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexAddDisjoinedCls.unlock();
-			mutexReasoner.unlock();
-		}	
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjoinedCls);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().makeDisjointClasses( classes);
+			}
+		}.call();
 	}
 	
 	/**
@@ -1698,18 +1351,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove the disjoint class axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange removeDisjointClassName( Set< String> classesName){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRemoveDisjoinedCls.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().removeDisjointClassName( classesName);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRemoveDisjoinedCls.unlock();
-			mutexReasoner.unlock();
-		}	
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjoinedCls);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().removeDisjointClassName( classesName);
+			}
+		}.call();
 	}
 	/**
 	 * This method calls {@link OWLManipulator#removeDisjointClasses(Set)}
@@ -1719,37 +1367,15 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove the disjoint class axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */	
 	public OWLOntologyChange removeDisjointClasses( Set< OWLClass> classes){
-		long t = System.nanoTime();
-		mutexReasoner.lock();
-		mutexRemoveDisjoinedCls.lock();
-		try{
-			long t1 = System.nanoTime();
-			OWLOntologyChange out = getOWLManipulator().removeDisjointClasses( classes);
-			loggLockTime( t, t1);
-			return out;
-		} finally{
-			mutexRemoveDisjoinedCls.unlock();
-			mutexReasoner.unlock();
-		}	
-	}
-
-	
-	// for logging time (how much has been waiting for the mutex) and (how much has been waiting to do the manipulation)
-	private void loggLockTime( long initialTime, long unlockingTime){
-		Double time = (unlockingTime - initialTime) / 1000000D;
-		Double time2 = (System.nanoTime() - unlockingTime) / 1000000D;
-		//if( time > 400 || time2 > 400){
-			StackTraceElement[] trace = Thread.currentThread().getStackTrace();
-			String method = "", caller = "";
-			if( trace.length >= 3){
-				method = trace[2].getMethodName();
-				caller = trace[ trace.length - 1].getMethodName();
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjoinedCls);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange perfromSynchronisedCall() {
+				return getOWLManipulator().removeDisjointClasses( classes);
 			}
-			logger.addDebugString( this.getReferenceName() + " locked on " + method + " for " + time + " [ns] (top stack trace caller: " + caller + ")");
-			logger.addDebugString( this.getReferenceName() + " spent " + time2 + "[ns] waiting in OWLLibrary");
-		//}
+		}.call();
 	}
-
+	
 	// [[[[[[[[[[[[[[[[[[[[[[   METHOD TO CALL REASONING (thread safe)   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 	/** 
 	 * This method just synchronises the call to the reasoner (performed by {@link OWLReferences}) with respect to 
@@ -1767,7 +1393,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			mutexReasoner.unlock();
 		}
 	}
-	
 	
 	// [[[[[[[[[[[[[[[[[[[[[[   METHODS TO SAVE (exportable) ONTOLOGY   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 	/**
@@ -1812,5 +1437,120 @@ public class OWLReferences extends OWLReferencesInterface{
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
 			this.loggInconsistency();
 		}
+	}
+
+	// [[[[[[[[[[[[[[[[[[[[[[              INTERNAL CLASS               ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+	// use to manage logging and mutex for all the call to the OWLManipulator and OWLEnquirer
+	abstract protected class OWLReferencesCaller< T>{
+		//// constant
+		public final Long NANOSEC_2_SEC = 1000000000L;
+		public final Float MIN_LOGGING_THRESHOULD = 0.000000050F; // in seconds
+		
+		//// fields
+		private List< Lock> mutexes;
+		private Long synchronisatedInitialTime, workInitialTime;
+		private OWLReferences ontoRef;
+		private Float minLoggingThreshould;
+		
+		//// constructor
+		public OWLReferencesCaller( List< Lock> mutexes, OWLReferences ontoRef){
+			this.initialise(mutexes, ontoRef, MIN_LOGGING_THRESHOULD);
+		}
+		public OWLReferencesCaller( List< Lock> mutexes, OWLReferences ontoRef, Float minLoggingThreshould){
+			this.initialise(mutexes, ontoRef, minLoggingThreshould);
+		}
+		private void initialise( List< Lock> mutexes, OWLReferences ontoRef, Float minLoggingThreshould){
+			// initialise fields
+			this.mutexes = mutexes;
+			this.ontoRef = ontoRef;
+			this.minLoggingThreshould = minLoggingThreshould;
+		}
+		
+		//// working methods called in constructor
+		public T call(){
+			T t;
+			setSynchronisatedInitialTime();
+			if( mutexes != null){
+					lockMutex();
+				try{
+					t = doSynchronisedWork();
+				} finally {
+					unlockMutex();
+				}
+			} else t = doSynchronisedWork();
+			return t;
+		}
+		protected void lockMutex(){
+			for( int i = 0; i < getMutexes().size(); i++)
+				getMutexes().get( i).lock();
+		}
+		abstract T perfromSynchronisedCall(); //// main call function
+		protected T doSynchronisedWork(){
+			setWorkInitialTime();
+			T out = perfromSynchronisedCall();
+			loggLockTime( getSynchronisatedInitialTime(), getWorkInitialTime());
+			return out;	
+		}
+		protected void unlockMutex(){
+			for( int i = getMutexes().size() - 1; i <= 0; i--)
+				getMutexes().get( i).unlock();
+		}
+		
+		// for logging time (how much has been waiting for the mutex) and (how much has been waiting to do the manipulation)
+		private void loggLockTime( long initialTime, long unlockingTime){
+			Float time = Float.valueOf( unlockingTime - initialTime) / NANOSEC_2_SEC; // in seconds
+			Float time2 = Float.valueOf( System.nanoTime() - unlockingTime) / NANOSEC_2_SEC;
+			if( time >= minLoggingThreshould || time2 >= minLoggingThreshould){
+				StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+				String method = "", caller = "";
+				if( trace.length >= 3){
+					method = trace[2].getMethodName();
+					caller = trace[ trace.length - 1].getMethodName();
+				}
+				logger.addDebugString( getOntoRef().getReferenceName() + " locked on " + method + " for " + time + " [sec] (top stack trace caller: " + caller + ")");
+				logger.addDebugString( getOntoRef().getReferenceName() + " spent " + time2 + "[sec] waiting in OWLLibrary");
+			}
+		}
+		
+		//// getters
+		protected List<Lock> getMutexes() {
+			return mutexes;
+		}
+		protected Long getSynchronisatedInitialTime() {
+			return synchronisatedInitialTime;
+		}
+		protected Long getWorkInitialTime() {
+			return workInitialTime;
+		}
+		protected OWLReferences getOntoRef() {
+			return ontoRef;
+		}
+
+		protected Float getMinLoggingThreshould() {
+			return minLoggingThreshould;
+		}
+		
+		//// setters
+		protected void setSynchronisatedInitialTime() {
+			this.synchronisatedInitialTime = System.nanoTime();
+		}
+		protected void setWorkInitialTime() {
+			this.workInitialTime = System.nanoTime();
+		}
+		protected void setMinLoggingThreshould(Float minLoggingThreshould) {
+			this.minLoggingThreshould = minLoggingThreshould;
+		}
+	}
+	// method to easy get object to initialise OWLReferencesCall 
+	private List< Lock> getMutexes( Lock mutex){
+		List< Lock> mutexes = new ArrayList<>();
+		mutexes.add( mutex);
+		return mutexes;
+	}
+	private List< Lock> getMutexes( Lock mutex1, Lock mutex2){
+		List< Lock> mutexes = new ArrayList<>();
+		mutexes.add( mutex1);
+		mutexes.add( mutex2);
+		return mutexes;
 	}
 }

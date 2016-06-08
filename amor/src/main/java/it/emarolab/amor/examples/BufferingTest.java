@@ -65,6 +65,7 @@ public class BufferingTest {
 		
 		// 8) show results
 		ontoRef.printOntonolyOnConsole();
+		
 	}
 	
 	// procedure to assign a new id to X_IND and update the counter to point to an ID not assigned to any individuals
