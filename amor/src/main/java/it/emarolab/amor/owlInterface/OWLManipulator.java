@@ -578,8 +578,7 @@ public class OWLManipulator{
 	public OWLOntologyChange removeDataPropertyB2Individual(OWLNamedIndividual ind, OWLDataProperty prop, OWLLiteral value) {
 		long initialTime = System.nanoTime();
 		try{
-			OWLAxiom newAxiom = ontoRef.getFactory()
-					.getOWLDataPropertyAssertionAxiom( prop, ind, value);
+			OWLAxiom newAxiom = ontoRef.getFactory().getOWLDataPropertyAssertionAxiom( prop, ind, value);
 			OWLOntologyChange remove = getRemoveAxiom( newAxiom, changeBuffering);
 			if( ! changeBuffering)
 				applyChanges( remove);
@@ -791,7 +790,7 @@ public class OWLManipulator{
 
 
 	// ---------------------------   methods for replace entities to the ontology
-	/**
+	/*
 	 * Atomically (with respect to reasoner update) replacing of a data property.
 	 * Indeed, it will remove all the possible data property with a given values
 	 * using {@link #removeDataPropertyB2Individual(OWLNamedIndividual, OWLDataProperty, OWLLiteral)}.
@@ -803,19 +802,20 @@ public class OWLManipulator{
 	 * @param newValue new value to add
 	 * @return  the changes to be done into the refereed ontology to replace the value of a data property balue attached into an individual. 
 	 * You may want to do not consider the returning value and call {@link #applyChanges()} if this operation not buffered.
-	 */
+	 
 	public List<OWLOntologyChange> replaceDataPropertyB2Individual( OWLNamedIndividual ind, OWLDataProperty prop, Set< OWLLiteral> oldValue, OWLLiteral newValue){
 		List< OWLOntologyChange> changes = new ArrayList< OWLOntologyChange>(); 
 		try{
-			for( OWLLiteral l : oldValue)
-				changes.add( this.removeDataPropertyB2Individual( ind, prop, l));
+			if( oldValue != null)
+				for( OWLLiteral l : oldValue)
+					changes.add( this.removeDataPropertyB2Individual( ind, prop, l));
 			changes.add( this.addDataPropertyB2Individual( ind, prop, newValue));
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
 			ontoRef.loggInconsistency();
 			return null;
 		}
 		return changes;
-	}
+	}*/
 	/**
 	 * Atomically (with respect to reasoner update) replacing of a data property.
 	 * Indeed, it will remove the possible data property with a given value
@@ -832,7 +832,8 @@ public class OWLManipulator{
 	public List<OWLOntologyChange> replaceDataPropertyB2Individual( OWLNamedIndividual ind,  OWLDataProperty prop, OWLLiteral oldValue, OWLLiteral newValue){
 		List< OWLOntologyChange> changes = new ArrayList< OWLOntologyChange>(); 
 		try{		
-			changes.add( this.removeDataPropertyB2Individual( ind, prop, oldValue));
+			if( oldValue != null)
+				changes.add( this.removeDataPropertyB2Individual( ind, prop, oldValue));
 			changes.add( this.addDataPropertyB2Individual( ind, prop, newValue));
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
 			ontoRef.loggInconsistency();
@@ -840,7 +841,6 @@ public class OWLManipulator{
 		}	
 		return changes;
 	}
-
 	/**
 	 * Atomically (with respect to reasoner update) replacing of a object property.
 	 * Indeed, it will remove the possible object property with a given values
@@ -855,9 +855,10 @@ public class OWLManipulator{
 	 * You may want to do not consider the returning value and call {@link #applyChanges()} if this operation not buffered.
 	 */
 	public List<OWLOntologyChange> replaceObjectProperty( OWLNamedIndividual ind, OWLObjectProperty prop, OWLNamedIndividual oldValue, OWLNamedIndividual newValue){
-		List< OWLOntologyChange> changes = new ArrayList< OWLOntologyChange>(); 
+		List< OWLOntologyChange> changes = new ArrayList< OWLOntologyChange>();
 		try{
-			changes.add( this.removeObjectPropertyB2Individual( ind, prop, oldValue));
+			if( oldValue != null)
+				changes.add( this.removeObjectPropertyB2Individual( ind, prop, oldValue));
 			changes.add( this.addObjectPropertyB2Individual( ind, prop, newValue));
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
 			ontoRef.loggInconsistency();
@@ -865,7 +866,6 @@ public class OWLManipulator{
 		}	
 		return changes;
 	}
-	// TODO: replace no old values
 	/**
 	 * Atomically (with respect to reasoner update) replacing of individual
 	 * type. Which means to remove an individual from a class and add it to
@@ -883,7 +883,8 @@ public class OWLManipulator{
 	public List<OWLOntologyChange> replaceIndividualClass( OWLNamedIndividual ind, OWLClass oldValue, OWLClass newValue){
 		List< OWLOntologyChange> changes = new ArrayList< OWLOntologyChange>(); 
 		try{
-			changes.add( this.removeIndividualB2Class( ind, oldValue));
+			if( oldValue != null)
+				changes.add( this.removeIndividualB2Class( ind, oldValue));
 			changes.add( this.addIndividualB2Class( ind, newValue));
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
 			ontoRef.loggInconsistency();

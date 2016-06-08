@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLIndividual;
@@ -82,7 +83,22 @@ public class OWLEnquirer {
 	} 
 	
 	/**
-	 * It returns all the ontological individual which are defined in the 
+	 * It returns all the ontological individuals which are defined in the 
+	 * refereed ontology and which are belonging to the class {@link OWLDataFactory#getOWLThing()}. 
+	 * Than the returning value is propagated, so it returns {@code null} if no individuals are
+	 * classified in that class (so if no individuals are introduced into the ontology) 
+	 * or if such class does not exist in.
+	 * Finally note that the completeness of the results 
+	 * of this methods also depends from the value
+	 * of {@link #returnCompleteDescription}.
+	 * 
+	 * @return all the individuals belong to the root class of the ontology.
+	 */
+	public Set<OWLNamedIndividual> getIndividualB2Thing(){
+		return( getIndividualB2Class( ontoRef.getFactory().getOWLThing()));
+	}
+	/**
+	 * It returns all the ontological individuals which are defined in the 
 	 * refereed ontology and which are belonging to the class with name 
 	 * defined by the parameter. Indeed this method will call 
 	 * {@link #getOWLClass(String)},
@@ -129,6 +145,22 @@ public class OWLEnquirer {
 		}
 		logger.addDebugString( "Individual belong to class given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
+	}
+	/**
+	 * It returns one ontological individual which are defined in the 
+	 * refereed ontology and which are belonging to the class {@link OWLDataFactory#getOWLThing()}. 
+	 * Indeed this method will call {@link #getOnlyIndividualB2Class(OWLClass)}. Than,
+	 * using {@link #getOnlyElement(Set)} it will return one
+	 * individual that are belonging to the class. It returns null if no individual are
+	 * classified in that class, so if no individuals are introduced into the ontology.
+	 * Finally note that the completeness of the results 
+	 * of this methods also depends from the value
+	 * of {@link #returnCompleteDescription}.
+	 * 
+	 * @return an individual belong to the root class of the ontology.
+	 */
+	public OWLNamedIndividual getOnlyIndividualB2Thing(){
+		return( getOnlyIndividualB2Class( ontoRef.getFactory().getOWLThing()));
 	}
 	/**
 	 * It returns one ontological individual which are defined in the 

@@ -7,6 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -88,6 +89,49 @@ public class OWLReferences extends OWLReferencesInterface{
 	private Lock mutexSubObjProp = new ReentrantLock();
 	private Lock mutexSuperDataProp = new ReentrantLock();
 	private Lock mutexSuperObjProp = new ReentrantLock();
+	
+	/**
+	 * This method search for all the individuals in the root class {@link OWLDataFactory#getOWLThing()}. 
+	 * It looks for defined semantic entities as well as for inferred 
+	 * axioms (given by the reasoner). In order to do so it calls:
+	 * {@link OWLEnquirer#getIndividualB2Thing()}
+	 * @return the set of all the individuals into the root ontology class.
+	 */
+	public Set<OWLNamedIndividual> getIndividualB2Thing(){
+		long t = System.nanoTime();
+		mutexReasoner.lock();
+		mutexIndividualB2Class.lock();
+		try{
+			Set<OWLNamedIndividual> out = getOWLEnquirer().getIndividualB2Thing();
+			long t1 = System.nanoTime();
+			loggLockTime( t, t1);
+			return out;
+		} finally{
+			mutexIndividualB2Class.unlock();
+			mutexReasoner.unlock();
+		}
+	}
+	/**
+	 * This method search for one individual in the root class {@link OWLDataFactory#getOWLThing()}. 
+	 * It looks for defined semantic entities as well as for inferred 
+	 * axioms (given by the reasoner). In order to do so it calls:
+	 * {@link OWLEnquirer#getOnlyIndividualB2Thing()}
+	 * @return one individual into the root ontology class.
+	 */
+	public OWLNamedIndividual getOnlyIndividualB2Thing(){
+		long t = System.nanoTime();
+		mutexReasoner.lock();
+		mutexIndividualB2Class.lock();
+		try{
+			OWLNamedIndividual out = getOWLEnquirer().getOnlyIndividualB2Thing();
+			long t1 = System.nanoTime();
+			loggLockTime( t, t1);
+			return out;
+		} finally{
+			mutexIndividualB2Class.unlock();
+			mutexReasoner.unlock();
+		}
+	}
 	
 	/**
 	 * This method search for individuals in a specified class. 
@@ -1382,7 +1426,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	
 
 	// ------------------------------------------------------------   methods for REPLACE entities
-	/**
+	/*
 	 * This method calls {@link OWLManipulator#replaceDataPropertyB2Individual(OWLNamedIndividual, OWLDataProperty, Set, OWLLiteral)}
 	 * in order to replace a data property of an individual with a new value.
 	 * @param ind the individual from which replace the property
@@ -1390,7 +1434,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param oldValue the set of old value of the property to be removed
 	 * @param newValue the new value of the property to be added
 	 * @return the changes to be done in order to replace a data property value attached to an individual. (see {@link OWLManipulator} for more info) 
-	 */
+	 
 	public List<OWLOntologyChange> replaceDataProperty( OWLNamedIndividual ind, OWLDataProperty prop, Set< OWLLiteral> oldValue, OWLLiteral newValue){
 		long t = System.nanoTime();
 		mutexReasoner.lock();
@@ -1404,7 +1448,7 @@ public class OWLReferences extends OWLReferencesInterface{
 			mutexReplaceDataProp.unlock();
 			mutexReasoner.unlock();
 		}
-	}
+	}*/
 	/**
 	 * This method calls {@link OWLManipulator#replaceDataPropertyB2Individual(OWLNamedIndividual, OWLDataProperty, OWLLiteral, OWLLiteral)}
 	 * in order to replace a data property of an individual with a new value.
