@@ -132,7 +132,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param className the name of the class from which to retrieve the individuals
 	 * @return the set of individuals into the given class.
 	 */
-	public Set<OWLNamedIndividual> getIndividualB2Class( String className){
+	public Set<OWLNamedIndividual> getIndividualB2Class( final String className){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
 		return new OWLReferencesCaller< Set< OWLNamedIndividual>>(  mutexes, this) {
 			@Override
@@ -149,7 +149,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param ontoClass the class from which to retrieve the individuals
 	 * @return the set of individuals into the given class.
 	 */
-	public Set<OWLNamedIndividual> getIndividualB2Class( OWLClass ontoClass){ 
+	public Set<OWLNamedIndividual> getIndividualB2Class( final OWLClass ontoClass){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
 		return new OWLReferencesCaller< Set< OWLNamedIndividual>>(  mutexes, this) {
 			@Override
@@ -166,7 +166,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param className the name of the class from which to retrieve the individuals
 	 * @return an individuals into the given class.
 	 */
-	public OWLNamedIndividual getOnlyIndividualB2Class( String className){ 
+	public OWLNamedIndividual getOnlyIndividualB2Class( final String className){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
 		return new OWLReferencesCaller< OWLNamedIndividual>(  mutexes, this) {
 			@Override
@@ -183,7 +183,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param ontoClass the class from which to retrieve the individuals
 	 * @return an individuals into the given class.
 	 */
-	public OWLNamedIndividual getOnlyIndividualB2Class( OWLClass ontoClass){
+	public OWLNamedIndividual getOnlyIndividualB2Class( final OWLClass ontoClass){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
 		return new OWLReferencesCaller< OWLNamedIndividual>(  mutexes, this) {
 			@Override
@@ -201,7 +201,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param individual the individual from which query its types.
 	 * @return the set of classes in which the given individual is belonging to.
 	 */
-	public Set< OWLClass> getIndividualClasses( OWLNamedIndividual individual){
+	public Set< OWLClass> getIndividualClasses( final OWLNamedIndividual individual){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndivClasses);
 		return new OWLReferencesCaller< Set< OWLClass>>(  mutexes, this) {
 			@Override
@@ -218,7 +218,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param individual the individual from which query its types.
 	 * @return the set of classes in which the given individual is belonging to.
 	 */
-	public Set< OWLClass> getIndividualClasses( String individual){
+	public Set< OWLClass> getIndividualClasses( final String individual){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndivClasses);
 		return new OWLReferencesCaller< Set< OWLClass>>(  mutexes, this) {
 			@Override
@@ -235,7 +235,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param individual the individual from which query its types.
 	 * @return the set of classes in which the given individual is belonging to.
 	 */
-	public OWLClass getOnlyIndividualClasses( OWLNamedIndividual individual){
+	public OWLClass getOnlyIndividualClasses( final OWLNamedIndividual individual){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndivClasses);
 		return new OWLReferencesCaller< OWLClass>(  mutexes, this) {
 			@Override
@@ -252,7 +252,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param individual the individual from which query its types.
 	 * @return the set of classes in which the given individual is belonging to.
 	 */
-	public OWLClass getOnlyIndividualClasses( String individual){
+	public OWLClass getOnlyIndividualClasses( final String individual){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndivClasses);
 		return new OWLReferencesCaller< OWLClass>(  mutexes, this) {
 			@Override
@@ -272,7 +272,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param propertyName the name of the property to search in the individual properties.
 	 * @return the set of values of the specified data property assigned to an individual.
 	 */
-	public Set<OWLLiteral> getDataPropertyB2Individual( String individualName, String propertyName){
+	public Set<OWLLiteral> getDataPropertyB2Individual( final String individualName, final String propertyName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexDataPropB2Ind);
 		return new OWLReferencesCaller< Set< OWLLiteral>>(  mutexes, this) {
 			@Override
@@ -290,7 +290,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param property the property to search in the individual properties.
 	 * @return the set of values of the specified data property assigned to an individual.
 	 */
-	public Set<OWLLiteral> getDataPropertyB2Individual( OWLNamedIndividual individual, OWLDataProperty property){
+	public Set<OWLLiteral> getDataPropertyB2Individual( final OWLNamedIndividual individual, final OWLDataProperty property){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexDataPropB2Ind);
 		return new OWLReferencesCaller< Set< OWLLiteral>>(  mutexes, this) {
 			@Override
@@ -308,7 +308,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param propertyName the name of the property to search in the individual properties.
 	 * @return a value of the specified data property assigned to an individual.
 	 */
-	public OWLLiteral getOnlyDataPropertyB2Individual( String individualName, String propertyName){
+	public OWLLiteral getOnlyDataPropertyB2Individual( final String individualName, final String propertyName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexDataPropB2Ind);
 		return new OWLReferencesCaller< OWLLiteral>(  mutexes, this) {
 			@Override
@@ -326,7 +326,8 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param property the property to search in the individual properties.
 	 * @return a value of the specified data property assigned to an individual.
 	 */
-	public OWLLiteral getOnlyDataPropertyB2Individual( OWLNamedIndividual individual, OWLDataProperty property){
+	public OWLLiteral getOnlyDataPropertyB2Individual(
+			final OWLNamedIndividual individual, final OWLDataProperty property){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexDataPropB2Ind);
 		return new OWLReferencesCaller< OWLLiteral>(  mutexes, this) {
 			@Override
@@ -344,7 +345,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param individual the individual from which query its data properties.
 	 * @return the set of a container of all the data properties with relative values.
 	 */
-	public Set<DataPropertyRelatios> getDataPropertyB2Individual( OWLNamedIndividual individual){
+	public Set<DataPropertyRelatios> getDataPropertyB2Individual( final OWLNamedIndividual individual){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAllDataPropB2Ind);
 		return new OWLReferencesCaller< Set<DataPropertyRelatios>>(  mutexes, this) {
 			@Override
@@ -361,7 +362,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param individualName the name of the individual from which query its data properties.
 	 * @return the set of a container of all the data properties with relative values.
 	 */
-	public Set<DataPropertyRelatios> getDataPropertyB2Individual( String individualName){
+	public Set<DataPropertyRelatios> getDataPropertyB2Individual( final String individualName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAllObjPropB2Ind);
 		return new OWLReferencesCaller< Set<DataPropertyRelatios>>(  mutexes, this) {
 			@Override
@@ -380,7 +381,8 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param propertyName the name of the property to search in the individual properties.
 	 * @return the set of values of the specified object property assigned to an individual.
 	 */
-	public Set<OWLNamedIndividual> getObjectPropertyB2Individual( String individualName, String propertyName){
+	public Set<OWLNamedIndividual> getObjectPropertyB2Individual(
+			final String individualName, final String propertyName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexObjPropB2Ind);
 		return new OWLReferencesCaller<  Set<OWLNamedIndividual>>(  mutexes, this) {
 			@Override
@@ -398,7 +400,8 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param property the property to search in the individual properties.
 	 * @return the set of values of the specified object property assigned to an individual.
 	 */
-	public Set<OWLNamedIndividual> getObjectPropertyB2Individual( OWLNamedIndividual individual, OWLObjectProperty property){
+	public Set<OWLNamedIndividual> getObjectPropertyB2Individual(
+			final OWLNamedIndividual individual, final OWLObjectProperty property){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexObjPropB2Ind);
 		return new OWLReferencesCaller<  Set<OWLNamedIndividual>>(  mutexes, this) {
 			@Override
@@ -416,7 +419,8 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param propertyName the name of the property to search in the individual properties.
 	 * @return a value of the specified object property assigned to an individual.
 	 */
-	public OWLNamedIndividual getOnlyObjectPropertyB2Individual( String individualName, String propertyName){
+	public OWLNamedIndividual getOnlyObjectPropertyB2Individual(
+			final String individualName, final String propertyName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexObjPropB2Ind);
 		return new OWLReferencesCaller< OWLNamedIndividual>(  mutexes, this) {
 			@Override
@@ -434,7 +438,8 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param property the property to search in the individual properties.
 	 * @return a value of the specified object property assigned to an individual.
 	 */
-	public OWLNamedIndividual getOnlyObjectPropertyB2Individual( OWLNamedIndividual individual, OWLObjectProperty property){
+	public OWLNamedIndividual getOnlyObjectPropertyB2Individual(
+			final OWLNamedIndividual individual, final OWLObjectProperty property){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexObjPropB2Ind);
 		return new OWLReferencesCaller< OWLNamedIndividual>(  mutexes, this) {
 			@Override
@@ -452,7 +457,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param individual the individual from which query its object properties.
 	 * @return the set of a container of all the object properties with relative values.
 	 */
-	public Set<ObjectPropertyRelatios> getObjectPropertyB2Individual( OWLNamedIndividual individual){
+	public Set<ObjectPropertyRelatios> getObjectPropertyB2Individual( final OWLNamedIndividual individual){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAllObjPropB2Ind);
 		return new OWLReferencesCaller< Set<ObjectPropertyRelatios>>(  mutexes, this) {
 			@Override
@@ -469,7 +474,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param individualName the name of the individual from which query its object properties.
 	 * @return the set of a container of all the object properties with relative values.
 	 */
-	public Set< ObjectPropertyRelatios> getObjectPropertyB2Individual( String individualName){
+	public Set< ObjectPropertyRelatios> getObjectPropertyB2Individual( final String individualName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAllObjPropB2Ind);
 		return new OWLReferencesCaller< Set<ObjectPropertyRelatios>>(  mutexes, this) {
 			@Override
@@ -487,11 +492,12 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param propName the name of the data property from which to retrieve its sub-properties.
 	 * @return the set of all the data properties that are sub-properties of the specified parameter.
 	 */
-	public Set<OWLDataProperty> getSubDataPropertyOf( String propName){
+	public Set<OWLDataProperty> getSubDataPropertyOf( final String propName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubDataProp);
 		return new OWLReferencesCaller< Set<OWLDataProperty>>(  mutexes, this) {
 			@Override
 			protected Set<OWLDataProperty> perfromSynchronisedCall() {
+
 				return getOWLEnquirer().getSubDataPropertyOf( propName);
 			}
 		}.call();
@@ -504,12 +510,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param prop the data property from which to retrieve its sub-properties.
 	 * @return the set of all the data properties that are sub-properties of the specified parameter.
 	 */
-	public Set<OWLDataProperty> getSubDataPropertyOf( OWLDataProperty prop){
+	public Set<OWLDataProperty> getSubDataPropertyOf( final OWLDataProperty prop){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubDataProp);
 		return new OWLReferencesCaller< Set<OWLDataProperty>>(  mutexes, this) {
 			@Override
 			protected Set<OWLDataProperty> perfromSynchronisedCall() {
-				return getOWLEnquirer().getSubDataPropertyOf( prop);
+
+                return getOWLEnquirer().getSubDataPropertyOf( prop);
 			}
 		}.call();
 	}
@@ -521,7 +528,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param propName the name of the data property from which to retrieve its super-properties.
 	 * @return the set of all the data properties that are super-properties of the specified parameter.
 	 */
-	public Set<OWLDataProperty> getSuperDataPropertyOf( String propName){
+	public Set<OWLDataProperty> getSuperDataPropertyOf( final String propName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperDataProp);
 		return new OWLReferencesCaller< Set<OWLDataProperty>>(  mutexes, this) {
 			@Override
@@ -538,7 +545,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param prop the data property from which to retrieve its super-properties.
 	 * @return the set of all the data properties that are super-properties of the specified parameter.
 	 */
-	public Set<OWLDataProperty> getSuperDataPropertyOf( OWLDataProperty prop){
+	public Set<OWLDataProperty> getSuperDataPropertyOf( final OWLDataProperty prop){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperDataProp);
 		return new OWLReferencesCaller< Set<OWLDataProperty>>(  mutexes, this) {
 			@Override
@@ -556,7 +563,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param propName the name of the data property from which to retrieve its sub-properties.
 	 * @return the set of all the object properties that are sub-properties of the specified parameter.
 	 */
-	public Set<OWLObjectProperty> getSubObjectPropertyOf( String propName){
+	public Set<OWLObjectProperty> getSubObjectPropertyOf( final String propName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubObjProp);
 		return new OWLReferencesCaller< Set<OWLObjectProperty>>(  mutexes, this) {
 			@Override
@@ -573,7 +580,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param prop the data property from which to retrieve its sub-properties.
 	 * @return the set of all the object properties that are sub-properties of the specified parameter.
 	 */
-	public Set<OWLObjectProperty> getSubObjectPropertyOf( OWLObjectProperty prop){
+	public Set<OWLObjectProperty> getSubObjectPropertyOf( final OWLObjectProperty prop){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubObjProp);
 		return new OWLReferencesCaller< Set<OWLObjectProperty>>(  mutexes, this) {
 			@Override
@@ -590,7 +597,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param propName the name of the data property from which to retrieve its super-properties.
 	 * @return the set of all the object properties that are super-properties of the specified parameter.
 	 */
-	public Set<OWLObjectProperty> getSuperObjectPropertyOf( String propName){
+	public Set<OWLObjectProperty> getSuperObjectPropertyOf( final String propName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperObjProp);
 		return new OWLReferencesCaller< Set<OWLObjectProperty>>(  mutexes, this) {
 			@Override
@@ -607,7 +614,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param prop the data property from which to retrieve its super-properties.
 	 * @return the set of all the object properties that are super-properties of the specified parameter.
 	 */
-	public Set<OWLObjectProperty> getSuperObjectPropertyOf( OWLObjectProperty prop){
+	public Set<OWLObjectProperty> getSuperObjectPropertyOf( final OWLObjectProperty prop){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperObjProp);
 		return new OWLReferencesCaller< Set<OWLObjectProperty>>(  mutexes, this) {
 			@Override
@@ -625,7 +632,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param className the name of the class from which to retrieve its sub-classes.
 	 * @return the set of all the classes that are sub-classes of the specified parameter.
 	 */
-	public Set<OWLClass> getSubClassOf( String className){
+	public Set<OWLClass> getSubClassOf( final String className){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubClass);
 		return new OWLReferencesCaller< Set<OWLClass>>(  mutexes, this) {
 			@Override
@@ -642,7 +649,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param class the class from which to retrieve its sub-classes.
 	 * @return the set of all the classes that are sub-classes of the specified parameter.
 	 */
-	public Set<OWLClass> getSubClassOf( OWLClass cl){
+	public Set<OWLClass> getSubClassOf( final OWLClass cl){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubClass);
 		return new OWLReferencesCaller< Set<OWLClass>>(  mutexes, this) {
 			@Override
@@ -660,7 +667,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param className the name of the class from which to retrieve its super-classes.
 	 * @return the set of all the classes that are super-classes of the specified parameter.
 	 */
-	public Set<OWLClass> getSuperClassOf( String className){
+	public Set<OWLClass> getSuperClassOf( final String className){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperClass);
 		return new OWLReferencesCaller< Set<OWLClass>>(  mutexes, this) {
 			@Override
@@ -677,7 +684,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param class the class from which to retrieve its super-classes.
 	 * @return the set of all the classes that are super-classes of the specified parameter.
 	 */
-	public Set<OWLClass> getSuperClassOf( OWLClass cl){
+	public Set<OWLClass> getSuperClassOf( final OWLClass cl){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperClass);
 		return new OWLReferencesCaller< Set<OWLClass>>(  mutexes, this) {
 			@Override
@@ -725,7 +732,8 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param value the value of the data property
 	 * @return the changes to be done in order to add an object property to an individual. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange addObjectPropertyB2Individual( OWLNamedIndividual ind, OWLObjectProperty prop,  OWLNamedIndividual value){
+	public OWLOntologyChange addObjectPropertyB2Individual(
+            final OWLNamedIndividual ind, final OWLObjectProperty prop,  final OWLNamedIndividual value){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddObjPropB2Ind);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -742,7 +750,8 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param valueName the name of the value of the data property
 	 * @return the changes to be done in order to add an object property to an individual. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange addObjectPropertyB2Individual( String individualName, String propName, String valueName){
+	public OWLOntologyChange addObjectPropertyB2Individual(
+            final String individualName, final String propName, final String valueName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddObjPropB2Ind);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -761,7 +770,8 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param value the value of the data property
 	 * @return the changes to be done in order to add an data property to an individual. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange addDataPropertyB2Individual(OWLNamedIndividual ind,  OWLDataProperty prop, OWLLiteral value){
+	public OWLOntologyChange addDataPropertyB2Individual(
+            final OWLNamedIndividual ind,  final OWLDataProperty prop, final OWLLiteral value){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDataPropB2Ind);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -778,7 +788,8 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param value the name of the value of the data property
 	 * @return the changes to be done in order to add an data property to an individual. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange addDataPropertyB2Individual( String individualName, String propertyName, Object value){
+	public OWLOntologyChange addDataPropertyB2Individual(
+            final String individualName, final String propertyName, final Object value){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDataPropB2Ind);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -794,7 +805,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param ind the individual to be set to be belonging to the {@code OWLThing} class.
 	 * @return the changes to be done in order to add an individual into a class. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange addIndividual(OWLNamedIndividual ind){
+	public OWLOntologyChange addIndividual(final OWLNamedIndividual ind){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddInd);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -809,7 +820,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param individualName the name of the individual to be set to be belonging to the {@code OWLThing} class.
 	 * @return the changes to be done in order to add an individual into a class. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange addIndividual(String individualName){
+	public OWLOntologyChange addIndividual(final String individualName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddInd);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -826,7 +837,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param cls the class in which the individual will be belonging to.
 	 * @return the changes to be done in order to add an individual into a class. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange addIndividualB2Class(OWLNamedIndividual ind, OWLClass cls){
+	public OWLOntologyChange addIndividualB2Class(final OWLNamedIndividual ind, final OWLClass cls){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddIndB2Class);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -842,7 +853,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param className the name of the class in which the individual will be belonging to.
 	 * @return the changes to be done in order to add an individual into a class. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange addIndividualB2Class(String individualName, String className){
+	public OWLOntologyChange addIndividualB2Class(final String individualName, final String className){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddIndB2Class);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -858,7 +869,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param className the name of the class to be added into the ontology.
 	 * @return the changes to be done in order to add a class into the ontology. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange addClass( String className){
+	public OWLOntologyChange addClass( final String className){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddClass);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -873,7 +884,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param cls the class to be added into the ontology.
 	 * @return the changes to be done in order to add a class into the ontology. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange addClass( OWLClass cls){
+	public OWLOntologyChange addClass( final OWLClass cls){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddClass);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -890,7 +901,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param subClassName the name of the class to add as sub class of the specified class.
 	 * @return the changes to be done in order to add a class by specifying its super class. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange addSubClassOf( String superClassName, String subClassName){
+	public OWLOntologyChange addSubClassOf( final String superClassName, final String subClassName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddSubClass);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -906,7 +917,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param subClass the class to add as sub class of the specified class.
 	 * @return the changes to be done in order to add a class by specifying its super class. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange addSubClassOf( OWLClass supClass, OWLClass subClass){
+	public OWLOntologyChange addSubClassOf( final OWLClass supClass, final OWLClass subClass){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddSubClass);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -925,7 +936,8 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param value the value of the property to remove.
 	 * @return the changes to be done in order to remove an object property from an individual. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange removeObjectPropertyB2Individual( OWLNamedIndividual ind, OWLObjectProperty prop, OWLNamedIndividual value){
+	public OWLOntologyChange removeObjectPropertyB2Individual(
+            final OWLNamedIndividual ind, final OWLObjectProperty prop, final OWLNamedIndividual value){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveObjPropB2Ind);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -942,7 +954,8 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param valueName the name of the value of the property to remove.
 	 * @return the changes to be done in order to remove an object property from an individual. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange removeObjectPropertyB2Individual( String individualName, String propName, String valueName){
+	public OWLOntologyChange removeObjectPropertyB2Individual(
+            final String individualName, final String propName, final String valueName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveObjPropB2Ind);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -960,7 +973,8 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param value the value of the property to remove.
 	 * @return the changes to be done in order to remove a data property from an individual. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange removeDataPropertyB2Individual(OWLNamedIndividual ind, OWLDataProperty prop, OWLLiteral value){
+	public OWLOntologyChange removeDataPropertyB2Individual(
+            final OWLNamedIndividual ind, final OWLDataProperty prop, final OWLLiteral value){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDataPropB2Ind);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -977,7 +991,8 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param value the name of the value of the property to remove.
 	 * @return the changes to be done in order to remove a data property from an individual. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange removeDataPropertyB2Individual( String individualName, String propertyName, Object value){
+	public OWLOntologyChange removeDataPropertyB2Individual(
+            final String individualName, final String propertyName, final Object value){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDataPropB2Ind);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -995,7 +1010,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param cls the class from which the individual should be removed.
 	 * @return the changes to be done in order to remove an individual from a class. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange removeIndividualB2Class(OWLNamedIndividual ind, OWLClass cls){
+	public OWLOntologyChange removeIndividualB2Class(final OWLNamedIndividual ind, final OWLClass cls){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveIndB2Class);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -1011,7 +1026,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param className the name of the class from which the individual should be removed.
 	 * @return the changes to be done in order to remove an individual from a class. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange removeIndividualB2Class(String individualName, String className){
+	public OWLOntologyChange removeIndividualB2Class(final String individualName, final String className){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveIndB2Class);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -1027,7 +1042,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param ind the individual to be removed.
 	 * @return the changes to be done in order to remove an individual from the ontology. (see {@link OWLManipulator} for more info)
 	 */
-	public List<OWLOntologyChange> removeIndividual( OWLNamedIndividual individual){ 
+	public List<OWLOntologyChange> removeIndividual( final OWLNamedIndividual individual){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveInd);
 		return new OWLReferencesCaller< List< OWLOntologyChange>>(  mutexes, this) {
 			@Override
@@ -1042,7 +1057,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param indName the name of the individual to be removed.
 	 * @return the changes to be done in order to remove an individual from the ontology. (see {@link OWLManipulator} for more info)
 	 */
-	public List<OWLOntologyChange> removeIndividual( String indName){ 
+	public List<OWLOntologyChange> removeIndividual( final String indName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveInd);
 		return new OWLReferencesCaller< List< OWLOntologyChange>>(  mutexes, this) {
 			@Override
@@ -1057,7 +1072,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param individuals the set of individuals to be removed.
 	 * @return the changes to be done in order to remove the set of individuals from the ontology. (see {@link OWLManipulator} for more info)
 	 */
-	public List<OWLOntologyChange> removeIndividual( Set< OWLNamedIndividual> individuals){ 
+	public List<OWLOntologyChange> removeIndividual( final Set< OWLNamedIndividual> individuals){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveInd);
 		return new OWLReferencesCaller< List< OWLOntologyChange>>(  mutexes, this) {
 			@Override
@@ -1072,7 +1087,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param className the name of the class to be removed from the ontology.
 	 * @return the changes to be done in order to remove a class from the ontology. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange removeClass( String className){
+	public OWLOntologyChange removeClass( final String className){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveClass);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -1087,7 +1102,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param cls the class to be removed into the ontology.
 	 * @return the changes to be done in order to remove a class from the ontology an individual into a class. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange removeClass( OWLClass cls){
+	public OWLOntologyChange removeClass( final OWLClass cls){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveClass);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -1104,7 +1119,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param subClassName the name of the class to remove as sub class of the specified class.
 	 * @return the changes to be done in order to remove a sub class assertion by specifying its super class. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange removeSubClassOf( String superClassName, String subClassName){
+	public OWLOntologyChange removeSubClassOf( final String superClassName, final String subClassName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveSubClass);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -1120,7 +1135,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param subClass the class to remove as sub class of the specified class.
 	 * @return the changes to be done in order to remove a sub class assertion by specifying its super class. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange removeSubClassOf( OWLClass supClass, OWLClass subClass){
+	public OWLOntologyChange removeSubClassOf( final OWLClass supClass, final OWLClass subClass){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveSubClass);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -1164,7 +1179,8 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param newValue the new value of the property to be added
 	 * @return the changes to be done in order to replace a data property value attached to an individual. (see {@link OWLManipulator} for more info) 
 	 */
-	public List<OWLOntologyChange> replaceDataProperty( OWLNamedIndividual ind, OWLDataProperty prop, OWLLiteral oldValue, OWLLiteral newValue){
+	public List<OWLOntologyChange> replaceDataProperty(
+            final OWLNamedIndividual ind, final OWLDataProperty prop, final OWLLiteral oldValue, final OWLLiteral newValue){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexReplaceDataProp);
 		return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
 			@Override
@@ -1182,7 +1198,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param newValue the new value of the property to be added
 	 * @return the changes to be done in order to replace a object property value attached to an individual. (see {@link OWLManipulator} for more info) 
 	 */
-	public List<OWLOntologyChange> replaceObjectProperty( OWLNamedIndividual ind, OWLObjectProperty prop, OWLNamedIndividual oldValue, OWLNamedIndividual newValue){
+	public List<OWLOntologyChange> replaceObjectProperty(
+            final OWLNamedIndividual ind, final OWLObjectProperty prop,
+            final OWLNamedIndividual oldValue, final OWLNamedIndividual newValue){
 		List< Lock> mutexes = getMutexes( mutexReasoner);
 		return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
 			@Override
@@ -1199,7 +1217,8 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param newValue the new class in which the individual will be belonging to.
 	 * @return the changes to be done in order to replace a object property value attached to an individual. (see {@link OWLManipulator} for more info) 
 	 */
-	public List<OWLOntologyChange> replaceIndividualClass( OWLNamedIndividual ind,	OWLClass oldValue, OWLClass newValue){
+	public List<OWLOntologyChange> replaceIndividualClass(
+            final OWLNamedIndividual ind, final OWLClass oldValue, final OWLClass newValue){
 		List< Lock> mutexes = getMutexes( mutexReasoner);
 		return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
 			@Override
@@ -1217,7 +1236,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param newIRI the new name for the ontological entity.
 	 * @return the changes to be done in order to rename an ontological entity. (see {@link OWLManipulator} for more info)
 	 */
-	public List< OWLOntologyChange> renameEntity( OWLEntity entity, IRI newIRI){
+	public List< OWLOntologyChange> renameEntity( final OWLEntity entity, final IRI newIRI){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRename);
 		return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
 			@Override
@@ -1233,7 +1252,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param newName the new name for the ontological entity to be combined with the semantic ontology IRI.
 	 * @return the changes to be done in order to rename an ontological entity. (see {@link OWLManipulator} for more info)
 	 */
-	public List< OWLOntologyChange> renameEntity( OWLEntity entity, String newName){
+	public List< OWLOntologyChange> renameEntity( final OWLEntity entity, final String newName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRename);
 		return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
 			@Override
@@ -1251,7 +1270,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param individualNames the set of names of individuals to make disjointed.
 	 * @return the changes to be done in order to add the disjoint individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange makeDisjointIndividualName( Set< String> individualNames){
+	public OWLOntologyChange makeDisjointIndividualName( final Set< String> individualNames){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjoinedInd);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -1267,7 +1286,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param individuals the set of individuals to make disjointed.
 	 * @return the changes to be done in order to add the disjoint individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange makeDisjointIndividuals( Set< OWLNamedIndividual> individuals){
+	public OWLOntologyChange makeDisjointIndividuals( final Set< OWLNamedIndividual> individuals){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjoinedInd);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -1284,7 +1303,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param individualNames the set of names of individuals to make not disjointed anymore.
 	 * @return the changes to be done in order to remove the disjoint individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange removeDisjointIndividualName( Set< String> individualNames){
+	public OWLOntologyChange removeDisjointIndividualName( final Set< String> individualNames){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjoinedInd);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -1300,7 +1319,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param individuals the set of individuals to make not disjointed anymore.
 	 * @return the changes to be done in order to remove the disjoint individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange removeDisjointIndividuals( Set< OWLNamedIndividual> individuals){
+	public OWLOntologyChange removeDisjointIndividuals( final Set< OWLNamedIndividual> individuals){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjoinedInd);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -1317,7 +1336,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param classesName the set of names of class to make disjointed.
 	 * @return the changes to be done in order to add the disjoint classes axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange makeDisjointClassName( Set< String> classesName){
+	public OWLOntologyChange makeDisjointClassName( final Set< String> classesName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjoinedCls);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -1333,7 +1352,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param classes the set of classes to make disjointed.
 	 * @return the changes to be done in order to add the disjoint classes axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange makeDisjointClasses( Set< OWLClass> classes){
+	public OWLOntologyChange makeDisjointClasses( final Set< OWLClass> classes){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjoinedCls);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -1350,7 +1369,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param classesName the set of names of class to make not disjointed anymore.
 	 * @return the changes to be done in order to remove the disjoint class axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange removeDisjointClassName( Set< String> classesName){
+	public OWLOntologyChange removeDisjointClassName( final Set< String> classesName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjoinedCls);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -1366,7 +1385,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param classes the set of class to make not disjointed anymore.
 	 * @return the changes to be done in order to remove the disjoint class axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */	
-	public OWLOntologyChange removeDisjointClasses( Set< OWLClass> classes){
+	public OWLOntologyChange removeDisjointClasses( final Set< OWLClass> classes){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjoinedCls);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
