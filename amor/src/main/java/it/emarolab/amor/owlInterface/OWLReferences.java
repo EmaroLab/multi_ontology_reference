@@ -13,6 +13,7 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
+import org.semanticweb.owlapi.model.RemoveAxiom;
 
 import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
@@ -1027,11 +1028,11 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param ind the individual to be removed.
 	 * @return the changes to be done in order to remove an individual from the ontology. (see {@link OWLManipulator} for more info)
 	 */
-	public List<OWLOntologyChange> removeIndividual( OWLNamedIndividual individual){ 
+	public List<RemoveAxiom> removeIndividual( OWLNamedIndividual individual){ 
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveInd);
-		return new OWLReferencesCaller< List< OWLOntologyChange>>(  mutexes, this) {
+		return new OWLReferencesCaller< List< RemoveAxiom>>(  mutexes, this) {
 			@Override
-			protected List< OWLOntologyChange> perfromSynchronisedCall() {
+			protected List<RemoveAxiom> perfromSynchronisedCall() {
 				return getOWLManipulator().removeIndividual(individual);
 			}
 		}.call();
@@ -1042,11 +1043,11 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param indName the name of the individual to be removed.
 	 * @return the changes to be done in order to remove an individual from the ontology. (see {@link OWLManipulator} for more info)
 	 */
-	public List<OWLOntologyChange> removeIndividual( String indName){ 
+	public List<RemoveAxiom> removeIndividual( String indName){ 
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveInd);
-		return new OWLReferencesCaller< List< OWLOntologyChange>>(  mutexes, this) {
+		return new OWLReferencesCaller< List< RemoveAxiom>>(  mutexes, this) {
 			@Override
-			protected List< OWLOntologyChange> perfromSynchronisedCall() {
+			protected List< RemoveAxiom> perfromSynchronisedCall() {
 				return getOWLManipulator().removeIndividual( indName);
 			}
 		}.call();
@@ -1492,7 +1493,7 @@ public class OWLReferences extends OWLReferencesInterface{
 			return out;	
 		}
 		protected void unlockMutex(){
-			for( int i = getMutexes().size() - 1; i <= 0; i--)
+			for( int i = getMutexes().size() - 1; i >= 0; i--)
 				getMutexes().get( i).unlock();
 		}
 		

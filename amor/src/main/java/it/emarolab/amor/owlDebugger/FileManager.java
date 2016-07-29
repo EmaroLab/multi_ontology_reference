@@ -44,7 +44,7 @@ public class FileManager {
 	private BufferedWriter writer = null;  // object to write
 	private String filePath = null;  // absolute path of the file
 	
-	private String defaultBasePath = System.getProperty("user.dir") + "/files/logs/"; // basic path for default usage
+	private String defaultBasePath = System.getProperty("user.dir") + "/amor/files/logs/"; // basic path for default usage
 	
 
 	// define the file.format it must be one of the key and it must have delimiters
@@ -100,7 +100,7 @@ public class FileManager {
 	 * 	'fileName is unconsidered
 	 * </pre> 
 	 * This method uses the default base path, which is equal to:
-	 * {@code System.getProperty("user.dir") + "/files/logs/"} 
+	 * {@code System.getProperty("user.dir") + "/amor/files/logs/"} 
 	 * 
 	 * @param path the relative directory where the file is.
 	 * @param fileName the name of the file.

@@ -34,7 +34,10 @@ dependencies {
     /* Example of a local subproject dependency */
     /* compile project(':sibling_gradle_project') */
 
-    compile fileTree(dir: 'libs/OWL_API_3-4-5', include: ['*.jar'])
+    /*compile fileTree(dir: 'libs/OWL_API_3-4-5', include: ['*.jar'])*/
+    
+    compile fileTree(dir: 'libs/OWL_API-5-0-2', include: ['*.jar'])
+    
     compile fileTree(dir: 'libs/pellet', include: ['*.jar'])
     compile fileTree(dir: 'libs/fact++', include: ['*.jar'])
     compile fileTree(dir: 'libs/hermit', include: ['*.jar'])

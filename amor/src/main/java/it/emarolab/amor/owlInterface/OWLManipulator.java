@@ -269,7 +269,7 @@ public class OWLManipulator{
 			ontoRef.loggInconsistency();
 		}
 	}
-
+	
 
 
 	// [[[[[[[[[[[[[[[[[[[[[[[[[[[   METHODS FOR ONTOLOGY MANIPULATION  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
@@ -662,17 +662,18 @@ public class OWLManipulator{
 	 * @return the changes to be done into the refereed ontology to remove the given individual. 
 	 * You may want to do not consider the returning value and call {@link #applyChanges()} if this operation not buffered.
 	 */
-	public List<OWLOntologyChange> removeIndividual( OWLNamedIndividual individual){
-		OWLEntityRemover remover = new OWLEntityRemover( ontoRef.getManager(), Collections.singleton( ontoRef.getOntology()));
+	public List<RemoveAxiom> removeIndividual( OWLNamedIndividual individual){
+		OWLEntityRemover remover = new OWLEntityRemover( Collections.singleton( ontoRef.getOntology())); // ontoRef.getManager(), Collections.singleton( ontoRef.getOntology()));
 		individual.accept(remover);
 		long initialTime = System.nanoTime();
-		List<OWLOntologyChange> remove = remover.getChanges();
+		List<RemoveAxiom> remove = remover.getChanges();
 		if( ! changeBuffering)
-			applyChanges(remove);
+			applyChanges((OWLOntologyChange) remove);
 		else changeList.addAll( remove);
 		logger.addDebugString( "remove individual (" + ontoRef.getOWLObjectName( individual) + ") in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( remove);
 	}
+	
 	/**
 	 * Returns the changes to be applied into the referring ontology for removing
 	 * a set of individuals.
@@ -698,7 +699,7 @@ public class OWLManipulator{
 	 * @return the changes to be done into the refereed ontology to remove the given individual. 
 	 * You may want to do not consider the returning value and call {@link #applyChanges()} if this operation not buffered.
 	 */
-	public List<OWLOntologyChange> removeIndividual( String indName){
+	public List<RemoveAxiom> removeIndividual( String indName){
 		return removeIndividual( ontoRef.getOWLIndividual( indName));
 	}
 

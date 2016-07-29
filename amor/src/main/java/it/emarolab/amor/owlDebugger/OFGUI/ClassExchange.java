@@ -27,10 +27,12 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import org.semanticweb.owlapi.io.OWLObjectRenderer;
+import org.semanticweb.owlapi.model.OWLObject;
 
 import it.emarolab.amor.owlDebugger.OFGUI.individualGui.ClassTableIndividual;
 import it.emarolab.amor.owlInterface.OWLReferences;
-import uk.ac.manchester.cs.owlapi.dlsyntax.DLSyntaxObjectRenderer;
+//import uk.ac.manchester.cs.owlapi.dlsyntax.DLSyntaxObjectRenderer;
+import it.emarolab.amor.owlInterface.OWLReferencesInterface;
 
 // collect shered quantity in the gui
 public class ClassExchange {
@@ -67,7 +69,7 @@ public class ClassExchange {
 	public static final String classRootLabel = "Class Root :";
 	public static final String findLabel = "Find :";
 	public static final String defaultRootClass = "PredefinedOntology";//"rootTime";//JavaInterfaces";
-	public static final String defaultSavingPath = System.getProperty("user.dir") + "/files/OntologyGui/";
+	public static final String defaultSavingPath = System.getProperty("user.dir") + "/amor/files/OntologyGui/";
 	private static final String defaultSavingName = "";//"default";
 	 
     public final static String indAssertLabel = "[ asserted individual ]";
@@ -89,7 +91,7 @@ public class ClassExchange {
 	public static final char DOWN = 40;
 	
 	// icons
-	private final static String iconpath = System.getProperty("user.dir") + "/files/Icon/";//"images/middle.gif";
+	private final static String iconpath = System.getProperty("user.dir") + "/amor/files/Icon/";//"images/middle.gif";
     private final static String iconClass = iconpath + "Class.gif";
     private final static String iconClassInf = iconpath + "inferedClass.gif";
     private final static String iconInd = iconpath + "Individual.gif";
@@ -136,7 +138,7 @@ public class ClassExchange {
     private static PrefixOWLOntologyFormat pm = null;
 	private static OWLOntology ontology = null;
 	private static OWLOntologyManager manager;*/
-    private static OWLObjectRenderer renderer;
+    //private static OWLObjectRenderer renderer;
     private static OWLReferences ontoRef;
     
 	public static final String Things = "Thing";
@@ -194,7 +196,7 @@ public class ClassExchange {
 	
 	//static{
 	private void initialise(){
-		renderer = new DLSyntaxObjectRenderer();
+		//renderer = new DLSyntaxObjectRenderer();
 		frame = new MyFrame( frameLabel);//new JFrame( frameLabel);
 		txtOntoName = new JTextField( ontoName);
 		cmbClassRoot = new JComboBox();
@@ -390,10 +392,10 @@ public class ClassExchange {
 	public static synchronized String getOntoName(){
 		return( ontoName);
 	}
-	public static synchronized OWLObjectRenderer getRenderer() {
+	/*public static synchronized OWLObjectRenderer getRenderer() {
 		return renderer;
-	}
-	
+	}*/
+		
 	public static synchronized Color getNullcolor() {
 		return nullColor;
 	}

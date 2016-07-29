@@ -1,0 +1,6 @@
+ 29/07/16_16:48:06,101 -> Class OWLReferencesInterface$OWLReferencesContainer : Create a new prefix manager for References: OWLReferencesInterface "ontoRef3"
+ 29/07/16_16:48:06,508 -> Class OWLReferencesInterface$OWLReferencesContainer : Ontology OWL manager created for References: OWLReferencesInterface "ontoRef3"
+ 29/07/16_16:48:07,375 -> Class OWLReferencesInterface$OWLReferencesContainer : Ontology loaded from web for References: OWLReferencesInterface "ontoRef3"
+ 29/07/16_16:48:07,376 -> Class OWLReferencesInterface$OWLReferencesContainer : Create a OWL Data Factory for References: OWLReferencesInterface "ontoRef3"
+ 29/07/16_16:48:07,511 -> Class OWLReferencesInterface$OWLReferencesContainer : Reasoner (openllet.owlapi.OpenlletReasonerFactory) created in: 134704718 [ns] for the References: OWLReferencesInterface "ontoRef3"
+ 29/07/16_16:48:07,516 -> OWLReferences OWLReferencesInterface "ontoRef3" : new OWL References initialised in: 1623423276 [ns] for the Object OWLReferencesInterface "ontoRef3"

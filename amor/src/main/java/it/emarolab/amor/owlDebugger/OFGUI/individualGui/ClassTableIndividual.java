@@ -12,7 +12,9 @@ import javax.swing.ToolTipManager;
 import javax.swing.table.AbstractTableModel;
 
 import it.emarolab.amor.owlDebugger.OFGUI.ClassExchange;
+
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLIndividual;
@@ -21,9 +23,13 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.reasoner.Node;
+import org.semanticweb.owlapi.search.EntitySearcher;
+
+import com.google.common.collect.Multimap;
 
 import it.emarolab.amor.owlDebugger.OFGUI.LoadOntology;
 import it.emarolab.amor.owlInterface.OWLReferences;
+import it.emarolab.amor.owlInterface.OWLReferencesInterface;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -35,10 +41,13 @@ import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is like TableDemo, except that it substitutes a
@@ -185,7 +194,8 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 	public synchronized void mouseReleased(MouseEvent arg0) {
 		textWorker = new TextWorker( this); // excecute by itself
 	}
-	
+
+	/* BROKEN WITH OWL API 5
 	public synchronized JTextArea renderText(){
 		int selectionCount = table.getSelectedRow();
 		JTextArea text = null;
@@ -477,7 +487,7 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 		textArea. setCaretPosition(0);
 		return( textArea);
 	}
-		
+*/		
 	// caller of table type
 	public synchronized Object[][] renderItem() {
 		//synchronized( ontoRef.getReasoner()){
@@ -498,12 +508,16 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
     // Compute data property belong to the individual
 	// boolean inferred, string DataProp, string value, string type, Boolean follow
 	private synchronized Object[][] renderDataPropertyItem() {
-		Map<OWLDataPropertyExpression, Set<OWLLiteral>> nonInf;
+		Map<OWLDataPropertyExpression, Collection<OWLLiteral>> nonInf;
 		Set<OWLDataProperty> allDataProperty;
 		OWLNamedIndividual ind;
 		synchronized( ontoRef.getReasoner()){
-			ind = ontoRef.getFactory().getOWLNamedIndividual( individualname, ontoRef.getPrefixFormat());
-			nonInf = ind.getDataPropertyValues( ontoRef.getOntology());
+			ind = ontoRef.getFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
+			
+			//nonInf = ind.getDataPropertyValues( ontoRef.getOntology());
+			Multimap<OWLDataPropertyExpression, OWLLiteral> nonInfStream = EntitySearcher.getDataPropertyValues( ind, ontoRef.getOntology());
+			nonInf = nonInfStream.asMap();	
+        	
 			allDataProperty = ontoRef.getOntology().getDataPropertiesInSignature( true);
 		}
 	
@@ -514,9 +528,9 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 		for( OWLDataPropertyExpression dataProp : nonInf.keySet()){
 			for( OWLLiteral literal : nonInf.get( dataProp)){
 				temp.add( ClassExchange.imDataPropIcon);
-				temp.add( ClassExchange.getRenderer().render( dataProp));
-				temp.add( ClassExchange.getRenderer().render( literal));
-				temp.add( ClassExchange.getRenderer().render( literal.getDatatype()));
+				temp.add( OWLReferencesInterface.getOWLName( dataProp));
+				temp.add( OWLReferencesInterface.getOWLName( literal));
+				temp.add( OWLReferencesInterface.getOWLName( literal.getDatatype()));
 				allProp.add( temp);
 				//System.out.println( temp);
 				temp = new ArrayList< Object>();
@@ -530,9 +544,9 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 				Set< OWLLiteral> a = ontoRef.getReasoner().getDataPropertyValues( ind, dataProp);
 				for ( OWLLiteral value : a){				
 					temp.add( ClassExchange.imDataPropIcon);
-					temp.add( ClassExchange.getRenderer().render( dataProp));
-					temp.add( ClassExchange.getRenderer().render( value));
-					temp.add( ClassExchange.getRenderer().render( value.getDatatype()));
+					temp.add( OWLReferencesInterface.getOWLName( dataProp));
+					temp.add( OWLReferencesInterface.getOWLName( value));
+					temp.add( OWLReferencesInterface.getOWLName( value.getDatatype()));
 					//System.out.println( " allProp " +allProp+ " contains temp " +temp);
 					if( ! allProp.contains( temp)){
 						temp.set( 0, ClassExchange.imDataPropInfIcon);
@@ -564,12 +578,16 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 	}
 	// boolean inferred, string ObjProp, string value, Boolean follow
 	private synchronized Object[][]  renderObjPropertyItem(){
-		Map<OWLObjectPropertyExpression, Set<OWLIndividual>> nonInf;
+		Map<OWLObjectPropertyExpression, Collection<OWLIndividual>> nonInf;
 		Set<OWLObjectProperty> allDataProperty;
 		OWLNamedIndividual ind;
 		synchronized( ontoRef.getReasoner()){
-			ind = ontoRef.getFactory().getOWLNamedIndividual( individualname, ontoRef.getPrefixFormat());
-			nonInf = ind.getObjectPropertyValues( ontoRef.getOntology());
+			ind = ontoRef.getFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
+			
+			//nonInf = ind.getObjectPropertyValues( ontoRef.getOntology());
+			Multimap<OWLObjectPropertyExpression, OWLIndividual> nonInfStream = EntitySearcher.getObjectPropertyValues( ind, ontoRef.getOntology());
+			nonInf = nonInfStream.asMap();	
+        	
 			allDataProperty = ontoRef.getOntology().getObjectPropertiesInSignature( true);
 		}
 		
@@ -579,8 +597,8 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 		for( OWLObjectPropertyExpression dataProp : nonInf.keySet()){
 			for( OWLIndividual literal : nonInf.get( dataProp)){
 				temp.add( ClassExchange.imObjPropIcon);
-				temp.add( ClassExchange.getRenderer().render( dataProp));
-				temp.add( ClassExchange.getRenderer().render( literal));
+				temp.add( OWLReferencesInterface.getOWLName( dataProp));
+				temp.add( OWLReferencesInterface.getOWLName( literal));
 				allProp.add( temp);
 				temp = new ArrayList< Object>();
 			}
@@ -593,8 +611,8 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 				Set<OWLNamedIndividual> a = ontoRef.getReasoner().getObjectPropertyValues( ind, dataProp).getFlattened();
 				for ( OWLNamedIndividual value : a){				
 					temp.add( ClassExchange.imObjPropIcon);
-					temp.add( ClassExchange.getRenderer().render( dataProp));
-					temp.add( ClassExchange.getRenderer().render( value));
+					temp.add( OWLReferencesInterface.getOWLName( dataProp));
+					temp.add( OWLReferencesInterface.getOWLName( value));
 					if( ! allProp.contains( temp)){
 						temp.set( 0, ClassExchange.imObjPropInfIcon);
 						allProp.add( temp);
@@ -621,7 +639,7 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 		Set<OWLClass> nonInf;
 		Set<OWLClass> classes;
 		synchronized( ontoRef.getReasoner()){
-			OWLNamedIndividual ind = ontoRef.getFactory().getOWLNamedIndividual( individualname, ontoRef.getPrefixFormat());
+			OWLNamedIndividual ind = ontoRef.getFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
 			nonInf = ind.getClassesInSignature();
 			classes = ontoRef.getReasoner().getTypes( ind, false).getFlattened();
 		}
@@ -631,7 +649,7 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 		List< Object> temp = new ArrayList< Object>();
 		for( OWLClass classs : nonInf){
 			temp.add( ClassExchange.imClassIcon);
-			temp.add( ClassExchange.getRenderer().render( classs));
+			temp.add( OWLReferencesInterface.getOWLName( classs));
 			allProp.add( temp);
 			temp = new ArrayList< Object>();
 		}
@@ -639,7 +657,7 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 		// get all the object property and check if they can be asserted
 		for ( OWLClass classs : classes){				
 			temp.add( ClassExchange.imClassIcon);
-			temp.add( ClassExchange.getRenderer().render( classs));
+			temp.add( OWLReferencesInterface.getOWLName( classs));
 			if( ! allProp.contains( temp)){
 				temp.set( 0, ClassExchange.imClassInfIcon);
 				allProp.add( temp);
@@ -668,8 +686,13 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 		Set<OWLIndividual> nonInf;
 		Node<OWLNamedIndividual> individuals;
 		synchronized( ontoRef.getReasoner()){
-			OWLNamedIndividual ind = ontoRef.getFactory().getOWLNamedIndividual( individualname, ontoRef.getPrefixFormat());
-			nonInf = ind.getSameIndividuals( ontoRef.getOntology());
+			OWLNamedIndividual ind = ontoRef.getFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
+			
+			//nonInf = ind.getSameIndividuals( ontoRef.getOntology());
+			Stream<OWLIndividual> nonInfStream = EntitySearcher.getSameIndividuals( ind, ontoRef.getOntology());
+			nonInf = nonInfStream.collect(Collectors.toSet());	
+        	
+			
 			individuals = ontoRef.getReasoner().getSameIndividuals(ind);
 		}
 		
@@ -679,7 +702,7 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 		List< Object> temp = new ArrayList< Object>();
 		for( OWLIndividual sameInd : nonInf){
 			temp.add( ClassExchange.imIndividualIcon);
-			temp.add( ClassExchange.getRenderer().render( sameInd));
+			temp.add( OWLReferencesInterface.getOWLName( sameInd));
 			allProp.add( temp);
 			temp = new ArrayList< Object>();
 		}
@@ -688,7 +711,7 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 		
 		for ( OWLNamedIndividual sameInd : individuals){				
 			temp.add( ClassExchange.imIndividualIcon);
-			temp.add( ClassExchange.getRenderer().render( sameInd));
+			temp.add( OWLReferencesInterface.getOWLName( sameInd));
 			if( ! allProp.contains( temp)){
 				if( ! temp.get( 1).equals(individualname)){
 					temp.set( 0, ClassExchange.imIndividualInfIcon);
@@ -985,7 +1008,7 @@ class TextWorker extends SwingWorker< JTextArea, String> {
 		running = true;
 	    ClassExchange.getProgressBar().setVisible( running);
 	    
-	    JTextArea a = caller.renderText();
+	    JTextArea a = null;//caller.renderText();
 	    
 	    running = false;
 	    ClassExchange.getProgressBar().setVisible( running);

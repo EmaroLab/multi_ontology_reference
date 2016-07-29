@@ -26,7 +26,8 @@ public class OWLRefDebuggingExample {
 		 
 		// 4) [PERAMETER] the system comes with a simple GUI from which it is possible to see the state of the ontology
 		// during run time as well as make some basic changes. Be aware that the GUI is not stable yet!
-		Thread t = new Thread( new GuiRunner( ontoRefName));
+		//NOT PORTED TO OWL API 5 JET
+ 		Thread t = new Thread( new GuiRunner( ontoRefName));
 		t.start();
 			
 		// 5) be sure to see all logs!

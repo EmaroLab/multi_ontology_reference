@@ -24,7 +24,7 @@ public class OWLRefEnquirerExample {
 	public static final Integer COMMAND = OWLReferencesContainer.COMMAND_LOAD_WEB;
 	public static final Boolean BUFFERING_OWLMANIPULATOR = false; // if true you must to apply changes manually. Otherwise their are applied as soon as possible.
 
-	public static final String ONTOLOGY_SAVING_PATH = "files/ontologies/pizza_enquired.owl";
+	public static final String ONTOLOGY_SAVING_PATH = "amor/files/ontologies/pizza_enquired.owl";
 
 	public static void main(String[] args) {
 		// let disable verbose logging (this call may be delayed!!)

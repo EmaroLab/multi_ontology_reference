@@ -35,10 +35,10 @@ import it.emarolab.amor.owlInterface.ReasonerExplanator;
 public class OWLRefInOutExample {
 
 	public static final String ONTOLOGY_IRI_PATH = "http://www.semanticweb.org/luca-buoncompagni/aMor/examples";
-	public static final String ONTOLOGY_FILE_BASE = "files/ontologies/";
+	public static final String ONTOLOGY_FILE_BASE = "amor/files/ontologies/";
 
 	public static void main(String[] args) throws Throwable {
-		// 1) create an new ontology by using the default reasoner (it has also explanation) and save it to file
+		// 1) create an new ontology by using the default reasoner (it has also explanation (no more with api 5.0???)) and save it to file
 		String ontoRefName1 = "ontoRef1"; // this must be a unique identifier for all the references you what to create into the system
 		String filePath1 = ONTOLOGY_FILE_BASE + "test_creation.owl";
 		OWLReferences ontoRef1 = OWLReferencesContainer.newOWLReferencesCreated( ontoRefName1, filePath1, ONTOLOGY_IRI_PATH, false);
@@ -55,6 +55,7 @@ public class OWLRefInOutExample {
 		// if you do not change the file path it will use filePath2 that may is not what you are looking for in the case of loading from web.
 		ontoRef2.saveOntology( ONTOLOGY_FILE_BASE + "test_loadFromWeb.owl"); 
 
+/*		FACT IS NOT WORKING JET WITH OLW API 5
 		// 3) let now open the pizza ontology from file with Fact reasoner 
 		// (you must to install the reasoner on your machine see lib folder or https://code.google.com/archive/p/factplusplus/downloads)
 		// specifically you must to generate (by compiling) the file libFaCTPlusPlusJNI.so and put it in the java.library.path of your machine (/usr/lib for ubuntu)
@@ -64,6 +65,7 @@ public class OWLRefInOutExample {
 		ontoRef3.synchroniseReasoner(); // perform reasoning
 		// export all the inferences made by the reasoner in the saving file
 		ontoRef3.saveOntology( true, ONTOLOGY_FILE_BASE + "test_loadFromFile.owl"); // change also the saving path with respect to the one given on constructor 
+*/
 
 		// I have't found again the jar to be included in order to instantiate 
 		// au.csiro.snorocket.owlapi3.SnorocketReasonerFactory
@@ -84,6 +86,7 @@ public class OWLRefInOutExample {
 		OWLReferencesInterface ontoRef2Bis = OWLReferencesContainer.getOWLReferences( ontoRefName2);
 		if( ontoRef2.equals( ontoRef2Bis))
 			System.out.print( "3)\n\n retrieve ontoRef2 again");
+	
 	}
 }
 
