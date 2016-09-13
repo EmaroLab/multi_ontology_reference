@@ -52,6 +52,11 @@ subprojects {
      */
     /* apply plugin: "eclipse"*/
     apply plugin: "idea"
+
+    allprojects {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 }
 
 /*
@@ -66,4 +71,5 @@ subprojects {
   If you're using catkin_make, this is not important, since it will use the task list specified
   in CMakeLists.txt
 */
+
 defaultTasks 'tasks'

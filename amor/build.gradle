@@ -29,13 +29,10 @@ repositories {
 }
 
 dependencies {
-    /* Example of an external maven artifact dependency */
-    /* compile 'org.ros.rosjava_core:rosjava:[0.2,)' */
-    /* Example of a local subproject dependency */
-    /* compile project(':sibling_gradle_project') */
+    compile "com.google.guava:guava:16+"
+    compile "javax.inject:javax.inject:1+"
+    compile "org.apache.commons:commons-rdf-api:0.2+"
 
-    /*compile fileTree(dir: 'libs/OWL_API_3-4-5', include: ['*.jar'])*/
-    
     compile fileTree(dir: 'libs/OWL_API-5-0-2', include: ['*.jar'])
     
     compile fileTree(dir: 'libs/pellet', include: ['*.jar'])

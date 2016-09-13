@@ -140,7 +140,7 @@ public class OWLEnquirer {
 		
 		//Set<OWLIndividual> set = ontoClass.getIndividuals( ontoRef.getOntology());
 		Stream<OWLIndividual> stream = EntitySearcher.getIndividuals( ontoClass, ontoRef.getOntology());
-		Set<OWLIndividual> set = stream.collect(Collectors.toSet());	
+		Set<OWLIndividual> set = stream.collect(Collectors.toSet());
 		
 		if( set != null){
 			for( OWLIndividual s : set)
