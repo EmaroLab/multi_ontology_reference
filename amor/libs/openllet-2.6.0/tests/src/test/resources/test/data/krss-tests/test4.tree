@@ -1,7 +1,0 @@
-(TOP NIL ( B E ))
-(A ( D ) ( BOTTOM ))
-(B ( TOP ) ( D ))
-(C ( E ) ( BOTTOM ))
-(D ( B ) ( A ))
-(E ( TOP ) ( C ))
-(BOTTOM ( A C ) NIL )

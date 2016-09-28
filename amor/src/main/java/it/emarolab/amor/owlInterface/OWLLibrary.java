@@ -62,7 +62,7 @@ public class OWLLibrary {
 	 * Java reflection to instantiate the Pellet Reasoner.
 	 * In particular it is: {@value #REASONER_QUALIFIER_PELLET}.
 	 */
-	public static final String REASONER_QUALIFIER_PELLET = "openllet.owlapi.OpenlletReasonerFactory";// "com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory";
+	public static final String REASONER_QUALIFIER_PELLET = "com.clarkparsia.pellet.owlapi.PelletReasonerFactory";// "com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory";
 	/**
 	 * Full qualifier of the Snorocket reasoner Factory. String to be called by
 	 * Java reflection to instantiate the Snorocket Reasoner.
