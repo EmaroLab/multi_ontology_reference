@@ -15,6 +15,6 @@ This is the ROS version of the library, ready to be included in your ROS project
 
 For legacy support (Java 7 and OWL API 3.4.5) and more reasoner choices, use the [OWL-api4-stable](https://github.com/EmaroLab/multi_ontology_reference/tree/OWL-api4-stable) branch.
 
-**master** and **OWL-api5** branches are OWL api 5 based and currently support only [*Openllet*](https://github.com/Galigator/openllet), an open source for of the Pellet reasoner. More will be added as they are ported to OWL api 5.
+**master** and **OWL-api5** branches are OWL api 5 based and currently support only [*Openllet*](https://github.com/Galigator/openllet), an open source fork of the Pellet reasoner. More will be added as they are ported to OWL api 5.
 
 Full documentation coming soon. If you need, you can refer to the code itself since most public functions already come with docstrings.
