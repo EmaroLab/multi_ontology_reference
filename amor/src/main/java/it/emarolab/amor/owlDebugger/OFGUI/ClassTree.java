@@ -5,6 +5,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
@@ -22,9 +24,11 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import it.emarolab.amor.owlDebugger.OFGUI.individualGui.IndividualGuiRunner;
 import it.emarolab.amor.owlInterface.OWLReferences;
+import it.emarolab.amor.owlInterface.OWLReferencesInterface;
 
 public class ClassTree implements TreeSelectionListener {
 
@@ -106,15 +110,23 @@ public class ClassTree implements TreeSelectionListener {
 	        // manage not string for owl:Thing
 	        if( superClass.equals( ClassExchange.Things)){
 	        	topClass = ontoRef.getFactory().getOWLThing().asOWLClass();
-	        	Set<OWLClass> tmpInf = ontoRef.getReasoner().getSubClasses( topClass, false).getFlattened();        	
-	        	notInferedCl = topClass.getSubClasses( ontoRef.getOntology());
+	        	Set<OWLClass> tmpInf = ontoRef.getReasoner().getSubClasses( topClass, false).getFlattened();
+	        	
+	        	//notInferedCl = topClass.getSubClasses( ontoRef.getOntology());
+	        	Stream<OWLClassExpression> notInferedClStream = EntitySearcher.getSubClasses( topClass, ontoRef.getOntology());
+	        	notInferedCl = notInferedClStream.collect(Collectors.toSet());	
+	        	
 	        	for( OWLClass n :tmpInf)
 	        		notInferedCl.add( n);
 	        	
 	        } else {
-	        	topClass = ontoRef.getFactory().getOWLClass( superClass, ontoRef.getPrefixFormat());
+	        	//topClass = ontoRef.getFactory().getOWLClass( superClass, ontoRef.getPrefixFormat());
+	        	topClass = ontoRef.getFactory().getOWLClass( ontoRef.getPrefixFormat( superClass));
 	        	inferedCl = ontoRef.getReasoner().getSubClasses( topClass, false).getFlattened();
-	        	notInferedCl = topClass.getSubClasses(ontoRef.getOntology());
+	        	
+	        	//notInferedCl = topClass.getSubClasses(ontoRef.getOntology());
+	        	Stream<OWLClassExpression> notInferedClStream = EntitySearcher.getSubClasses( topClass, ontoRef.getOntology());
+	        	notInferedCl = notInferedClStream.collect(Collectors.toSet());
 	        }
 			
 	        
@@ -123,14 +135,21 @@ public class ClassTree implements TreeSelectionListener {
 		        for( OWLClassExpression infNo : notInferedCl){ 
 		        	if( ! infNo.equals( ontoRef.getFactory().getOWLNothing())){
 		        		//add a new class
-			        	tmpUpdateNode = new EntryInfo( ClassExchange.getRenderer().render( infNo), ClassExchange.classIcon);
+		        		//tmpUpdateNode = new EntryInfo( ClassExchange.getRenderer().render( infNo), ClassExchange.classIcon);
+		        		tmpUpdateNode = new EntryInfo( OWLReferencesInterface.getOWLName( infNo), ClassExchange.classIcon);
+		        		
 		        		category = new DefaultMutableTreeNode(tmpUpdateNode);
 		        		top.add( category);
 			        	
 			    		// add not inferred individual
-			    		Set<OWLIndividual> notInferedIn = infNo.asOWLClass().getIndividuals(ontoRef.getOntology());
+			    		//Set<OWLIndividual> notInferedIn = infNo.asOWLClass().getIndividuals(ontoRef.getOntology());
+		        		Stream<OWLIndividual> notInferedInStream = EntitySearcher.getIndividuals( infNo.asOWLClass(), ontoRef.getOntology());
+		        		Set<OWLIndividual> notInferedIn = notInferedInStream.collect(Collectors.toSet());
+		        		
 			    		for( OWLIndividual noInfInd : notInferedIn){
-			    			tmpUpdateNode = new EntryInfo( ClassExchange.getRenderer().render( noInfInd), ClassExchange.individualcon);
+			    			//tmpUpdateNode = new EntryInfo( ClassExchange.getRenderer().render( noInfInd), ClassExchange.individualcon);
+			    			tmpUpdateNode = new EntryInfo( OWLReferencesInterface.getOWLName( noInfInd), ClassExchange.individualcon);
+			    			
 			    			category.add( new DefaultMutableTreeNode( tmpUpdateNode));
 			    			
 			    		}
@@ -150,7 +169,9 @@ public class ClassTree implements TreeSelectionListener {
 				    					infindividual = new DefaultMutableTreeNode( tmpUpdateNode);
 				    					init = false;
 				    				}
-				    				tmpUpdateNode = new EntryInfo( ClassExchange.getRenderer().render(infInd), ClassExchange.individualInfIcon);
+				    				//tmpUpdateNode = new EntryInfo( ClassExchange.getRenderer().render(infInd), ClassExchange.individualInfIcon);
+				    				tmpUpdateNode = new EntryInfo( OWLReferencesInterface.getOWLName( infInd), ClassExchange.individualInfIcon);
+				    				
 				    				DefaultMutableTreeNode a = new DefaultMutableTreeNode( tmpUpdateNode);
 				    				infindividual.add( a);
 				    				category.add( infindividual);
@@ -161,8 +182,9 @@ public class ClassTree implements TreeSelectionListener {
 			    			category.add( infindividual);*/ 
 			    		
 			    		// call this function recorsively
-			    		createNodes( category, ClassExchange.getRenderer().render(infNo));
-						
+			    		//createNodes( category, ClassExchange.getRenderer().render(infNo));
+						createNodes( category, OWLReferencesInterface.getOWLName( infNo));
+			    		
 			        }
 		        }
 	        }
@@ -180,7 +202,9 @@ public class ClassTree implements TreeSelectionListener {
 		    					infcategory = new DefaultMutableTreeNode( tmpUpdateNode);
 		    					init = false;
 		    				}
-		    				tmpUpdateNode = new EntryInfo( ClassExchange.getRenderer().render(inf), ClassExchange.classInfIcon);
+		    				//tmpUpdateNode = new EntryInfo( ClassExchange.getRenderer().render(inf), ClassExchange.classInfIcon);
+		    				tmpUpdateNode = new EntryInfo( OWLReferencesInterface.getOWLName( inf), ClassExchange.classInfIcon);
+		    						
 		    				DefaultMutableTreeNode a = new DefaultMutableTreeNode( tmpUpdateNode);
 		        			infcategory.add( a);
 		        		}

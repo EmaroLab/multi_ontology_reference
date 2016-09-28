@@ -9,6 +9,7 @@ import javax.swing.DefaultComboBoxModel;
 import org.semanticweb.owlapi.model.OWLClass;
 
 import it.emarolab.amor.owlInterface.OWLReferences;
+import it.emarolab.amor.owlInterface.OWLReferencesInterface;
 
 
 public class ClassRootManager {
@@ -32,7 +33,10 @@ public class ClassRootManager {
         ArrayList<String> allClbox = new ArrayList<String>();
         allClbox.add( ClassExchange.Things); // care about OWLThing
         for( OWLClass cl : allClass){
-        	tmp = ClassExchange.getRenderer().render( cl);
+        	
+        	//tmp = ClassExchange.getRenderer().render( cl);
+        	tmp = OWLReferencesInterface.getOWLName( cl);
+        	
         	if( ! cl.equals( ontoRef.getFactory().getOWLThing())){
         		if( ClassExchange.getClassRootObj().getEditor().getItem() == null)
         			allClbox.add( tmp);

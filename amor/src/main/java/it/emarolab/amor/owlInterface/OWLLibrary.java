@@ -19,7 +19,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
 import org.semanticweb.owlapi.util.SimpleIRIMapper;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
-import org.semanticweb.owlapi.vocab.PrefixOWLOntologyFormat;
+//import org.semanticweb.owlapi.vocab.PrefixOWLOntologyFormat;
 
 import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
@@ -62,7 +62,7 @@ public class OWLLibrary {
 	 * Java reflection to instantiate the Pellet Reasoner.
 	 * In particular it is: {@value #REASONER_QUALIFIER_PELLET}.
 	 */
-	public static final String REASONER_QUALIFIER_PELLET = "com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory";
+	public static final String REASONER_QUALIFIER_PELLET = "com.clarkparsia.pellet.owlapi.PelletReasonerFactory";// "com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory";
 	/**
 	 * Full qualifier of the Snorocket reasoner Factory. String to be called by
 	 * Java reflection to instantiate the Snorocket Reasoner.
@@ -74,7 +74,7 @@ public class OWLLibrary {
 	 * Java reflection to instantiate the HERMIT Reasoner.
 	 * In particular it is: {@value #REASONER_QUALIFIER_HERMIT}.
 	 */
-	public static final String REASONER_QUALIFIER_HERMIT = "org.semanticweb.HermiT.Reasoner$ReasonerFactory";
+	public static final String REASONER_QUALIFIER_HERMIT = "org.semanticweb.HermiT.ReasonerFactory";// "org.semanticweb.HermiT.Reasoner$ReasonerFactory";
 	/**
 	 * Full qualifier of the FACT reasoner Factory. String to be called by
 	 * Java reflection to instantiate the FACT Reasoner.
@@ -107,10 +107,11 @@ public class OWLLibrary {
 	 * This is the OWL Ontology (base API object) to be used in an OWL References
 	 */
 	private OWLOntology ontology;
-	/**
-	 * This is the OWL ontology Prefix Format (base API object) to be used in an OWL References
-	 */
-	private PrefixOWLOntologyFormat pm;
+	
+	// This is the OWL ontology Prefix Format (base API object) to be used in an OWL References
+	//private PrefixOWLOntologyFormat pm; DEPRECATED WITH OWL API 5
+	private String prefix;
+	
 	/**
 	 * This is the OWL Reasoner (base API object) used by the ontology associated in an OWLReferences.
 	 */
@@ -275,10 +276,13 @@ public class OWLLibrary {
 	 * and {@link #getIriOntologyPath()} have not to be {@code null} nor badly formatted.
 	 */
 	protected synchronized void setPrefixFormat() {
-		PrefixOWLOntologyFormat pm = (PrefixOWLOntologyFormat) this.getManager().getOntologyFormat( this.getOntology());
+		/*PrefixOWLOntologyFormat pm = (PrefixOWLOntologyFormat) this.getManager().getOntologyFormat( this.getOntology());
 		pm.setDefaultPrefix( this.getIriOntologyPath() + "#");
 		logger.addDebugString( "Create a new prefix manager for References: " + this);
-		this.pm = pm;
+		this.pm = pm;*/
+		
+		this.prefix = this.getIriOntologyPath() + "#";
+		logger.addDebugString( "Create a new prefix manager for References: " + this);
 	}
 
 	// methods to create the reasoner from java reflection
@@ -399,12 +403,13 @@ public class OWLLibrary {
 	public synchronized OWLOntology getOntology() {
 		return ontology;
 	}
-	/**
-	 * @return the OWL Ontology prefix which depends from the ontology IRI.
-	 * This is initialised using OWL API during constructor.
-	 */
-	public synchronized PrefixOWLOntologyFormat getPrefixFormat() {
-		return pm;
+	//@return the OWL Ontology prefix which depends from the ontology IRI.
+	//This is initialised using OWL API during constructor.
+	public synchronized String getPrefix() {
+		return prefix;
+	}
+	public synchronized IRI getPrefixFormat( String name) {
+		return IRI.create( prefix + name);
 	}
 	/**
 	 * @return the OWL reasoner.
@@ -439,7 +444,10 @@ public class OWLLibrary {
 	 */
 	public OWLClass getOWLClass( String className) {
 		long initialTime = System.nanoTime();
-		OWLClass classObj = this.getFactory().getOWLClass(className, this.getPrefixFormat());
+		
+		//OWLClass classObj = this.getFactory().getOWLClass(className, this.pm);
+		OWLClass classObj = this.getFactory().getOWLClass( getPrefixFormat( className));
+		
 		logger.addDebugString( "OWLClass given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return (classObj);
 	}
@@ -454,8 +462,10 @@ public class OWLLibrary {
 	 */
 	public OWLNamedIndividual getOWLIndividual( String individualName){
 		long initialTime = System.nanoTime();
-		OWLNamedIndividual individualObj =
-                this.getFactory().getOWLNamedIndividual( ":" + individualName, this.getPrefixFormat());
+		
+		//OWLNamedIndividual individualObj = this.getFactory().getOWLNamedIndividual( ":" + individualName, this.pm);
+		OWLNamedIndividual individualObj = this.getFactory().getOWLNamedIndividual( getPrefixFormat( individualName));
+				
 		logger.addDebugString( "OWLNamedIndividual given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return (individualObj);
 	}
@@ -470,7 +480,10 @@ public class OWLLibrary {
 	 */
 	public OWLDataProperty getOWLDataProperty(String dataPropertyName) {
 		long initialTime = System.nanoTime();
-		OWLDataProperty property = this.getFactory().getOWLDataProperty(":"	+ dataPropertyName, this.getPrefixFormat());
+		
+		//OWLDataProperty property = this.getFactory().getOWLDataProperty( ":" + dataPropertyName, this.pm);
+		OWLDataProperty property = this.getFactory().getOWLDataProperty(  getPrefixFormat( dataPropertyName));
+				
 		logger.addDebugString( "OWLDataProperty given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return (property);
 	}
@@ -485,8 +498,10 @@ public class OWLLibrary {
 	 */
 	public OWLObjectProperty getOWLObjectProperty( String objPropertyName){
 		long initialTime = System.nanoTime();
-		OWLObjectProperty property =
-                this.getFactory().getOWLObjectProperty( ":" + objPropertyName, this.getPrefixFormat());
+		
+		//OWLObjectProperty property = this.getFactory().getOWLObjectProperty( ":" + objPropertyName, this.pm());
+		OWLObjectProperty property = this.getFactory().getOWLObjectProperty(  getPrefixFormat( objPropertyName));
+		
 		logger.addDebugString( "OWLObjectProperty given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return (property);
 	}
@@ -568,7 +583,7 @@ public class OWLLibrary {
 	public String toString() {
 		return "OWLLibrary [getManager()=" + getManager() + ", getFactory()="
 				+ getFactory() + ", getOntology()=" + getOntology()
-				+ ", getPrefixFormat()=" + getPrefixFormat()
+				+ ", getPrefix()=" + getPrefix()
 				+ ", getReasoner()=" + getReasoner() + ", getIriFilePath()="
 				+ getIriFilePath() + ", getIriOntologyPath()="
 				+ getIriOntologyPath() + "]";

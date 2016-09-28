@@ -44,7 +44,7 @@ public class LoadOntology {
 		} else {
 			// show a dialog box
 			JOptionPane a = new JOptionPane();
-			String message = "No instance of OntologyManager exists with name : " + ontoName + ".\n No changes will take place.";
+			String message = "No innstance of OntologyManager exists with name : " + ontoName + ".\n No changes will take place.";
 			String title = "Unknown ontology name";
 			JOptionPane.showMessageDialog( a, message, title, JOptionPane.ERROR_MESSAGE);
 		}
@@ -53,16 +53,20 @@ public class LoadOntology {
 			ClassExchange.changeVisibilityProgressBar(false);
 	}
 
+	public static synchronized void saveOntology(){
+		saveOntology( true);
+	}
 	// if true print on file the ontology
 	// if false save the ontology 
+	@Deprecated
 	public static synchronized void saveOntology( boolean toOWL){
 		OWLReferences ontoRef = ClassExchange.getOntoRef();
 		
 		String message;
-		String format;
-		ArrayList<String> strs; 
+		String format = "txt";
+		ArrayList<String> strs = new ArrayList<String>(); 
 		if( ! toOWL){
-			format = "txt";
+		/*	format = "txt";
 			strs = new ArrayList<String>();
 			BufferedReader tmp = getOntologyTokens();
 			boolean loop =true;
@@ -83,7 +87,8 @@ public class LoadOntology {
 				e.printStackTrace();
 				message = "IO Exception " + e.getCause() + System.getProperty("line.separator") +
 						e.getMessage();
-			}
+			}*/
+			System.err.println( "Deprecated with owl api 5");
 		}
 		else{
 			format = "owl";
@@ -127,7 +132,7 @@ public class LoadOntology {
 	}
 	
 	// print ontology and return the string
-	public static synchronized BufferedReader getOntologyTokens(){
+/*	public static synchronized BufferedReader getOntologyTokens(){
 		OWLReferences ontoRef = ClassExchange.getOntoRef();
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -150,5 +155,5 @@ public class LoadOntology {
 		BufferedReader br = new BufferedReader(new StringReader(buffer.toString()));
 		
 		return( br);
-	}	
+	}	*/
 }

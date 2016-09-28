@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
     <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base="">
-        <uri id="Automatically generated entry, Timestamp=1455318026298" name="duplicate:http://protege.stanford.edu/ontologies/pizza/pizza.owl" uri="test_loadFromFile.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1455318026298" name="duplicate:http://protege.stanford.edu/ontologies/pizza/pizza.owl" uri="test_loadFromWeb.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1455318026298" name="duplicate:http://protege.stanford.edu/ontologies/pizza/pizza.owl" uri="test_loadFromWeb_changed.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1455318026298" name="http://www.co-ode.org/ontologies/pizza/pizza.owl" uri="pizza_enquired.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1455318026298" name="duplicate:http://www.semanticweb.org/luca-buoncompagni/aMor/examples" uri="ontology_manipulation.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1455318026298" name="duplicate:http://www.semanticweb.org/luca-buoncompagni/aMor/examples" uri="test_creation.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1469802718306" name="duplicate:http://protege.stanford.edu/ontologies/pizza/pizza.owl" uri="test_loadFromWeb_changed.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1469802718306" name="duplicate:http://protege.stanford.edu/ontologies/pizza/pizza.owl" uri="test_loadFromWeb.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1469802718306" name="duplicate:http://protege.stanford.edu/ontologies/pizza/pizza.owl" uri="test_loadFromFile.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1469802718306" name="http://www.co-ode.org/ontologies/pizza/pizza.owl" uri="pizza_enquired.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1469802718306" name="duplicate:http://www.semanticweb.org/luca-buoncompagni/aMor/examples" uri="test_creation.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1469802718306" name="duplicate:http://www.semanticweb.org/luca-buoncompagni/aMor/examples" uri="utility.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1469802718306" name="duplicate:http://www.semanticweb.org/luca-buoncompagni/aMor/examples" uri="ontology_manipulation.owl"/>
     </group>
 </catalog>

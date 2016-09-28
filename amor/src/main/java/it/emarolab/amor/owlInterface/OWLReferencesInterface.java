@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxOntologyFormat;
+//import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxOntologyFormat;
 import org.semanticweb.owlapi.io.OWLObjectRenderer;
 import org.semanticweb.owlapi.io.StreamDocumentTarget;
 import org.semanticweb.owlapi.model.IRI;
@@ -17,15 +17,15 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
-import org.semanticweb.owlapi.model.OWLOntologyFormat;
+//import org.semanticweb.owlapi.model.OWLOntologyFormat;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
-import uk.ac.manchester.cs.owlapi.dlsyntax.DLSyntaxObjectRenderer;
+//import uk.ac.manchester.cs.owlapi.dlsyntax.DLSyntaxObjectRenderer;
 
-import com.clarkparsia.owlapi.explanation.PelletExplanation;
-import com.clarkparsia.owlapi.explanation.io.manchester.ManchesterSyntaxExplanationRenderer;
+//import openllet.owlapi.explanation.PelletExplanation;
+//import openllet.owlapi.explanation.io.manchester.ManchesterSyntaxExplanationRenderer;
 
 import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
@@ -80,7 +80,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	private OWLManipulator manipulator;
 	private OWLEnquirer enquirer;
 
-	private  final static OWLObjectRenderer renderer = new DLSyntaxObjectRenderer();
+//	private  final static OWLObjectRenderer renderer = new DLSyntaxObjectRenderer(); !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	/**
 	 * This object is used to log informations about the instances of this class.
@@ -162,6 +162,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 			this.filePath = filePath; 
 			this.ontologyPath = ontologyPath;
 			this.setIriOntologyPath( IRI.create( ontologyPath));
+			this.setPrefixFormat();
 			this.usedCommand = command;
 			// take an ontology opening action by considering its vale
 			switch( command){
@@ -184,7 +185,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 			}
 			// now that the manager and the ontology is initialise, create other owl api objects
 			this.setFactory(); // creates and sets the field that you can retrieve from getFactory();
-			this.setPrefixFormat(); // creates and sets the field that you can retrieve from getPrefixForamt();
+			//this.setPrefixFormat(); // creates and sets the field that you can retrieve from getPrefixForamt();
 
 			if( reasonerFactory == null || reasonerFactory.equals( OWLLibrary.REASONER_DEFAULT)) 
 				setDefaultReasoner( bufferingReasoner); // actually it Initialise  pellet as reasoner
@@ -501,6 +502,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		 */
 		@Override
 		protected String getExplanation() {
+			/*
 			// should throw org.semanticweb.owlapi.reasoner.InconsistentOntologyException
 			PelletExplanation.setup();
 			logger.addDebugString("%%%%%%%%%%%%%%%%%%%%%%  INCONSISTENCY  " + ontoRef.getReferenceName() + " %%%%%%%%%%%%%%%%%%%%%%%%%%");
@@ -520,6 +522,8 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 			}catch( Exception e){
 				return(  ontoRef + "is not consistent. No message was give from the reasoner, an error occurs during explanation retrieves. " + e.getCause());
 			}
+			*/
+			return( "pellet exmplanation to be migrated");
 		}
 
 		@Override
@@ -567,10 +571,30 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	 * @return the name of the ontological object given as input parameter.
 	 */
 	public synchronized static String getOWLName( OWLObject o){
-		if( o != null)
-			return( renderer.render( o));
+		/*if( o != null)
+			return renderer.render( o));
+			*/
+		if( o != null){
+			String tmp = o.toString();
+			// ex: <http://www.co-ode.org/ontologies/pizza/pizza.owl#America>
+			int start = tmp.indexOf( "#");
+			int end = tmp.indexOf( ">");
+			if( start >= 0 & end >= 0)
+				return tmp.substring( start + 1, end);
+			else {
+				// ex: "1"^^xsd:integer
+				String s = tmp;
+				start = s.indexOf("\"");
+				if( start >= 0){
+					s = s.substring( start + 1);
+					end = s.indexOf("\"");
+					if( end >= 0)
+						return s.substring( 0, end);
+				}
+ 			}
+		}	
 		staicLogger.addDebugString( "Cannot get the OWL name of a null OWL object", true);
-		return( null);
+		return o.toString();
 	}
 	/**
 	 * It uses a render defined as {@code OWLObjectRenderer renderer = new DLSyntaxObjectRenderer();}
@@ -634,7 +658,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	 * It prints the ontology on the java console using Manchester formatting. 
 	 */
 	public void printOntonolyOnConsole() {
-		try{
+		/*try{
 			long initialTime = System.nanoTime();
 			ManchesterOWLSyntaxOntologyFormat manSyntaxFormat = new ManchesterOWLSyntaxOntologyFormat();
 			OWLOntologyManager man = this.getManager();
@@ -649,7 +673,8 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 			e.printStackTrace();
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
 			this.loggInconsistency();
-		}
+		}*/
+		System.err.println( "Not ported to owl 5 jet !!!");
 	}
 
 

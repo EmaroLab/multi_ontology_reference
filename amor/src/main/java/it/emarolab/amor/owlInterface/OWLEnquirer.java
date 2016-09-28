@@ -1,7 +1,10 @@
 package it.emarolab.amor.owlInterface;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -14,6 +17,7 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
@@ -133,7 +137,11 @@ public class OWLEnquirer {
 	public Set<OWLNamedIndividual> getIndividualB2Class( OWLClass ontoClass){
 		long initialTime = System.nanoTime();
 		Set< OWLNamedIndividual> out = new HashSet< OWLNamedIndividual>();
-		Set<OWLIndividual> set = ontoClass.getIndividuals( ontoRef.getOntology());
+		
+		//Set<OWLIndividual> set = ontoClass.getIndividuals( ontoRef.getOntology());
+		Stream<OWLIndividual> stream = EntitySearcher.getIndividuals( ontoClass, ontoRef.getOntology());
+		Set<OWLIndividual> set = stream.collect(Collectors.toSet());
+		
 		if( set != null){
 			for( OWLIndividual s : set)
 				out.add( s.asOWLNamedIndividual());
@@ -218,7 +226,11 @@ public class OWLEnquirer {
 	public Set< OWLClass> getIndividualClasses( OWLNamedIndividual individual){
 		long initialTime = System.nanoTime();
 		Set< OWLClass> out = new HashSet< OWLClass>();
-		Set< OWLClassExpression> set = individual.getTypes( ontoRef.getOntology());
+		
+		//Set< OWLClassExpression> set = individual.getTypes( ontoRef.getOntology());
+		Stream<OWLClassExpression> stream = EntitySearcher.getTypes( individual, ontoRef.getOntology());
+		Set< OWLClassExpression> set = stream.collect(Collectors.toSet());
+		
 		if( set != null){
 			for( OWLClassExpression s : set)
 				out.add( s.asOWLClass());
@@ -299,7 +311,11 @@ public class OWLEnquirer {
 	 */
 	public Set<OWLLiteral> getDataPropertyB2Individual( OWLNamedIndividual individual, OWLDataProperty property){
 		long initialTime = System.nanoTime();
-		Set<OWLLiteral>  value = individual.getDataPropertyValues(property, ontoRef.getOntology());
+		
+		//Set<OWLLiteral>  value = individual.getDataPropertyValues(property, ontoRef.getOntology());
+		Stream<OWLLiteral> stream = EntitySearcher.getDataPropertyValues(individual, property, ontoRef.getOntology());
+		Set< OWLLiteral> value = stream.collect( Collectors.toSet());
+		
 		try{
 			Set<OWLLiteral> valueInf = ontoRef.getReasoner().getDataPropertyValues( individual, property);
 			value.addAll( valueInf);
@@ -307,7 +323,7 @@ public class OWLEnquirer {
 			ontoRef.loggInconsistency();
 		}
 		logger.addDebugString( "get data property belong to individual given in: " + (System.nanoTime() - initialTime) + " [ns]");
-		return( value);
+		return ( value);
 	}
 	/**
 	 * Returns one literal value attached to a given individual
@@ -369,7 +385,11 @@ public class OWLEnquirer {
 	public Set<OWLNamedIndividual> getObjectPropertyB2Individual( OWLNamedIndividual individual, OWLObjectProperty property){
 		long initialTime = System.nanoTime();
 		Set< OWLNamedIndividual> out = new HashSet< OWLNamedIndividual>();
-		Set< OWLIndividual> set = individual.getObjectPropertyValues(property, ontoRef.getOntology());
+		
+		//Set< OWLIndividual> set = individual.getObjectPropertyValues(property, ontoRef.getOntology());
+		Stream< OWLIndividual> stream = EntitySearcher.getObjectPropertyValues(individual, property, ontoRef.getOntology());
+		Set< OWLIndividual> set = stream.collect( Collectors.toSet());
+		
 		if( set != null){
 			for( OWLIndividual i : set)
 				out.add( i.asOWLNamedIndividual());
@@ -596,7 +616,11 @@ public class OWLEnquirer {
 	 */
 	public Set<OWLObjectProperty> getSubObjectPropertyOf( OWLObjectProperty prop){
 		long initialTime = System.nanoTime();
-		Set<OWLObjectPropertyExpression> set = prop.getSubProperties( ontoRef.getOntology());//cl.getSubClasses( ontoRef.getOntology());
+		
+		//Set<OWLObjectPropertyExpression> set = prop.getSubProperties( ontoRef.getOntology());//cl.getSubClasses( ontoRef.getOntology());
+		Stream<OWLObjectPropertyExpression> stream = EntitySearcher.getSubProperties( prop, ontoRef.getOntology());
+		Set<OWLObjectPropertyExpression> set = stream.collect( Collectors.toSet());
+		
 		Set<OWLObjectProperty> out = new HashSet< OWLObjectProperty>();
 		if( set != null){
 			for( OWLObjectPropertyExpression s : set)
@@ -639,7 +663,11 @@ public class OWLEnquirer {
 	 */
 	public Set<OWLObjectProperty> getSuperObjectPropertyOf( OWLObjectProperty prop){
 		long initialTime = System.nanoTime();
-		Set<OWLObjectPropertyExpression> set = prop.getSuperProperties( ontoRef.getOntology());
+		
+		//Set<OWLObjectPropertyExpression> set = prop.getSuperProperties( ontoRef.getOntology());
+		Stream<OWLObjectPropertyExpression> stream = EntitySearcher.getSuperProperties( prop, ontoRef.getOntology());
+		Set<OWLObjectPropertyExpression> set = stream.collect( Collectors.toSet());
+		
 		Set<OWLObjectProperty> out = new HashSet< OWLObjectProperty>();
 		if( set != null){
 			for( OWLObjectPropertyExpression s : set)
@@ -683,7 +711,11 @@ public class OWLEnquirer {
 	 */
 	public Set<OWLDataProperty> getSubDataPropertyOf( OWLDataProperty prop){ 
 		long initialTime = System.nanoTime();
-		Set<OWLDataPropertyExpression> set = prop.getSubProperties( ontoRef.getOntology());
+		
+		//Set<OWLDataPropertyExpression> set = prop.getSubProperties( ontoRef.getOntology());
+		Stream<OWLDataPropertyExpression> stream = EntitySearcher.getSubProperties( prop, ontoRef.getOntology());
+		Set<OWLDataPropertyExpression> set = stream.collect( Collectors.toSet());
+		
 		Set<OWLDataProperty> out = new HashSet< OWLDataProperty>();
 		if( set != null){
 			for( OWLDataPropertyExpression s : set)
@@ -726,7 +758,11 @@ public class OWLEnquirer {
 	 */
 	public Set<OWLDataProperty> getSuperDataPropertyOf( OWLDataProperty prop){ 
 		long initialTime = System.nanoTime();
-		Set<OWLDataPropertyExpression> set = prop.getSuperProperties( ontoRef.getOntology());
+		
+		//Set<OWLDataPropertyExpression> set = prop.getSuperProperties( ontoRef.getOntology());
+		Stream<OWLDataPropertyExpression> stream = EntitySearcher.getSuperProperties( prop, ontoRef.getOntology());
+		Set<OWLDataPropertyExpression> set = stream.collect( Collectors.toSet());
+		
 		Set<OWLDataProperty> out = new HashSet< OWLDataProperty>();
 		if( set != null){
 			for( OWLDataPropertyExpression s : set)
@@ -787,7 +823,11 @@ public class OWLEnquirer {
 	 */
 	public Set<OWLClass> getSubClassOf( OWLClass cl){
 		long initialTime = System.nanoTime();
-		Set<OWLClassExpression> set = cl.getSubClasses( ontoRef.getOntology());
+		
+		//Set<OWLClassExpression> set = cl.getSubClasses( ontoRef.getOntology());
+		Stream<OWLClassExpression> stream = EntitySearcher.getSubClasses( cl, ontoRef.getOntology());
+		Set<OWLClassExpression> set = stream.collect( Collectors.toSet());
+		
 		Set<OWLClass> out = new HashSet< OWLClass>();
 		if( set != null){
 			for( OWLClassExpression s : set)
@@ -832,7 +872,11 @@ public class OWLEnquirer {
 	public Set<OWLClass> getSuperClassOf( OWLClass cl){
 		long initialTime = System.nanoTime();
 		Set<OWLClass> classes = new HashSet< OWLClass>();
-		Set< OWLClassExpression> set = cl.getSuperClasses( ontoRef.getOntology());
+		
+		//Set< OWLClassExpression> set = cl.getSuperClasses( ontoRef.getOntology());
+		Stream<OWLClassExpression> stream = EntitySearcher.getSuperClasses( cl, ontoRef.getOntology());
+		Set<OWLClassExpression> set = stream.collect( Collectors.toSet());
+		
 		if( set != null){ 
 			for( OWLClassExpression j : set)
 				classes.add( j.asOWLClass());

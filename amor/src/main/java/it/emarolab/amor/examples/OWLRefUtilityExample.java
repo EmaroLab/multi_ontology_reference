@@ -3,11 +3,11 @@ package it.emarolab.amor.examples;
 import it.emarolab.amor.owlInterface.OWLLibrary;
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContainer;
-
+ 
 public class OWLRefUtilityExample {
 
 	public static final String OWLREFERENCES_NAME = "refName";
-	public static final String ONTOLOGY_FILE_PATH = "files/ontologies/utility.owl";
+	public static final String ONTOLOGY_FILE_PATH = "amor/files/ontologies/utility.owl";
 	public static final String ONTOLOGY_IRI_PATH = "http://www.semanticweb.org/luca-buoncompagni/aMor/examples";
 	public static final String REASONER_FACTORY = OWLLibrary.REASONER_DEFAULT;
 	public static final Boolean BUFFERING_REASONER = true; // if true you must to update manually the reasoner. Otherwise it synchronises itself any time is needed
