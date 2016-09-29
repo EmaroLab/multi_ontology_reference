@@ -9,7 +9,7 @@
 + Ontology debug GUI available (currently working but not stable).
 + Extensive logging.
 + Out-of-the-box support for most reasoners. Easy to add more.
-+ Based on latest standards: Java 8 and OWL API 5. For legacy support, check Java 7 and OWL API 3.4.5 (Support for Java 8 and OWL API 5.X coming soon, check OWL-api5 branch).
++ Based on latest standards: Java 8 and OWL API 5.
 
 This is the ROS version of the library, ready to be included in your ROS projects. 
 
