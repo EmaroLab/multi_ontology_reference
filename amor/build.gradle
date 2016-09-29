@@ -33,7 +33,6 @@ dependencies {
     //AMOR
 
     compile group: 'com.github.galigator.openllet', name: 'openllet-owlapi', version: '2.5.1'
-    compile group: 'com.github.galigator.openllet', name: 'openllet-jena', version: '2.5.1'
     compile group: 'net.sourceforge.owlapi', name: 'owlapi-distribution', version: '5.0.2'
 
 }
