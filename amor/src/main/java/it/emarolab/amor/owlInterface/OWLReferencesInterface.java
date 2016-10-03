@@ -1,7 +1,6 @@
 package it.emarolab.amor.owlInterface;
 
 import java.io.File;
-import java.io.StringWriter;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -10,15 +9,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 //import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxOntologyFormat;
-import org.semanticweb.owlapi.io.OWLObjectRenderer;
-import org.semanticweb.owlapi.io.StreamDocumentTarget;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
-import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
 //import org.semanticweb.owlapi.model.OWLOntologyFormat;
-import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
@@ -368,7 +363,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	 * {@code false} it would return only the frist direct assertion.
 	 */
 	public synchronized void setOWLEnquirerCompletenessFlag( Boolean flag){
-		this.enquirer.setReturningCompleteDescrription( flag);
+		this.enquirer.setReturningCompleteDescription( flag);
 	}
 	
 

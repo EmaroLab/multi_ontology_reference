@@ -13,38 +13,34 @@ import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
 
 /**
- * This static class is used to export an ontology.
- * If a Reasoner built asserted property,
- * they will be exported as fixed one.
+ * Static class used to export an ontology.
+ * Reasoner generated asserted property will be exported as fixed.
  * 
  * @author Buoncomapgni Luca
  * @version 1.0
  *
  */
-public class InferedAxiomExporter {
+public class InferredAxiomExporter {
 
 	/**
-	 * This object is used to log informations about the instances of this class.
-	 * The logs can be activated by setting the flag: {@link LoggerFlag#LOG_ONTOLOGY_EXPORTER}
+	 * Object used to log information about this class instances.
+	 * Logs are activated by flag: {@link LoggerFlag#LOG_ONTOLOGY_EXPORTER}
 	 */
-	private static Logger logger = new Logger( InferedAxiomExporter.class, LoggerFlag.getLogOntologyExporter());
+	private static Logger logger = new Logger( InferredAxiomExporter.class, LoggerFlag.getLogOntologyExporter());
 
 	
 	private static boolean importingClosure = true;
 	
-	// set as non instatiable
-	private InferedAxiomExporter() {
+	// set as non instantiable
+	private InferredAxiomExporter() {
         throw new AssertionError();
     }
 	
 	/**
-	 * Given an ontology it changes all the asserted 
-	 * property into a fixed one, if any. This method just ask 
-	 * for all the asserted entity and make a copy of them. 
-	 * Note that this procedure may be computational expensive. 
+	 * Saves all asserted entities in an ontology as fixed. Slow.
 	 * 
-	 * @param ontoRef the ontology to export
-	 * @return the input ontology with asserted entity exported
+	 * @param ontoRef ontology with inferred entities.
+	 * @return ontology with exported entities
 	 */
 	public synchronized static OWLReferences exportOntology( OWLReferences ontoRef){
 		long initialTime = System.nanoTime();
@@ -114,6 +110,6 @@ public class InferedAxiomExporter {
 	 * @param importingClosure set to true to import.
 	 */
 	public static void setImportingClosure(boolean importingClosure) {
-		InferedAxiomExporter.importingClosure = importingClosure;
+		InferredAxiomExporter.importingClosure = importingClosure;
 	}	
 }

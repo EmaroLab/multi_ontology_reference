@@ -1401,7 +1401,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * retrieved from the OWLReferences class using: 
 	 * {@code ontoRef.getIriFilePath();}. Note that this procedure
 	 * may replace an already existing file. The exporting of the 
-	 * asserted relation is done by: {@link InferedAxiomExporter#exportOntology(OWLReferences)}
+	 * asserted relation is done by: {@link InferredAxiomExporter#exportOntology(OWLReferences)}
 	 * and my be an expensive procedure.
 	 * @param exportInf if {@code true} export all reasoner inferences in the returned ontology References.
 	 * Otherwise it just call {@link #saveOntology()}
@@ -1410,7 +1410,7 @@ public class OWLReferences extends OWLReferencesInterface{
 		OWLReferences ontoRef = this;
 		try {
 			if( exportInf)
-				ontoRef = InferedAxiomExporter.exportOntology( ontoRef);
+				ontoRef = InferredAxiomExporter.exportOntology( ontoRef);
 			ontoRef.saveOntology();
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
 			this.loggInconsistency();
@@ -1423,7 +1423,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * given as input parameter, and this method does not update: 
 	 * {@code ontoRef.getIriFilePath();}. Note that this procedure
 	 * may replace an already existing file. The exporting of the 
-	 * asserted relation is done by: {@link InferedAxiomExporter#exportOntology(OWLReferences)}
+	 * asserted relation is done by: {@link InferredAxiomExporter#exportOntology(OWLReferences)}
 	 * and my be an expensive procedure.
 	 * @param exportInf if {@code true} export all reasoner inferences in the returned ontology References.
 	 * Otherwise it just call {@link #saveOntology(String)}
@@ -1433,7 +1433,7 @@ public class OWLReferences extends OWLReferencesInterface{
 		OWLReferences ontoRef = this;
 		try {
 			if( exportInf)
-				ontoRef = InferedAxiomExporter.exportOntology( ontoRef);
+				ontoRef = InferredAxiomExporter.exportOntology( ontoRef);
 			ontoRef.saveOntology( filePath);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
 			this.loggInconsistency();

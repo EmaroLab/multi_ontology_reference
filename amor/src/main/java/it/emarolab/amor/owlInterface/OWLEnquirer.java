@@ -1,6 +1,5 @@
 package it.emarolab.amor.owlInterface;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,33 +21,33 @@ import org.semanticweb.owlapi.search.EntitySearcher;
 import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
 
-// TODO : bring upo to OWLReferences getSubObjectPropertyOf getSubDataPropertyOf and all its case
+// TODO : bring up to OWLReferences getSubObjectPropertyOf getSubDataPropertyOf and all its case
 // TODO : make an abstract class interface to be implemented for all methods (all have the same shape)
 public class OWLEnquirer {
 
 	/**
-	 * This object is used to log informations about the instances of this class.
-	 * The logs can be activated by setting the flag: {@link LoggerFlag#LOG_OWL_ENQUIRER}
+	 * Object used to log information about this class instances.
+	 * Logs are activated by flag: {@link LoggerFlag#LOG_OWL_ENQUIRER}
 	 */
 	private Logger logger = new Logger( this, LoggerFlag.getLogOWLEnquirer());
 
 	/**
-	 * This boolean is used for quering sub/super-(class or properties) to the
-	 * resoner. If it is {@code false} only the hierarchically direct entities will be returned
-	 * by the reasoner (the not reasoned value are all returned anyway).
-	 * Otherwise it collects all the sub/super entities up to the leafs/root of the structure.
+	 * Boolean used to query the reasoner sub/super-(class or properties).
+	 * If it is {@code false} only hierarchically direct entities will be returned
+	 * (all non-reasoned values are returned anyway).
+	 * Else, it collects all entities up to the leafs and root of the structure.
 	 */
 	public static final Boolean DEFAULT_RETURN_COMPLETE_DESCRIPTION = true;
 	
 	private Boolean returnCompleteDescription;
 	/**
-	 * The reference to the ontology to be manipulayed given in constructor.
+	 * Ontology reference to be manipulated given in the constructor.
 	 */
 	private OWLReferencesInterface ontoRef;
 
 	/**
-	 * fully initialise this object where the value of {@link #returnCompleteDescription}
-	 * is set to the defualt value {@value #DEFAULT_RETURN_COMPLETE_DESCRIPTION}.
+	 * Constructor which sets {@link #returnCompleteDescription} flag to
+	 * default value {@value #DEFAULT_RETURN_COMPLETE_DESCRIPTION}.
 	 * @param owlRef the ontology in which perform queries
 	 */
 	protected OWLEnquirer( OWLReferencesInterface owlRef){
@@ -56,7 +55,7 @@ public class OWLEnquirer {
 		this.returnCompleteDescription = DEFAULT_RETURN_COMPLETE_DESCRIPTION;
 	}
 	/**
-	 * fully initialise this object.
+	 * Constructor to define custom {@link #returnCompleteDescription} value.
 	 * @param owlRef the ontology in which perform queries
 	 * @param returnCompleteDescription the value given to {@link #returnCompleteDescription}
 	 */
@@ -66,7 +65,7 @@ public class OWLEnquirer {
 	}
 	
 	/**
-	 * @return a container of all the objects of the refereed ontology,
+	 * @return a container of all the objects of the referenced ontology,
 	 * set on constructor.
 	 */
 	protected OWLReferencesInterface getLiOwlLibrary(){
@@ -82,7 +81,7 @@ public class OWLEnquirer {
 	/**
 	 * @param flag the value of {@link #returnCompleteDescription} to set.
 	 */
-	protected void setReturningCompleteDescrription( Boolean flag){
+	protected void setReturningCompleteDescription(Boolean flag){
 		returnCompleteDescription = flag;
 	} 
 	
