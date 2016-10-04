@@ -66,72 +66,56 @@ public class OWLEnquirer {
 	
 	/**
 	 * @return a container of all the objects of the referenced ontology,
-	 * set on constructor.
+	 * set by constructor.
 	 */
 	protected OWLReferencesInterface getLiOwlLibrary(){
 		return ontoRef;
 	}
 
 	/**
-	 * @return the actual value of {@link #returnCompleteDescription}.
+	 * @return current value of {@link #returnCompleteDescription}.
 	 */
 	protected Boolean isReturningCompleteDescription(){
 		return returnCompleteDescription;
 	}
 	/**
-	 * @param flag the value of {@link #returnCompleteDescription} to set.
+	 * @param flag value to set for {@link #returnCompleteDescription}.
 	 */
 	protected void setReturningCompleteDescription(Boolean flag){
 		returnCompleteDescription = flag;
 	} 
 	
 	/**
-	 * It returns all the ontological individuals which are defined in the 
-	 * refereed ontology and which are belonging to the class {@link OWLDataFactory#getOWLThing()}. 
-	 * Than the returning value is propagated, so it returns {@code null} if no individuals are
-	 * classified in that class (so if no individuals are introduced into the ontology) 
-	 * or if such class does not exist in.
-	 * Finally note that the completeness of the results 
-	 * of this methods also depends from the value
-	 * of {@link #returnCompleteDescription}.
+	 * Returns all individual defined in the ontology {@link OWLDataFactory#getOWLThing()}.
+	 * It returns {@code null} if no individuals belong to the root class or if such class does not exist.
+	 * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
 	 * 
-	 * @return all the individuals belong to the root class of the ontology.
+	 * @return individuals belonging to the root class of the ontology.
 	 */
 	public Set<OWLNamedIndividual> getIndividualB2Thing(){
 		return( getIndividualB2Class( ontoRef.getFactory().getOWLThing()));
 	}
 	/**
-	 * It returns all the ontological individuals which are defined in the 
-	 * refereed ontology and which are belonging to the class with name 
-	 * defined by the parameter. Indeed this method will call 
-	 * {@link #getOWLClass(String)},
-	 * to get the actual OWL class Object and than it use it to call
-	 * {@link #getIndividualB2Class(OWLClass)}. Than the 
-	 * returning value is propagated, so it returns {@code null} if no individual are
-	 * classified in that class or if such class does not exist in 
-	 * the refereed ontology.
-	 * Finally note that the completeness of the results 
-	 * of this methods also depends from the value
-	 * of {@link #returnCompleteDescription}.
+	 * Returns all individuals belonging to the specified class.
+	 * The method takes a string and calls {@link OWLLibrary#getOWLClass(String)},
+     * to fetch the corresponding OWL class object {@link #getIndividualB2Class(OWLClass)}.
+     * It returns {@code null} if no individual belongs to that class or if such class does not exist.
+	 * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
 	 * 
-	 * @param className name of the ontological class
-	 * @return an not ordered set of individual belong to such class.
+	 * @param className name of the class.
+	 * @return non-ordered set of individuals belonging to such class.
 	 */
 	public Set<OWLNamedIndividual> getIndividualB2Class( String className){
 		return( getIndividualB2Class( ontoRef.getOWLClass( className)));
 	}
 	/**
-	 * It returns all the ontological individual which are defined in the 
-	 * refereed ontology and which are belonging to the class 
-	 * defined by the parameter. It returns null if no individual are
-	 * classified in that class or if such class does not exist in 
-	 * the refereed ontology.
-	 * Finally note that the completeness of the results 
-	 * of this methods also depends from the value
-	 * of {@link #returnCompleteDescription}.
+     * Returns all individuals belonging to the specified class.
+     * The method takes an OWL class object {@link #getIndividualB2Class(OWLClass)}.
+     * It returns {@code null} if no individual belongs to that class or if such class does not exist.
+     * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
 	 * 
-	 * @param ontoClass OWL class for which the individual are asked.
-	 * @return an not ordered set of individual belong to such class.
+	 * @param ontoClass OWL class.
+	 * @return non-ordered set of individuals belonging to such class.
 	 */
 	public Set<OWLNamedIndividual> getIndividualB2Class( OWLClass ontoClass){
 		long initialTime = System.nanoTime();
@@ -154,12 +138,8 @@ public class OWLEnquirer {
 		return( out);
 	}
 	/**
-	 * It returns one ontological individual which are defined in the 
-	 * refereed ontology and which are belonging to the class {@link OWLDataFactory#getOWLThing()}. 
-	 * Indeed this method will call {@link #getOnlyIndividualB2Class(OWLClass)}. Than,
-	 * using {@link #getOnlyElement(Set)} it will return one
-	 * individual that are belonging to the class. It returns null if no individual are
-	 * classified in that class, so if no individuals are introduced into the ontology.
+	 * Returns one individual belonging to the root class {@link OWLDataFactory#getOWLThing()}.
+	 * It returns {@code null} if no individual are classified in that class, so if no individuals are introduced into the ontology.
 	 * Finally note that the completeness of the results 
 	 * of this methods also depends from the value
 	 * of {@link #returnCompleteDescription}.
