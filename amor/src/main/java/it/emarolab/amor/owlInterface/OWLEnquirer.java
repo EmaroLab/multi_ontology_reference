@@ -1,10 +1,17 @@
 package it.emarolab.amor.owlInterface;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.clarkparsia.pellet.owlapi.PelletReasoner;
+import com.clarkparsia.pellet.owlapi.PelletReasonerFactory;
+import com.clarkparsia.pellet.sparqldl.jena.SparqlDLExecutionFactory;
+import org.apache.jena.query.*;
+import org.apache.jena.rdf.model.InfModel;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.mindswap.pellet.KnowledgeBase;
+import org.mindswap.pellet.jena.PelletInfGraph;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -868,4 +875,67 @@ public class OWLEnquirer {
 		logger.addDebugString( "get super classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( classes);
 	}
+
+
+	// works only for pellet
+	// set time out to null or < 0 to do not apply any timing out
+	public List< QuerySolution> sparql( String query, Long timeOut){
+		// get objects
+		KnowledgeBase kb = (( PelletReasoner) ontoRef.getReasoner()).getKB();
+		PelletInfGraph graph = new org.mindswap.pellet.jena.PelletReasoner().bind( kb );
+		InfModel model = ModelFactory.createInfModel( graph );
+		// make the query
+		QueryExecution qe = SparqlDLExecutionFactory.create( QueryFactory.create( query), model);
+		String queryLog = qe.getQuery().toString() + System.getProperty("line.separator") + "[TimeOut:";
+		if( timeOut != null) { // apply time out
+			if (timeOut > 0) {
+				qe.setTimeout(timeOut);
+				queryLog += timeOut + "ms].";
+			} else queryLog += "NONE].";
+		} else queryLog += "NONE].";
+		ResultSet result = qe.execSelect(); // TODO: it can do mutch more.... (ask query, evaluate constants, etc.)
+        // store the results
+        List< QuerySolution> solutions = new ArrayList<>();
+        while( result.hasNext()){
+            QuerySolution r = result.next();
+            solutions.add( r);
+        }
+        logger.addDebugString( "SPARQL query:" + System.getProperty("line.separator") + queryLog + System.getProperty("line.separator") + ResultSetFormatter.asText( result));
+		return solutions;
+	}
+	public List< QuerySolution> sparql( String query){ // no time out
+		return sparql( query, null);
+	}
+	public List< QuerySolution> sparql( String prefix, String select, String where, Long timeOut){
+		return sparql( prefix + select + where, timeOut);
+	}
+	public List< QuerySolution> sparql( String prefix, String select, String where){
+		return sparql( prefix + select + where);
+	}
+
+	public List< Map< String, String>> sparqlMsg(String query, Long timeOut){
+		return sparql2Msg( sparql( query, timeOut));
+	}
+	public List< Map< String, String>> sparqlMsg( String query){ // no time out
+		return sparql2Msg( sparql( query, null));
+	}
+	public List< Map< String, String>> sparqlMsg( String prefix, String select, String where, Long timeOut){
+		return sparql2Msg( sparql( prefix + select + where, timeOut));
+	}
+    public List< Map< String, String>> sparqlMsg( String prefix, String select, String where){
+		return sparql2Msg( sparql( prefix + select + where));
+	}
+    private List< Map< String, String>> sparql2Msg( List< QuerySolution> results) {
+        List< Map< String, String>> out = new ArrayList();
+        for( QuerySolution q : results){
+            Iterator<String> names = q.varNames();
+            Map<String, String> item = new HashMap<>();
+            while( names.hasNext()){
+                String n = names.next();
+                item.put( n, q.get( n).toString());
+            }
+            out.add( item);
+        }
+        return out;
+    }
 }

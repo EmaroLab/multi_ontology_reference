@@ -1,5 +1,7 @@
 package it.emarolab.amor.examples;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLClass;
@@ -17,11 +19,11 @@ import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContain
 public class OWLRefEnquirerExample {
 
 	public static final String OWLREFERENCES_NAME = "refName";
-	public static final String ONTOLOGY_FILE_PATH = "http://protege.stanford.edu/ontologies/pizza/pizza.owl";
+	public static final String ONTOLOGY_FILE_PATH = "/home/luca-phd/Desktop/pizza.owl";//http://protege.stanford.edu/ontologies/pizza/pizza.owl";
 	public static final String ONTOLOGY_IRI_PATH = "http://www.co-ode.org/ontologies/pizza/pizza.owl";
 	public static final String REASONER_FACTORY = OWLLibrary.REASONER_QUALIFIER_PELLET;
 	public static final Boolean BUFFERING_REASONER = true; // if true you must to update manually the reasoner. Otherwise it synchronises itself any time is needed
-	public static final Integer COMMAND = OWLReferencesContainer.COMMAND_LOAD_WEB;
+	public static final Integer COMMAND = OWLReferencesContainer.COMMAND_LOAD_FILE;//.COMMAND_LOAD_WEB;
 	public static final Boolean BUFFERING_OWLMANIPULATOR = false; // if true you must to apply changes manually. Otherwise their are applied as soon as possible.
 
 	public static final String ONTOLOGY_SAVING_PATH = "amor/files/ontologies/pizza_enquired.owl";
@@ -103,7 +105,30 @@ public class OWLRefEnquirerExample {
 		Set<OWLClass> allSubClasses = ontoRef.getSubClassOf( "DomainConcept"); // get all the children
 		System.out.println( " all the sub classes of DomainConcept are: " + allSubClasses);
 		System.out.println( " -------------------------------- 7 ------------------------------------------ \n");
-		
+
+		// 8) make an SPARQL query
+		String PREFIX = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>"
+				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"
+				+ "PREFIX piz: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>";
+		String SELECT = "SELECT ?p ?p1";
+		String WHERE = " WHERE{"
+				+ "?p  rdf:type             owl:Class;"
+				+     "rdfs:subClassOf      ?t."
+				+ "?p1 rdf:type             owl:Class;"
+				+     "rdfs:subClassOf      ?t;"
+				+     "rdfs:subClassOf      ?t1."
+
+				+ "?t  owl:onProperty       piz:hasTopping;"
+				+     "owl:someValuesFrom   piz:PeperoniSausageTopping."
+				+ "?t1 owl:onProperty       piz:hasTopping;"
+				+     "owl:someValuesFrom   piz:TomatoTopping."
+				+ "}";
+		List<Map<String, String>> result = ontoRef.sparqlMsg(PREFIX + SELECT + WHERE, null);
+		System.out.println( "SPARQL results: " + result);
+		System.out.println( " -------------------------------- 8 ------------------------------------------ \n");
+
+
 		System.out.println( "DONE !!");
 		
 		// there are also other functions of OWLReferences (OWLEnquirer) that you may what to use ... check out the JavaDoc

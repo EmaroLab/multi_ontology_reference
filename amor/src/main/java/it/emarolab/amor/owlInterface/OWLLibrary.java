@@ -86,7 +86,7 @@ public class OWLLibrary {
 	 * Generic identifier for the default reasoner.
 	 * In particular it is: {@value #REASONER_DEFAULT}.
 	 */
-	public static final String REASONER_DEFAULT = "aMOR.default.reasoner";
+	public static final String REASONER_DEFAULT = REASONER_QUALIFIER_PELLET;//"aMOR.default.reasoner";
 
 	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   PRIVATE CLASS FIELDS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]	
 	/**

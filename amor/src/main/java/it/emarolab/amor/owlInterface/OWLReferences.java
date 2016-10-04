@@ -2,10 +2,13 @@ package it.emarolab.amor.owlInterface;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -688,7 +691,35 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 
-	
+
+
+	public List< QuerySolution> sparql(String query, Long timeOut){
+		return this.getOWLEnquirer().sparql( query, timeOut);
+	}
+	public List< QuerySolution> sparql(String query){ // no time out
+		return this.getOWLEnquirer().sparql( query);
+	}
+	public List< QuerySolution> sparql( String prefix, String select, String where, Long timeOut){
+		return this.getOWLEnquirer().sparql( prefix, select, where, timeOut);
+	}
+	public List< QuerySolution> sparql( String prefix, String select, String where){
+		return this.getOWLEnquirer().sparql( prefix, select, where);
+	}
+
+	public List< Map< String, String>> sparqlMsg(String query, Long timeOut){
+		return this.getOWLEnquirer().sparqlMsg( query, timeOut);
+	}
+	public List< Map< String, String>> sparqlMsg( String query){ // no time out
+		return this.getOWLEnquirer().sparqlMsg( query);
+	}
+	public List< Map< String, String>> sparqlMsg( String prefix, String select, String where, Long timeOut){
+		return this.getOWLEnquirer().sparqlMsg( prefix, select, where, timeOut);
+	}
+	public List< Map< String, String>> sparqlMsg(String prefix, String select, String where){
+		return this.getOWLEnquirer().sparqlMsg( prefix, select, where);
+	}
+
+
 	
 	// [[[[[[[[[[[[[[[[[[[[   METHODS TO MANIPULATE THE ONTOLOGY   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 	// it uses default ontology manipulator (not buffering)!!!!

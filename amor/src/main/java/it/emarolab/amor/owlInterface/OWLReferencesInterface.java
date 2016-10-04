@@ -669,7 +669,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
 			this.loggInconsistency();
 		}*/
-		System.err.println( "Not ported to owl 5 jet !!!");
+		System.err.println( "The ontology printing on console is not ported to owl 5 jet !!!");
 	}
 
 
