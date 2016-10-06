@@ -889,7 +889,7 @@ public class OWLEnquirer {
 		String queryLog = qe.getQuery().toString() + System.getProperty("line.separator") + "[TimeOut:";
 		if( timeOut != null) { // apply time out
 			if (timeOut > 0) {
-				qe.setTimeout(timeOut);
+				qe.setTimeout( timeOut); // TODO: it does not seems to work with pellet SELECT queries
 				queryLog += timeOut + "ms].";
 			} else queryLog += "NONE].";
 		} else queryLog += "NONE].";

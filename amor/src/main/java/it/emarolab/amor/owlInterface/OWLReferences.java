@@ -94,6 +94,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	private Lock mutexSubObjProp = new ReentrantLock();
 	private Lock mutexSuperDataProp = new ReentrantLock();
 	private Lock mutexSuperObjProp = new ReentrantLock();
+	private Lock mutexSPARQL = new ReentrantLock();
 	
 	/**
 	 * This method search for all the individuals in the root class {@link OWLDataFactory#getOWLThing()}. 
@@ -694,29 +695,77 @@ public class OWLReferences extends OWLReferencesInterface{
 
 
 	public List< QuerySolution> sparql(String query, Long timeOut){
-		return this.getOWLEnquirer().sparql( query, timeOut);
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
+		return new OWLReferencesCaller< List< QuerySolution>>(  mutexes, this) {
+			@Override
+			protected List< QuerySolution>  perfromSynchronisedCall() {
+				return getOWLEnquirer().sparql( query, timeOut);
+			}
+		}.call();
 	}
 	public List< QuerySolution> sparql(String query){ // no time out
-		return this.getOWLEnquirer().sparql( query);
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
+		return new OWLReferencesCaller< List< QuerySolution>>(  mutexes, this) {
+			@Override
+			protected List< QuerySolution>  perfromSynchronisedCall() {
+				return getOWLEnquirer().sparql( query);
+			}
+		}.call();
 	}
 	public List< QuerySolution> sparql( String prefix, String select, String where, Long timeOut){
-		return this.getOWLEnquirer().sparql( prefix, select, where, timeOut);
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
+		return new OWLReferencesCaller< List< QuerySolution>>(  mutexes, this) {
+			@Override
+			protected List< QuerySolution>  perfromSynchronisedCall() {
+				return getOWLEnquirer().sparql( prefix, select, where, timeOut);
+			}
+		}.call();
 	}
 	public List< QuerySolution> sparql( String prefix, String select, String where){
-		return this.getOWLEnquirer().sparql( prefix, select, where);
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
+		return new OWLReferencesCaller< List< QuerySolution>>(  mutexes, this) {
+			@Override
+			protected List< QuerySolution>  perfromSynchronisedCall() {
+				return getOWLEnquirer().sparql( prefix, select, where);
+			}
+		}.call();
 	}
 
 	public List< Map< String, String>> sparqlMsg(String query, Long timeOut){
-		return this.getOWLEnquirer().sparqlMsg( query, timeOut);
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
+		return new OWLReferencesCaller< List< Map< String, String>>>(  mutexes, this) {
+			@Override
+			protected List< Map< String, String>>  perfromSynchronisedCall() {
+				return getOWLEnquirer().sparqlMsg( query, timeOut);
+			}
+		}.call();
 	}
 	public List< Map< String, String>> sparqlMsg( String query){ // no time out
-		return this.getOWLEnquirer().sparqlMsg( query);
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
+		return new OWLReferencesCaller< List< Map< String, String>>>(  mutexes, this) {
+			@Override
+			protected List< Map< String, String>>  perfromSynchronisedCall() {
+				return getOWLEnquirer().sparqlMsg( query);
+			}
+		}.call();
 	}
 	public List< Map< String, String>> sparqlMsg( String prefix, String select, String where, Long timeOut){
-		return this.getOWLEnquirer().sparqlMsg( prefix, select, where, timeOut);
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
+		return new OWLReferencesCaller< List< Map< String, String>>>(  mutexes, this) {
+			@Override
+			protected List< Map< String, String>>  perfromSynchronisedCall() {
+				return getOWLEnquirer().sparqlMsg( prefix, select, where, timeOut);
+			}
+		}.call();
 	}
 	public List< Map< String, String>> sparqlMsg(String prefix, String select, String where){
-		return this.getOWLEnquirer().sparqlMsg( prefix, select, where);
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
+		return new OWLReferencesCaller< List< Map< String, String>>>(  mutexes, this) {
+			@Override
+			protected List< Map< String, String>>  perfromSynchronisedCall() {
+				return getOWLEnquirer().sparqlMsg( prefix, select, where);
+			}
+		}.call();
 	}
 
 

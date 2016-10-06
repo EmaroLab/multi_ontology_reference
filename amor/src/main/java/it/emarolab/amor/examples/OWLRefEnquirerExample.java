@@ -19,23 +19,23 @@ import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContain
 public class OWLRefEnquirerExample {
 
 	public static final String OWLREFERENCES_NAME = "refName";
-	public static final String ONTOLOGY_FILE_PATH = "/home/luca-phd/Desktop/pizza.owl";//http://protege.stanford.edu/ontologies/pizza/pizza.owl";
-	public static final String ONTOLOGY_IRI_PATH = "http://www.co-ode.org/ontologies/pizza/pizza.owl";
+	public static final String ONTOLOGY_FILE_PATH = "http://swat.cse.lehigh.edu/onto/univ-bench.owl";//http://protege.stanford.edu/ontologies/pizza/pizza.owl";
+	public static final String ONTOLOGY_IRI_PATH = "http://swat.cse.lehigh.edu/onto/univ-bench.owl";
 	public static final String REASONER_FACTORY = OWLLibrary.REASONER_QUALIFIER_PELLET;
 	public static final Boolean BUFFERING_REASONER = true; // if true you must to update manually the reasoner. Otherwise it synchronises itself any time is needed
-	public static final Integer COMMAND = OWLReferencesContainer.COMMAND_LOAD_FILE;//.COMMAND_LOAD_WEB;
+	public static final Integer COMMAND = OWLReferencesContainer.COMMAND_LOAD_WEB;
 	public static final Boolean BUFFERING_OWLMANIPULATOR = false; // if true you must to apply changes manually. Otherwise their are applied as soon as possible.
 
 	public static final String ONTOLOGY_SAVING_PATH = "amor/files/ontologies/pizza_enquired.owl";
 
 	public static void main(String[] args) {
 		// let disable verbose logging (this call may be delayed!!)
-		Logger.LoggerFlag.resetAllLoggingFlags();
-		
+		//Logger.LoggerFlag.resetAllLoggingFlags();
+
 		// 1) [LOAD_WEB] load the ontology from web with the more general constructor
 		OWLReferences ontoRef = OWLReferencesContainer.newOWLReferences( OWLREFERENCES_NAME, ONTOLOGY_FILE_PATH, ONTOLOGY_IRI_PATH, REASONER_FACTORY, BUFFERING_REASONER, COMMAND);
 		ontoRef.setOWLManipulatorBuffering( BUFFERING_OWLMANIPULATOR);
-		
+	/*
 		// 2) [QUERY_IND_CLASS] let query all the individuals belonging to a class
 		Set<OWLNamedIndividual> individuals = ontoRef.getIndividualB2Class( "DomainConcept");
 		System.out.println( " individuals belonging to \"DomainConcept\": " + individuals);
@@ -105,13 +105,13 @@ public class OWLRefEnquirerExample {
 		Set<OWLClass> allSubClasses = ontoRef.getSubClassOf( "DomainConcept"); // get all the children
 		System.out.println( " all the sub classes of DomainConcept are: " + allSubClasses);
 		System.out.println( " -------------------------------- 7 ------------------------------------------ \n");
-
+*/
 		// 8) make an SPARQL query
 		String PREFIX = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>"
 				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"
 				+ "PREFIX piz: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>";
-		String SELECT = "SELECT ?p ?p1";
+		String SELECT = "SELECT ?p ?p1 ?p2 ?p3";
 		String WHERE = " WHERE{"
 				+ "?p  rdf:type             owl:Class;"
 				+     "rdfs:subClassOf      ?t."
@@ -124,7 +124,7 @@ public class OWLRefEnquirerExample {
 				+ "?t1 owl:onProperty       piz:hasTopping;"
 				+     "owl:someValuesFrom   piz:TomatoTopping."
 				+ "}";
-		List<Map<String, String>> result = ontoRef.sparqlMsg(PREFIX + SELECT + WHERE, null);
+		List<Map<String, String>> result = ontoRef.sparqlMsg(PREFIX + SELECT + WHERE, 1000L);
 		System.out.println( "SPARQL results: " + result);
 		System.out.println( " -------------------------------- 8 ------------------------------------------ \n");
 
@@ -134,7 +134,7 @@ public class OWLRefEnquirerExample {
 		// there are also other functions of OWLReferences (OWLEnquirer) that you may what to use ... check out the JavaDoc
 		
 		// also be sure to check how the complete documentation to see how is easy to integrate your query 
-		// in the system and contribute to the comunity 
+		// in the system and contribute to the community
 		
 		ontoRef.saveOntology( ONTOLOGY_SAVING_PATH);
 	}
