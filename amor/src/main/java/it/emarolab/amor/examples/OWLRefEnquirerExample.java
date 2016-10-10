@@ -19,8 +19,8 @@ import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContain
 public class OWLRefEnquirerExample {
 
 	public static final String OWLREFERENCES_NAME = "refName";
-	public static final String ONTOLOGY_FILE_PATH = "http://swat.cse.lehigh.edu/onto/univ-bench.owl";//http://protege.stanford.edu/ontologies/pizza/pizza.owl";
-	public static final String ONTOLOGY_IRI_PATH = "http://swat.cse.lehigh.edu/onto/univ-bench.owl";
+	public static final String ONTOLOGY_FILE_PATH = "http://protege.stanford.edu/ontologies/pizza/pizza.owl";
+	public static final String ONTOLOGY_IRI_PATH = "http://www.co-ode.org/ontologies/pizza/pizza.owl";
 	public static final String REASONER_FACTORY = OWLLibrary.REASONER_QUALIFIER_PELLET;
 	public static final Boolean BUFFERING_REASONER = true; // if true you must to update manually the reasoner. Otherwise it synchronises itself any time is needed
 	public static final Integer COMMAND = OWLReferencesContainer.COMMAND_LOAD_WEB;
@@ -35,7 +35,7 @@ public class OWLRefEnquirerExample {
 		// 1) [LOAD_WEB] load the ontology from web with the more general constructor
 		OWLReferences ontoRef = OWLReferencesContainer.newOWLReferences( OWLREFERENCES_NAME, ONTOLOGY_FILE_PATH, ONTOLOGY_IRI_PATH, REASONER_FACTORY, BUFFERING_REASONER, COMMAND);
 		ontoRef.setOWLManipulatorBuffering( BUFFERING_OWLMANIPULATOR);
-	/*
+
 		// 2) [QUERY_IND_CLASS] let query all the individuals belonging to a class
 		Set<OWLNamedIndividual> individuals = ontoRef.getIndividualB2Class( "DomainConcept");
 		System.out.println( " individuals belonging to \"DomainConcept\": " + individuals);
@@ -105,7 +105,7 @@ public class OWLRefEnquirerExample {
 		Set<OWLClass> allSubClasses = ontoRef.getSubClassOf( "DomainConcept"); // get all the children
 		System.out.println( " all the sub classes of DomainConcept are: " + allSubClasses);
 		System.out.println( " -------------------------------- 7 ------------------------------------------ \n");
-*/
+
 		// 8) make an SPARQL query
 		String PREFIX = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>"
