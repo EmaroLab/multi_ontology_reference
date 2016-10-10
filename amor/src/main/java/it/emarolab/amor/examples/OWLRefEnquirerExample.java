@@ -28,6 +28,8 @@ public class OWLRefEnquirerExample {
 
 	public static final String ONTOLOGY_SAVING_PATH = "amor/files/ontologies/pizza_enquired.owl";
 
+	private static Logger logger = new Logger( OWLRefEnquirerExample.class, Logger.LoggerFlag.getLogOWLEnquirer());
+
 	public static void main(String[] args) {
 		// let disable verbose logging (this call may be delayed!!)
 		//Logger.LoggerFlag.resetAllLoggingFlags();
@@ -124,8 +126,8 @@ public class OWLRefEnquirerExample {
 				+ "?t1 owl:onProperty       piz:hasTopping;"
 				+     "owl:someValuesFrom   piz:TomatoTopping."
 				+ "}";
-		List<Map<String, String>> result = ontoRef.sparqlMsg(PREFIX + SELECT + WHERE, 1000L);
-		System.out.println( "SPARQL results: " + result);
+		List<Map<String, String>> result = ontoRef.sparql2Msg( PREFIX + SELECT + WHERE, 10L);
+		logger.addDebugString( "SPARQL results: " + result);
 		System.out.println( " -------------------------------- 8 ------------------------------------------ \n");
 
 

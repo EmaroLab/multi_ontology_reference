@@ -731,7 +731,7 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 
-	public List< Map< String, String>> sparqlMsg(String query, Long timeOut){
+	public List< Map< String, String>> sparql2Msg(String query, Long timeOut){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
 		return new OWLReferencesCaller< List< Map< String, String>>>(  mutexes, this) {
 			@Override
@@ -740,7 +740,7 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-	public List< Map< String, String>> sparqlMsg( String query){ // no time out
+	public List< Map< String, String>> sparql2Msg( String query){ // no time out
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
 		return new OWLReferencesCaller< List< Map< String, String>>>(  mutexes, this) {
 			@Override
@@ -749,7 +749,7 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-	public List< Map< String, String>> sparqlMsg( String prefix, String select, String where, Long timeOut){
+	public List< Map< String, String>> sparql2Msg( String prefix, String select, String where, Long timeOut){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
 		return new OWLReferencesCaller< List< Map< String, String>>>(  mutexes, this) {
 			@Override
@@ -758,7 +758,7 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-	public List< Map< String, String>> sparqlMsg(String prefix, String select, String where){
+	public List< Map< String, String>> sparql2Msg(String prefix, String select, String where){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
 		return new OWLReferencesCaller< List< Map< String, String>>>(  mutexes, this) {
 			@Override
