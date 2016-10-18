@@ -904,7 +904,7 @@ public class OWLEnquirer {
 			logger.addDebugString("SPARQL query:" + System.getProperty("line.separator") + queryLog + System.getProperty("line.separator") + ResultSetFormatter.asText(result));
 			return solutions;
 		} catch ( QueryCancelledException e){
-            logger.addDebugString("SPARQL timeed out !!");
+            logger.addDebugString("SPARQL timed out !!");
 			return null;
 		}
 	}
