@@ -146,52 +146,37 @@ public class OWLEnquirer {
 	}
 	/**
 	 * Returns one individual belonging to the root class {@link OWLDataFactory#getOWLThing()}.
-	 * It returns {@code null} if no individual are classified in that class, so if no individuals are introduced into the ontology.
-	 * Finally note that the completeness of the results 
-	 * of this methods also depends from the value
-	 * of {@link #returnCompleteDescription}.
+	 * It returns {@code null} if no individual is classified in the class, meaning the ontology is not populated.
+	 * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
 	 * 
-	 * @return an individual belong to the root class of the ontology.
+	 * @return an individual belonging to the root class of the ontology.
 	 */
 	public OWLNamedIndividual getOnlyIndividualB2Thing(){
 		return( getOnlyIndividualB2Class( ontoRef.getFactory().getOWLThing()));
 	}
 	/**
-	 * It returns one ontological individual which are defined in the 
-	 * refereed ontology and which are belonging to the class with name 
-	 * defined by the parameter. Indeed this method will call {@link #getOWLClass(String)},
-	 * to get the actual OWL class Object and than it use it to call
-	 * {@link #getIndividualB2Class(OWLClass)}. Than,
-	 * using {@link #getOnlyElement(Set)} it will return one
-	 * individual that are belonging to the class. It returns null if no individual are
-	 * classified in that class, if such class does not exist in 
-	 * the refereed ontology or if the Set returned by 
+	 * Returns one individual belonging to the specified class. 
+	 * Returns {@code null} if no individual are classified in that class,
+	 * if such class does not exist or if the Set returned by 
 	 * {@code this.getIndividualB2Class( .. )} has {@code size > 1}.
-	 * Finally note that the completeness of the results 
-	 * of this methods also depends from the value
-	 * of {@link #returnCompleteDescription}.
+	 * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
 	 * 
-	 * @param className name of the ontological class
-	 * @return an individual belong to such class.
+	 * @param className name of the ontological class.
+	 * @return an individual belonging to ontoClass.
 	 */
 	public OWLNamedIndividual getOnlyIndividualB2Class( String className){
 		Set<OWLNamedIndividual> set = getIndividualB2Class( ontoRef.getOWLClass( className));
 		return( (OWLNamedIndividual) ontoRef.getOnlyElement(set));
 	}
 	/**
-	 * It returns an ontological individual which are defined in the 
-	 * refereed ontology and which are belonging to the class 
-	 * defined by the parameter. It returns null if no individual are
-	 * classified in it, if such class does not 
-	 * exist  or if there are more than one
-	 * individual classified in that class 
-	 * (since it uses {@link #getOnlyElement(Set)}). 
-	 * Finally note that the completeness of the results 
-	 * of this methods also depends from the value
-	 * of {@link #returnCompleteDescription}.
+	 * Returns one individual belonging to the specified class. 
+	 * Returns {@code null} if no individual are classified in that class,
+	 * if such class does not exist or if the Set returned by 
+	 * {@code this.getIndividualB2Class( .. )} has {@code size > 1}.
+	 * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
 	 * 
-	 * @param ontoClass OWL class for which the individual are asked.
-	 * @return an individual belong to such class.
+	 * @param ontoClass OWLClass object in which to search.
+	 * @return an individual belonging to ontoClass.
 	 */
 	public OWLNamedIndividual getOnlyIndividualB2Class( OWLClass ontoClass){
 		Set< OWLNamedIndividual> set = getIndividualB2Class( ontoClass);
@@ -199,15 +184,11 @@ public class OWLEnquirer {
 	}
 
 	/**
-	 * It returns the set of classes in which an individual has been
-	 * classified.
-	 * Finally note that the completeness of the results 
-	 * of this methods also depends from the value
-	 * of {@link #returnCompleteDescription}.
+	 * Returns the set of classes in which an individual has been classified.
+	 * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
 	 * 
-	 * @param individual ontological individual object
-	 * @return a not ordered set of all the classes where the 
-	 * individual is belonging to.
+	 * @param individual.
+	 * @return a set of all classes the individual belongs to.
 	 */
 	public Set< OWLClass> getIndividualClasses( OWLNamedIndividual individual){
 		long initialTime = System.nanoTime();
@@ -230,27 +211,21 @@ public class OWLEnquirer {
 		return out;
 	}
 	/**
-	 * It returns the set of classes in which an individual has been
-	 * classified.
-	 * Finally note that the completeness of the results 
-	 * of this methods also depends from the value
-	 * of {@link #returnCompleteDescription}.
-	 * 
-	 * @param individual ontological individual object.
-	 * @return a not ordered set of all the classes where the 
-	 * individual is belonging to.
+	 * Returns the set of classes in which an individual has been classified.
+	 * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+	 *
+	 * @param individual.
+	 * @return a set of all classes the individual belongs to.
 	 */
 	public Set< OWLClass> getIndividualClasses( String individualName){
 		OWLNamedIndividual ind = ontoRef.getOWLIndividual( individualName);
 		return getIndividualClasses( ind);
 	}
 	/**
-	 * Returns one calass in which the individual is belonging to.
-	 * Indeed this method calls {@link #getIndividualClasses(String)}
-	 * and its returning value retrieved trhough with {@link #getOnlyElement(Set)}.
+	 * Returns only one class the individual belongs to.
 	 * 
-	 * @param individualName ontological individual object.
-	 * @return one class inwhic the input individual is belonging to.
+	 * @param individualName.
+	 * @return a class.
 	 */
 	public OWLClass getOnlyIndividualClasses( String individualName){
 		Set< OWLClass> set = getIndividualClasses( individualName);
