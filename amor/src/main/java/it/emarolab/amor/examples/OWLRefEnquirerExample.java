@@ -10,8 +10,8 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlInterface.OWLEnquirer;
-import it.emarolab.amor.owlInterface.OWLEnquirer.DataPropertyRelatios;
-import it.emarolab.amor.owlInterface.OWLEnquirer.ObjectPropertyRelatios;
+import it.emarolab.amor.owlInterface.OWLEnquirer.DataPropertyRelations;
+import it.emarolab.amor.owlInterface.OWLEnquirer.ObjectPropertyRelations;
 import it.emarolab.amor.owlInterface.OWLLibrary;
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContainer;
@@ -54,7 +54,7 @@ public class OWLRefEnquirerExample {
 		ontoRef.addDataPropertyB2Individual( individualName, propertyName, 1.5f);
 
 		// 3) [QUERY_IND_DATAPROP] let query all the data properties of an individual
-		Set<DataPropertyRelatios> allData = ontoRef.getDataPropertyB2Individual(individualName);
+		Set<DataPropertyRelations> allData = ontoRef.getDataPropertyB2Individual(individualName);
 		System.out.println( "Query withoud synchronising the reasoner: " + individualName + " has Data Properties: " + allData);
 		// be careful while do queries with respect to buffering flags. For example this query require to 
 		// assess "hasDataProperty" as a sub property of "TopDataProperty" which requires the synchronisation of the reasoner 
@@ -82,11 +82,11 @@ public class OWLRefEnquirerExample {
 		ontoRef.addObjectPropertyB2Individual( interestingInd, "hasTopping", "topping3");
 
 		// 5) [QUERY_IND_OBJECTPROP] let query all the object properties of an individual
-		Set<ObjectPropertyRelatios> allObject = ontoRef.getObjectPropertyB2Individual( interestingInd);
+		Set<ObjectPropertyRelations> allObject = ontoRef.getObjectPropertyB2Individual( interestingInd);
 		System.out.println( allObject);
 		// if you update the ontology state the same functions will consider also inferred axioms
 		ontoRef.synchroniseReasoner(); // you may not call this if both buffering flags are false (this calls also applyChanges())
-		Set<ObjectPropertyRelatios> allReasonedObject = ontoRef.getObjectPropertyB2Individual( interestingInd);
+		Set<ObjectPropertyRelations> allReasonedObject = ontoRef.getObjectPropertyB2Individual( interestingInd);
 		System.out.println( allReasonedObject);
 		System.out.println( " -------------------------------- 5 ------------------------------------------ \n");
 		

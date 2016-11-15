@@ -292,11 +292,11 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		return this.manipulator;
 	}
 	/**
-	 * @param willBufferise the flag to set in the {@link OWLManipulator#setChangeBuffering(Boolean)}
+	 * @param willBufferise the flag to set in the {@link OWLManipulator#setManipulationBuffering(Boolean)}
 	 * in order to change the buffering (or not) behaviour for apply changes into the ontology.
 	 */
 	public synchronized void setOWLManipulatorBuffering( Boolean willBufferise){
-		manipulator.setChangeBuffering( willBufferise);
+		manipulator.setManipulationBuffering( willBufferise);
 	}
 	/**
 	 * This method calls {@link OWLManipulator#applyChanges()}. This will apply all the
@@ -669,7 +669,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
 			this.loggInconsistency();
 		}*/
-		System.err.println( "The ontology printing on console is not ported to owl 5 jet !!!");
+		System.err.println( "The ontology printing on console has not been ported to owl 5 yet !!!");
 	}
 
 

@@ -38,18 +38,15 @@ import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContain
  *
  * <p>
  * This class is the lowest interface level with the OWL API.
- * It contains all the basic structure to manipulate ontologies
- * but does not provide any initialisation procedures.<br>
- * Initialisation of this class should be done by calling (with this order):
+ * It contains all the basic structures to manipulate ontologies
+ * but does not provide any initialization procedure.<br>
+ * Initialization of this class should be done by calling (in this order):
  * {@link #setIriFilePath(IRI)}, {@link #setIriOntologyPath(IRI)}, {@link #setManager()},
  * {@link #createOntology()} or {@link #loadOntologyFromFile()}, {@link #setFactory()},
  * {@link #setPrefixFormat()} and {@link #setReasoner(String, boolean, String)}.<br>
- * WARNING: It is recommended not to interact directly to this class,
+ * WARNING: It is recommended not to interact directly twith this class,
  * use {@link OWLReferences} instead.<br>
  * </p>
- *
- * @see
- *
  *
  * @version 2.0
  */
@@ -62,7 +59,7 @@ public class OWLLibrary {
 	 * Java reflection to instantiate the Pellet Reasoner.
 	 * In particular it is: {@value #REASONER_QUALIFIER_PELLET}.
 	 */
-	public static final String REASONER_QUALIFIER_PELLET = "com.clarkparsia.pellet.owlapi.PelletReasonerFactory";// "com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory";
+	public static final String REASONER_QUALIFIER_PELLET = "com.clarkparsia.pellet.owlapi.PelletReasonerFactory"; // "com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory";
 	/**
 	 * Full qualifier of the Snorocket reasoner Factory. String to be called by
 	 * Java reflection to instantiate the Snorocket Reasoner.
@@ -74,7 +71,7 @@ public class OWLLibrary {
 	 * Java reflection to instantiate the HERMIT Reasoner.
 	 * In particular it is: {@value #REASONER_QUALIFIER_HERMIT}.
 	 */
-	public static final String REASONER_QUALIFIER_HERMIT = "org.semanticweb.HermiT.ReasonerFactory";// "org.semanticweb.HermiT.Reasoner$ReasonerFactory";
+	public static final String REASONER_QUALIFIER_HERMIT = "org.semanticweb.HermiT.ReasonerFactory"; // "org.semanticweb.HermiT.Reasoner$ReasonerFactory";
 	/**
 	 * Full qualifier of the FACT reasoner Factory. String to be called by
 	 * Java reflection to instantiate the FACT Reasoner.
@@ -83,28 +80,27 @@ public class OWLLibrary {
 	public static final String REASONER_QUALIFIER_FACT = "uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory";
 
 	/**
-	 * Generic identifier for the default reasoner.
-	 * In particular it is: {@value #REASONER_DEFAULT}.
+	 * Generic identifier for the default reasoner {@value #REASONER_DEFAULT}.
 	 */
-	public static final String REASONER_DEFAULT = REASONER_QUALIFIER_PELLET;//"aMOR.default.reasoner";
+	public static final String REASONER_DEFAULT = REASONER_QUALIFIER_PELLET; //"aMOR.default.reasoner";
 
 	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   PRIVATE CLASS FIELDS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]	
 	/**
-	 * This object is used to log information about the owl references managed by this container class.
-	 * The logs can be activated by setting the flag: {@link LoggerFlag#LOG_OWL_LIBRARY}
+	 * This object is used to log information about the OWL references managed by this container class.
+	 * Activated by setting the flag: {@link LoggerFlag#LOG_OWL_LIBRARY}
 	 */
 	private static Logger logger = new Logger( OWLReferencesContainer.class, LoggerFlag.getLogOwlLibrary());
 
 	/**
-	 * This is the OWL ontology Manager (base API object) to be used in an OWL References
+	 * This is the OWL ontology Manager (base API object) to be used in an OWL Reference.
 	 */
 	private OWLOntologyManager manager;
 	/**
-	 * This is the OWL ontology Data Factory (base API object) to be used in an OWL References
+	 * This is the OWL ontology Data Factory (base API object) to be used in an OWL Reference.
 	 */
 	private OWLDataFactory factory;
 	/**
-	 * This is the OWL Ontology (base API object) to be used in an OWL References
+	 * This is the OWL Ontology (base API object) to be used in an OWL Reference.
 	 */
 	private OWLOntology ontology;
 	
@@ -113,12 +109,12 @@ public class OWLLibrary {
 	private String prefix;
 	
 	/**
-	 * This is the OWL Reasoner (base API object) used by the ontology associated in an OWLReferences.
+	 * This is the OWL Reasoner (base API object) used by the ontology referenced by an OWLReference.
 	 */
 	private OWLReasoner reasoner;
 	/**
-	 * This is the IRI file path. It points to a local directory, if the References are created or loaded from file. 
-	 * While, it represents the URL path if the References is load from WEB.
+	 * This is the IRI file path. It points to a local directory, if the References are created or loaded from file,
+	 * or the URL path, if the References is load from WEB.
 	 */
 	private IRI iriFilePath;
 	/**
@@ -130,7 +126,7 @@ public class OWLLibrary {
 	/**
 	 * This constructor force this class to be used only inside the {@code aMor.owlInterface} package.
 	 * This object is internally used to manage {@link OWLReferences} and should not be used for other purposes.
-	 * If you want to interact with the ontology use the References instead.<br>
+	 * If you want to interact with the ontology use the {@link OWLReferences} instead.<br>
 	 * This method does not provide any initialisation procedure.
 	 * Please note that before you use any other methods of this class, you must call {@link #setIriFilePath(IRI)}
 	 * and {@link #setIriOntologyPath(IRI)} methods.
@@ -147,30 +143,28 @@ public class OWLLibrary {
 
 
 	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   FIELD SETTERS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-	// those two must be called before to do anything else !!!!!!!!!.
+	// those two must be called before doing anything else !!!!!!!!!.
 	/**
-	 * @param iriFilePath the IRI path to the ontology file to set. 
-	 * This method has to be set before using other methods of this class.
+	 * @param iriFilePath the ontology IRI path.
+	 * IRI is supposed to be set before using other methods of this class.
 	 */
 	protected synchronized void setIriFilePath(IRI iriFilePath) {
 		this.iriFilePath = iriFilePath;
 	}
 	/**
-	 * @param iriOntologyPath the semantic IRI path of the ontology to set.
-	 * This method has to be set using other methods of this class.
+	 * @param iriOntologyPath the semantic IRI path of the ontology.
+	 * semantic IRI is supposed to be set before using other methods of this class.
 	 */
 	protected synchronized void setIriOntologyPath(IRI iriOntologyPath) {
 		this.iriOntologyPath = iriOntologyPath;
 	}
 
-	// [[[[[[[[[[[[[[[[[[[[[[[[   FIELD SETTERS (CLASS INITIALISERS)   ]]]]]]]]]]]]]]]]]]]]]]]]]]
+	// [[[[[[[[[[[[[[[[[[[[[[[[   FIELD SETTERS (CLASS INITIALIZERS)   ]]]]]]]]]]]]]]]]]]]]]]]]]]
 	// those methods use tha bove set fields to create and initialise References to an ontology.
 	/**
-	 * Creates a new OWL Ontology Manager and sets it to the relative internal field (see {@link #getManager()}).<br>
+	 * Creates a new OWL Ontology Manager and sets it to the relative field (see {@link #getManager()}).<br>
 	 * This method requires that the following values are not {@code null}:
-	 * {@link #getIriFilePath()} and {@link #getOntologyPath()}.<br>
-	 * This method sets the manager using:
-	 * {@link OWLOntologyManager}{@code .addIRIMapper( new} {@link SimpleIRIMapper}{@code ( }{@link #getIriOntologyPath()}{@code , }{@link #getIriOntologyPath()}{@code ))}.
+	 * {@link #getIriFilePath()} and {@link #getIriOntologyPath()}.<br>
 	 */
 	protected synchronized void setManager(){
 		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
@@ -189,13 +183,11 @@ public class OWLLibrary {
 		this.manager = null;
 	}
 	/**
-	 * Creates and sets a new empty ontology in accordance with
-	 * {@link OWLReferencesInterface#getIriOntologyPath()}. 
-	 * It sets the ontology field which can be retrieved using {@link #getOntology()}.<br>
-	 * It will set the field to {@code null} if the ontology path associated to the parameter is not correct.
+	 * Creates and sets a new empty ontology in accordance with {@link OWLReferencesInterface#getIriOntologyPath()}.<br>
+	 * It sets the field to {@code null} if the ontology path associated to the parameter is not correct.
 	 * Also, This method requires that the values:
 	 * {@link #getIriOntologyPath()} and {@link #getManager()} are not {@code null} nor badly formatted.
-	 * If this happens, the ontology object associated to that class instance will be null.
+	 * If this happens, the ontology object associated to that class instance will be {@code null} too.
 	 */
 	protected synchronized void createOntology(){
 		try {
@@ -213,12 +205,9 @@ public class OWLLibrary {
 		this.ontology = null;
 	}
 	/**
-	 * It loads an ontology from file in accord with the given parameter.
-	 * It sets the ontology field which can be retrieved using {@link #getOntology()}.<br>
-	 * To do so, the method uses the ontology manager
-	 * from: {@link OWLReferencesInterface#getManager()} and the ontology IRI path: {@link #getIriOntologyPath()}
-	 * that must not be {@code null} nor bad formatted.
-	 * If this happen, the ontology field will be set to {@code null}
+	 * It loads an ontology from file in accord with the given parameter.<br>
+	 * Ontology IRI path: {@link #getIriOntologyPath()} must not be {@code null} nor badly formatted.
+	 * If this happen, the ontology field will be set to {@code null}.
 	 */
 	protected synchronized void loadOntologyFromFile(){
 		try{
@@ -236,11 +225,8 @@ public class OWLLibrary {
 		this.ontology = null;
 	}
 	/**
-	 * It loads an ontology from WEB in accordance with the given parameter.
-	 * It is possible to retrieve the so initialized ontology field using {@link #getOntology()}.<br>
-	 * It uses ontology manager from: {@link OWLReferencesInterface#getManager()}
-	 * and the ontology IRI path: {@link #getIriOntologyPath()},
-	 * that must not be {@code null} nor badly formatted.
+	 * It loads an ontology from WEB in accordance with the given parameter.<br>
+	 * Ontology IRI path: {@link #getIriOntologyPath()} must not be {@code null} nor badly formatted.
 	 * Returns null if these conditions are not met.
 	 */
 	protected synchronized void loadOntologyFromWeb(){
@@ -259,8 +245,7 @@ public class OWLLibrary {
 		this.ontology = null;
 	}
 	/**
-	 * Creates and sets the OWLDataFactory that can be accessed from
-	 * {@link #getFactory()}. 
+	 * Creates and sets the OWLDataFactory.<br>
 	 * It requires that the {@link OWLReferencesInterface#getManager()} is not {@code null}. 
 	 */
 	protected synchronized void setFactory(){
@@ -269,11 +254,10 @@ public class OWLLibrary {
 		this.factory = out;
 	}
 	/**
-	 * Creates and sets a prefix manager to be attached into the given ontology references,
-	 * in order to simplify IRI definitions and usage. It can be retrieved from the method:
-	 * {@link #getPrefixFormat()}.<br>
-	 * In order to compute it, the fields: {@link #getManager()}, {@link #getOntology()}
-	 * and {@link #getIriOntologyPath()} have not to be {@code null} nor badly formatted.
+	 * Creates and sets a prefix manager to be attached to the given ontology references,
+	 * in order to simplify IRI definitions and usage.<br>
+	 * Fields: {@link #getManager()}, {@link #getOntology()}
+	 * and {@link #getIriOntologyPath()}, must not be {@code null} nor badly formatted.
 	 */
 	protected synchronized void setPrefixFormat() {
 		/*PrefixOWLOntologyFormat pm = (PrefixOWLOntologyFormat) this.getManager().getOntologyFormat( this.getOntology());
@@ -287,20 +271,19 @@ public class OWLLibrary {
 
 	// methods to create the reasoner from java reflection
 	/**
-	 * It creates and sets a Reasoner instance that can be retrieved with the method {@link #getReasoner()}.
+	 * It creates and sets a Reasoner instance.
 	 * The type of the reasoner is defined by the reasoner name factory, which could be:
 	 * {@link #REASONER_QUALIFIER_PELLET}, {@link #REASONER_QUALIFIER_SNOROCKET},
 	 * {@link #REASONER_QUALIFIER_HERMIT} or {@link #REASONER_QUALIFIER_FACT}.<br>
 	 * If the buffering flag is {@code true} then the reasoner will update its
 	 * state only if {@link OWLReferencesInterface#synchroniseReasoner()} is called.
-	 * Otherwise (if {@code false}), the reasoner will synchronise itself after every change in the ontology.
+	 * Otherwise, the reasoner will synchronise itself after every change in the ontology.
 	 * The system will return {@code null} if a java reflection error occurs while instancing the
 	 * class defined by the parameter {@code reasonerFactoryName}. 
-	 * Moreover, in order to successfully use this method the fields: 
-	 * {@link #getOntology()} has not to be {@code null}.
-	 * @param reasonerFactoryName the fully java qualifier of the reasoner factory class to be initialised.
-	 * @param buffering determines if the reasoner should buffer changes or not.
-	 * @param loggingName the evocative name given to the {@link ReasonerMonitor} assigned to this reasoner for debugging.
+	 * Field {@link #getOntology()} has not to be {@code null}.
+	 * @param reasonerFactoryName full java qualifier of the reasoner factory class to be initialised.
+	 * @param buffering if {@code true} the reasoner buffers changes.
+	 * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
 	 */
 	protected synchronized void setReasoner( String reasonerFactoryName, boolean buffering, String loggingName){
 		long initialTime = System.nanoTime();
@@ -339,9 +322,8 @@ public class OWLLibrary {
 	 * Creates and sets an instance of the Pellet reasoner by calling
 	 * {@link #setReasoner(String, boolean, String)} with input parameter set to:
 	 * {@link #REASONER_QUALIFIER_PELLET}, {@code buffering} and {@code loggingName} respectively. 
-	 * @param buffering set to {@code true} to have a reasoner that has to be synchronised manually.
-	 * Set to {@code false} to have a reasoner that automatically synchronise after every change.
-	 * @param loggingName the evocative name given to the {@link ReasonerMonitor} assigned to this reasoner for debugging.
+	 * @param buffering if {@code true} the reasoner must be synchronized manually. Else, sync is automatic.
+	 * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
 	 */
 	protected synchronized void setPelletReasoner( boolean buffering, String loggingName){
 		setReasoner( REASONER_QUALIFIER_PELLET, buffering, loggingName);
@@ -350,9 +332,8 @@ public class OWLLibrary {
 	 * Creates and sets an instance of the Snorocket reasoner by calling
 	 * {@link #setReasoner(String, boolean, String)} with input parameter set to:
 	 * {@link #REASONER_QUALIFIER_SNOROCKET}, {@code buffering} and {@code loggingName} respectively. 
-	 * @param buffering set to {@code true} to have a reasoner that has to be synchronised manually.
-	 * Set to {@code false} to have a reasoner that automatically synchronise after every change.
-	 * @param loggingName the evocative name given to the {@link ReasonerMonitor} assigned to this reasoner for debugging.
+	 * @param buffering if {@code true} the reasoner must be synchronized manually. Else, sync is automatic.
+     * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
 	 */
 	protected synchronized void createSnorocketReasoner( boolean buffering, String loggingName){
 		setReasoner( REASONER_QUALIFIER_SNOROCKET, buffering, loggingName);
@@ -361,9 +342,8 @@ public class OWLLibrary {
 	 * Creates and sets an instance of the Hermit reasoner by calling
 	 * {@link #setReasoner(String, boolean, String)} with input parameter set to:
 	 * {@link #REASONER_QUALIFIER_HERMIT}, {@code buffering} and {@code loggingName} respectively. 
-	 * @param buffering set to {@code true} for have a reasoner that has to be synchronised manually. 
-	 * Set to {@code false} to have a reasoner that automatically synchronise after every change.
-	 * @param loggingName the evocative name given to the {@link ReasonerMonitor} assigned to this reasoner for debugging.
+	 * @param buffering if {@code true} the reasoner must be synchronized manually. Else, sync is automatic.
+     * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
 	 */
 	protected synchronized void createHermitReasoner( boolean buffering, String loggingName){
 		setReasoner( REASONER_QUALIFIER_HERMIT, buffering, loggingName);
@@ -372,9 +352,8 @@ public class OWLLibrary {
 	 * Creates and sets an instance of the Fact reasoner by calling
 	 * {@link #setReasoner(String, boolean, String)} with input parameter set to:
 	 * {@link #REASONER_QUALIFIER_FACT}, {@code buffering} and {@code loggingName} respectively. 
-	 * @param buffering set to {@code true} for have a reasoner that has to be synchronised manually. 
-	 * Set to {@code false} to have a reasoner that automatically synchronise after every change.
-	 * @param loggingName the evocative name given to the {@link ReasonerMonitor} assigned to this reasoner for debugging.
+	 * @param buffering if {@code true} the reasoner must be synchronized manually. Else, sync is automatic.
+     * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
 	 */
 	protected synchronized void createFactReasoner( boolean buffering, String loggingName){
 		setReasoner( REASONER_QUALIFIER_FACT, buffering, loggingName);
@@ -384,21 +363,18 @@ public class OWLLibrary {
 	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   FIELD GETTERS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 	/**
 	 * @return the OWL Ontology Manager associated to this reference instance.
-	 * This is initialised using OWL API during constructor.
 	 */
 	public synchronized OWLOntologyManager getManager() {
 		return manager;
 	}
 	/**
 	 * @return the OWL Data Factory associated to this reference instance.
-	 * This is initialised using OWL API during constructor.
 	 */
 	public synchronized OWLDataFactory getFactory() {
 		return factory;
 	}
 	/**
 	 * @return the OWL Ontology associated to this reference instance.
-	 * This is initialised using OWL API during constructor.
 	 */
 	public synchronized OWLOntology getOntology() {
 		return ontology;
@@ -413,7 +389,6 @@ public class OWLLibrary {
 	}
 	/**
 	 * @return the OWL reasoner.
-	 * This is initialised using OWL API during constructor.
 	 */
 	public synchronized OWLReasoner getReasoner() {
 		return reasoner;
@@ -436,11 +411,11 @@ public class OWLLibrary {
 	/**
 	 * Returns an Object which represents an ontological class
 	 * with a given name and specific IRI paths. If the entity
-	 * already exists in the ontology then the object will refer to it,
+	 * already exists in the ontology, then the object will refer to it,
 	 * otherwise the method will create a new ontological entity
 	 * (not automatically added to the ontology).
-	 * @param className defines the name of the ontological class
-	 * @return the OWL class with the given name and IRI paths in accordance with the OWLReference
+	 * @param className name of the ontological class.
+	 * @return the OWL class with the given name and IRI paths, in accordance with the OWLReference.
 	 */
 	public OWLClass getOWLClass( String className) {
 		long initialTime = System.nanoTime();
@@ -454,11 +429,11 @@ public class OWLLibrary {
 	/**
 	 * Returns an Object which represents an ontological individual
 	 * with a given name and specific IRI paths. 
-	 * If the entity already exists in the ontology then the object will refer to it,
+	 * If the entity already exists in the ontology, then the object will refer to it,
 	 * otherwise the method will create a new ontological entity
 	 * (not automatically added to the ontology).
-	 * @param individualName string to define the name of the ontological individual
-	 * @return the OWL individual with the given name and IRI paths in accordance to the OWLReference
+	 * @param individualName name of the ontological individual.
+	 * @return the OWL individual with the given name and IRI paths, in accordance to the OWLReference.
 	 */
 	public OWLNamedIndividual getOWLIndividual( String individualName){
 		long initialTime = System.nanoTime();
@@ -475,8 +450,8 @@ public class OWLLibrary {
 	 * already exists in the ontology then the object will refer to it,
 	 * otherwise the method will create a new ontological entity
 	 * (not automatically added to the ontology).
-	 * @param dataPropertyName string to define the name of the ontological data property
-	 * @return the OWL data property with the given name and IRI paths in accordance with the OWLReference
+	 * @param dataPropertyName  name of the ontological data property.
+	 * @return the OWL data property with the given name and IRI paths, in accordance with the OWLReference
 	 */
 	public OWLDataProperty getOWLDataProperty(String dataPropertyName) {
 		long initialTime = System.nanoTime();
@@ -493,8 +468,8 @@ public class OWLLibrary {
 	 * already exists in the ontology then the object will refer to it,
 	 * otherwise the method will create a new ontological entity
 	 * (not automatically added to the ontology).
-	 * @param objPropertyName string to define the name of the ontological object property
-	 * @return the OWL object property with the given name and IRI paths in accordance with the OWLReference
+	 * @param objPropertyName name of the ontological object property.
+	 * @return the OWL object property with the given name and IRI paths, in accordance with the OWLReference
 	 */
 	public OWLObjectProperty getOWLObjectProperty( String objPropertyName){
 		long initialTime = System.nanoTime();
@@ -507,24 +482,22 @@ public class OWLLibrary {
 	}
 	/**
 	 * Returns an Object which represents an ontological literal
-	 * with a given value and specific IRI paths. Indeed it calls:
-	 * {@link #getOWLLiteral(Object, OWLDatatype)}
-	 * with {@code value} and {@code null} input parameters.
-	 * @param value defines the value of the ontological literal
-	 * @return the OWL literal with the given value, type and IRI paths in accordance with the OWLReference
+	 * with a given value and specific IRI paths.
+	 * @param value defines the value of the ontological literal to get.
+	 * @return the OWL literal with the given value, type and IRI paths, in accordance with the OWLReference.
 	 */
 	public OWLLiteral getOWLLiteral( Object value){
 		return( getOWLLiteral( value, null));
 	}
 	/**
-	 * Given an Object value this method returns the OWLLiteral in accordance with the
-	 * actual type of {@code value}. The parameter Type can be null if value is of type:
-	 * String, Integer, Boolean, Float, Long or OWLLiteral; otherwise this method will returns null.
-	 * For more specific data type this methods require to give in input the right OWLDataType parameter.
-     * WARNING: it will return null if the data type of the parameter value is unknown.
-	 * @param value object to define the value of the ontological literal
-	 * @param type the OWL data type to define the literal
-	 * @return the OWL literal with the given value, type and IRI paths in accord to the OWLReference
+	 * Given an Object value, this method returns the OWLLiteral in accordance with the
+	 * actual type of {@code value}. The parameter Type can be {@code null} (i.e., not specified) if value is of type:
+	 * String, Integer, Boolean, Float, Long or OWLLiteral; otherwise it must be specified explicitly.
+	 * For more specific data type this methods require to give as input the right OWLDataType parameter.
+     * WARNING: it will return {@code null} if the data type of the parameter value is unknown.
+	 * @param value value of queried literal.
+	 * @param type OWL data type of queried literal.
+	 * @return the OWL literal object with the given value, type and IRI paths, in accordance with the OWLReference.
 	 */
 	public OWLLiteral getOWLLiteral( Object value, OWLDatatype type){
 		long initialTime = System.nanoTime();
@@ -555,24 +528,24 @@ public class OWLLibrary {
 	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[   METHODS USED FOR REASONING   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 
 	/**
-	 * Performs reasoning on the Ontology for buffering reasoners.
-     * It does not have any effects for not buffering reasoners.
-	 * WARNING: it does not consider pending changes on the internal buffer of {@link OWLManipulator}.
-	 * The input parameter is only used for logging purposes in case of reasoning pre-processing.
-	 * @param initialTime_ns It represents the initial time used to compute the reasoning time[ns] to be logged.
+	 * Performs reasoning on the Ontology when reasoner is set to buffering mode.
+     * It does not have any effects on non-buffering reasoners.
+	 * WARNING: it does not consider pending changes on the manipulation buffer ({@link OWLManipulator}).
+	 * {@param initialTime_ns} is only used for logging purposes in case of reasoning pre-processing.
+	 * @param initialTime_ns represents the initial time used to compute the reasoning time[ns] to be logged.
 	 */
 	protected void callReasoning( Long initialTime_ns){
 		if( initialTime_ns == null)
 			initialTime_ns =  System.nanoTime();
 		this.reasoner.flush();
 		Long finalTime = System.nanoTime();
-		logger.addDebugString( " synchronising... reasoner.flush() for ontology named: " +
+		logger.addDebugString( "Synchronising... reasoner.flush() for ontology named: " +
 				". Reasoning Time: " + ( finalTime - initialTime_ns) + " [ns]" + " over ontology: " + this.getOntology());
 	}
 	/**
-	 * Performs reasoning on the Ontology for buffering reasoners.
-     * It does not have any effects for not buffering reasoners.
-	 * For logging purposes, by default it measures the reasoning time from the current system time.
+	 * Performs reasoning on the Ontology when reasoner is set to buffering mode.
+     * It does not have any effects on non-buffering reasoners.
+     * WARNING: it does not consider pending changes on the manipulation buffer ({@link OWLManipulator}).
 	 */
 	protected void callReasoning(){
 		this.callReasoning( System.nanoTime());

@@ -122,6 +122,6 @@ public class OWLRefManipulationExample {
 		// there are also other functions of OWLReferences (OWLManipulator) that you may what to use ... check out the JavaDoc
 
 		// also be sure to check how the complete documentation to see how is easy to integrate your manipulation 
-		// in the system and contribute to the comunity
+		// in the system and contribute to the community
 	}
 }
