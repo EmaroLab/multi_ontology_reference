@@ -1,3 +1,4 @@
+
 #AMOR
 
 **AMOR** - a Multi-Ontology Reference library, is a complete library of helper functions for OWL ontologies with some remarkable features. 
@@ -12,6 +13,7 @@
 + Based on latest standards: Java 8 and OWL API 5.
 
 This is the ROS version of the library, ready to be included in your ROS projects. 
+A ROS service for ontology manipulation and querying, **ARMOR**, can be found [here]{https://github.com/EmaroLab/armor}.
 
 For legacy support (Java 7 and OWL API 3.4.5) and more reasoner choices, use the [OWL-api3](https://github.com/EmaroLab/multi_ontology_reference/tree/OWL-api3) branch.
 
