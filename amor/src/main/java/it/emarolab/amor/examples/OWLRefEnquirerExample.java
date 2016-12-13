@@ -58,7 +58,7 @@ public class OWLRefEnquirerExample {
 		System.out.println( "Query withoud synchronising the reasoner: " + individualName + " has Data Properties: " + allData);
 		// be careful while do queries with respect to buffering flags. For example this query require to 
 		// assess "hasDataProperty" as a sub property of "TopDataProperty" which requires the synchronisation of the reasoner 
-		ontoRef.synchroniseReasoner(); // you may not call this if both buffering flags are false (this calls also applyChanges())
+		ontoRef.synchronizeReasoner(); // you may not call this if both buffering flags are false (this calls also applyChanges())
 		allData = ontoRef.getDataPropertyB2Individual(individualName);
 		System.out.println( "Query with synchronising the reasoner" + individualName + " has Data Properties: " + allData);
 		System.out.println( " -------------------------------- 3 ------------------------------------------ \n");
@@ -85,7 +85,7 @@ public class OWLRefEnquirerExample {
 		Set<ObjectPropertyRelations> allObject = ontoRef.getObjectPropertyB2Individual( interestingInd);
 		System.out.println( allObject);
 		// if you update the ontology state the same functions will consider also inferred axioms
-		ontoRef.synchroniseReasoner(); // you may not call this if both buffering flags are false (this calls also applyChanges())
+		ontoRef.synchronizeReasoner(); // you may not call this if both buffering flags are false (this calls also applyChanges())
 		Set<ObjectPropertyRelations> allReasonedObject = ontoRef.getObjectPropertyB2Individual( interestingInd);
 		System.out.println( allReasonedObject);
 		System.out.println( " -------------------------------- 5 ------------------------------------------ \n");

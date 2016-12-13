@@ -64,7 +64,7 @@ public class BufferingTest {
 		reason( ontoRef);
 		
 		// 8) show results
-		ontoRef.printOntonolyOnConsole();
+		ontoRef.printOntologyOnConsole();
 		
 		System.err.println( ontoRef.getIndividualB2Thing());
 		
@@ -97,6 +97,6 @@ public class BufferingTest {
 	// update the state of the reasoner w.r.t. buffering flag
 	private static void reason( OWLReferences ontoRef){
 		if( BUFFERING_REASONER)
-			ontoRef.synchroniseReasoner();
+			ontoRef.synchronizeReasoner();
 	}
 }

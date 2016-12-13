@@ -22,7 +22,7 @@ public class OWLRefDebuggingExample {
 		OWLReferences ontoRef = OWLReferencesContainer.newOWLReferenceFromWeb( ontoRefName, filePath, pizzaOntologyIri, bufferingReasoner);
 		
 		// 3) you may want to print the ontology.
-		ontoRef.printOntonolyOnConsole();
+		ontoRef.printOntologyOnConsole();
 		 
 		// 4) [PERAMETER] the system comes with a simple GUI from which it is possible to see the state of the ontology
 		// during run time as well as make some basic changes. Be aware that the GUI is not stable yet!

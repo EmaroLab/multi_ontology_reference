@@ -26,38 +26,37 @@ import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
 */
 abstract public class ReasonerExplanator{
 	/**
-	 * This is the object that contains all the needed references
+	 * This is the object that contains all the required references
 	 * to an OWL ontology. Set on constructor.
 	 */
 	private OWLLibrary owlLibrary;
 
 	/**
-	 * This object is used to log informations about the instances of this class.
-	 * The logs can be activated by setting the flag: {@link LoggerFlag#LOG_REASONER_EXPLANATION}
+	 * This object is used to log information about the instances of this class.
+	 * The logs can be activated by setting the flag {@link LoggerFlag#LOG_REASONER_EXPLANATION}
 	 */
 	private Logger logger = new Logger( this, LoggerFlag.getLogReasonerExplanation());
 
 	/**
-	 * This constructor just save the instance of the OWL Library
-	 * that refers to all the OWL object instantiated in a specific References
-	 * @param owlLibrary the object containing OWL instances of a specified References
+	 * Constructor.
+	 * @param owlLibrary an object collecting all OWL entities belonging to an OWL reference
 	 */
 	protected ReasonerExplanator( OWLLibrary owlLibrary){
 		this.owlLibrary = owlLibrary;
 	}
 
 	/**
-	 * @return all the explanation that the reasoner can provide when an inconsistency occurs to be printed for debugging.
+	 * @return all the explanation that the reasoner can provide when an inconsistency occurs. Can be printed for debugging.
 	 */
 	abstract protected String getExplanation();
 
 	/**
-	 * This method should print on console (or use {@link #showErrorDialog(String)}) in order to show that an inconsistency occurs.
+	 * This method should print on console (or use {@link #showErrorDialog(String)}) in order to show that an inconsistency occurred.
 	 */
 	abstract protected void notifyInconsistency();
 
 	/**
-	 * This method show a graphical panel by notify the user that an inconsistency occurs.
+	 * This method show a graphical panel to notify the user that an inconsistency occurred.
 	 * @param text the text to be notified to the user
 	 */
 	protected void showErrorDialog( String text){
@@ -66,7 +65,7 @@ abstract public class ReasonerExplanator{
 	}
 
 	/**
-	 * @return the instance that points to all the needed objects of an OWL References. 
+	 * @return the instance that points to all the objects of an OWL Reference.
 	 * Initialised on constructor.
 	 */
 	protected OWLLibrary getOwlLibrary(){
@@ -74,8 +73,8 @@ abstract public class ReasonerExplanator{
 	}
 
 	/**
-	 * @return the logging object associated to this class with the activation
-	 * flag: {@link LoggerFlag#LOG_REASONER_EXPLANATION}
+	 * @return the logging object associated to this class.
+	 * Logging can be activated by the flag {@link LoggerFlag#LOG_REASONER_EXPLANATION}.
 	 */
 	protected Logger getLogger(){
 		return this.logger;

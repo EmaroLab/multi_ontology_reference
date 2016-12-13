@@ -78,8 +78,8 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 //	private  final static OWLObjectRenderer renderer = new DLSyntaxObjectRenderer(); !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	/**
-	 * This object is used to log informations about the instances of this class.
-	 * The logs can be activated by setting the flag: {@link LoggerFlag#LOG_REFERENCES_INTERFACE}
+	 * This object is used to log information about the instances of this class.
+	 * The logs can be activated by setting the flag {@link LoggerFlag#LOG_REFERENCES_INTERFACE}
 	 */
 	private Logger logger = new Logger( this, LoggerFlag.LOG_REFERENCES_INTERFACE);
 	
@@ -87,69 +87,72 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 
 	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   CONSTRUCTORS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 	/**
-	 * Create a new references to an ontology using the standard reasoner (given by {@link #getDefaultReasoner(Boolean)}).
-	 * @param referenceName the unique identifier of this ontology references. This is the key with which this instance
-	 * is stored in the system map {@link OWLReferencesContainer#allReferences}
-	 * @param filePath the file path (or URL) to the ontology.
-	 * @param ontologyPath the IRI path of the ontology. 
-	 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-	 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link #synchroniseReasoner()} gets called. 
-	 * @param command specifying if the ontology should be created, loaded from file or from web. Possible value of {@code commands} are:
-	 * {@link OWLReferencesContainer#COMMAND_CREATE}, {@link OWLReferencesContainer#COMMAND_LOAD_FILE} or 
-	 * {@link OWLReferencesContainer#COMMAND_LOAD_WEB}.
+	 * Create a new references to an ontology using the standard reasoner.
+	 * @param referenceName the unique identifier for this ontology reference.
+     *                      The reference is stored in {@link OWLReferencesContainer#allReferences}.
+	 * @param filePath the ontology file path (or URL).
+	 * @param ontologyPath the ontology IRI path.
+	 * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+     *                          is called. Else, the reasoner is called after every change to the ontology.
+	 * @param command specify if the reference must be created or loaded (from file or web).
+     *                Possible values for{@code commands} are:
+     *                {@link OWLReferencesContainer#COMMAND_CREATE}, {@link OWLReferencesContainer#COMMAND_LOAD_FILE} or
+     *                {@link OWLReferencesContainer#COMMAND_LOAD_WEB}.
 	 */
 	protected OWLReferencesInterface( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner, Integer command){
 		super(); // just create OWL library it does not initialise it. Remember to set iriFilePath and iriOntologyPath before to do enything else.
 		// track this instance of this class
 		if( referenceName != null)
-			initialiser( referenceName, filePath, ontologyPath, null, true, command);
+			initializer( referenceName, filePath, ontologyPath, null, true, command);
 		else logger.addDebugString( "Cannot initialise an OWL References with null name.", true);
 	}
-	/**
-	 * Create a new references to an ontology with the given specifications.
-	 * @param referenceName the unique identifier of this ontology references. This is the key with which this instance
-	 * is stored in the system map {@link OWLReferencesContainer#allReferences}
-	 * @param filePath the file path (or URL) to the ontology.
-	 * @param ontologyPath the IRI path of the ontology.
-	 * @param reasonerFactory the reasoner factory qualifier used to instance the reasoner assigned to the ontology refereed by this class. 
-	 * If this parameter is {@code null} the default reasoner type is given by the method {@link #getDefaultReasoner(Boolean)}.
-	 * The values of this parameter have to be in the range: [{@link OWLLibrary#REASONER_QUALIFIER_PELLET},
-	 * {@link OWLLibrary#REASONER_QUALIFIER_HERMIT}, {@link OWLLibrary#REASONER_QUALIFIER_SNOROCKET} or {@link OWLLibrary#REASONER_QUALIFIER_FACT}]. 
-	 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-	 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link #synchroniseReasoner()} gets called. 
-	 * @param command specifying if the ontology should be created, loaded from file or from web. Possible value of {@code commands} are:
-	 * {@link OWLReferencesContainer#COMMAND_CREATE}, {@link OWLReferencesContainer#COMMAND_LOAD_FILE} or 
-	 * {@link OWLReferencesContainer#COMMAND_LOAD_WEB}.
-	 */
+    /**
+     * Create a new references to an ontology using the standard reasoner.
+     * @param referenceName the unique identifier for this ontology reference.
+     *                      The reference is stored in {@link OWLReferencesContainer#allReferences}.
+     * @param filePath the ontology file path (or URL).
+     * @param ontologyPath the ontology IRI path.
+     * @param reasonerFactory the reasoner factory qualifier referring to the reasoner to use.
+     *                        Possible values are: [{@link OWLLibrary#REASONER_QUALIFIER_PELLET},
+     *                        {@link OWLLibrary#REASONER_QUALIFIER_HERMIT}, {@link OWLLibrary#REASONER_QUALIFIER_SNOROCKET}
+     *                        or {@link OWLLibrary#REASONER_QUALIFIER_FACT}].
+     * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+     *                          is called. Else, the reasoner is called after every change to the ontology.
+     * @param command specify if the reference must be created or loaded (from file or web).
+     *                Possible values for{@code commands} are:
+     *                {@link OWLReferencesContainer#COMMAND_CREATE}, {@link OWLReferencesContainer#COMMAND_LOAD_FILE} or
+     *                {@link OWLReferencesContainer#COMMAND_LOAD_WEB}.
+     */
 	protected OWLReferencesInterface( String referenceName, String filePath, String ontologyPath, String reasonerFactory, Boolean bufferingReasoner, Integer command) {
 		super(); // just create OWL library it does not initialise it. Remember to set iriFilePath and iriOntologyPath before to do enything else.
 		// track this instance of this class
 		if( referenceName != null)
-			initialiser( referenceName, filePath, ontologyPath, reasonerFactory, bufferingReasoner, command);
+			initializer( referenceName, filePath, ontologyPath, reasonerFactory, bufferingReasoner, command);
 		else logger.addDebugString( "Cannot initialise an OWL References with null name.", true);
 	}
 
 	/**
-	 * This method implements the common initialisation procedure called by all the constructors:
-	 * {@link #OWLReferencesInterface(OWLReferencesSerializable)}, {@link #OWLReferencesInterface(String, String, String, int)} and
-	 * {@link #OWLReferencesInterface(String, String, String, OWLReasoner, Boolean, int)}. 
-	 * Last but not the least it calls {@link OWLReferencesContainer#addInstance(OWLReferencesInterface)} in order
-	 * to add this References to the complete static map of the system. 
-	 * @param referenceName the unique identifier of this ontology references. This is the key with which this instance
-	 * is stored in the system map {@link OWLReferencesContainer#allReferences}
-	 * @param filePath the file path (or URL) to the ontology.
-	 * @param ontologyPath the IRI path of the ontology.
-	 * @param reasonerFactory the reasoner factory qualifier used to instance the reasoner assigned to the ontology refereed by this class. 
-	 * If this parameter is {@code null} the default reasoner type is given by the method {@link #getDefaultReasoner(Boolean)}.
-	 * The values of this parameter have to be in the range: [{@link OWLLibrary#REASONER_QUALIFIER_PELLET},
-	 * {@link OWLLibrary#REASONER_QUALIFIER_HERMIT}, {@link OWLLibrary#REASONER_QUALIFIER_SNOROCKET} or {@link OWLLibrary#REASONER_QUALIFIER_FACT}]. 
-	 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-	 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link #synchroniseReasoner()} gets called.
-	 * @param command specifying if the ontology should be created, loaded from file or from web. Possible value of {@code commands} are:
-	 * {@link OWLReferencesContainer#COMMAND_CREATE}, {@link OWLReferencesContainer#COMMAND_LOAD_FILE} or 
-	 * {@link OWLReferencesContainer#COMMAND_LOAD_WEB}.
+	 * This method implements the common initialisation procedure called by
+	 * {@link OWLReferencesInterface(String, String, String, Boolean, Integer)} and
+	 * {@link OWLReferencesInterface(String, String, String, OWLReasoner, Boolean, Integer)}.
+	 * It stores the reference created in {@link OWLReferencesContainer#addInstance(OWLReferencesInterface)}
+     * to create a static map of the system.
+	 * @param referenceName the unique identifier for this ontology reference.
+     *                      The reference is stored in {@link OWLReferencesContainer#allReferences}.
+     * @param filePath the ontology file path (or URL).
+     * @param ontologyPath the ontology IRI path.
+     * @param reasonerFactory the reasoner factory qualifier referring to the reasoner to use.
+     *                        Possible values are: [{@link OWLLibrary#REASONER_QUALIFIER_PELLET},
+     *                        {@link OWLLibrary#REASONER_QUALIFIER_HERMIT}, {@link OWLLibrary#REASONER_QUALIFIER_SNOROCKET}
+     *                        or {@link OWLLibrary#REASONER_QUALIFIER_FACT}].
+     * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+     *                          is called. Else, the reasoner is called after every change to the ontology.
+     * @param command specify if the reference must be created or loaded (from file or web).
+     *                Possible values for{@code commands} are:
+     *                {@link OWLReferencesContainer#COMMAND_CREATE}, {@link OWLReferencesContainer#COMMAND_LOAD_FILE} or
+     *                {@link OWLReferencesContainer#COMMAND_LOAD_WEB}.
 	 */
-	private synchronized void initialiser( String referenceName, String filePath, String ontologyPath, String reasonerFactory, Boolean bufferingReasoner, Integer command){
+	private synchronized void initializer(String referenceName, String filePath, String ontologyPath, String reasonerFactory, Boolean bufferingReasoner, Integer command){
 		this.referenceName = referenceName; // set the unique identifier of this object
 		if(  OWLReferencesContainer.addInstance( this)){ // add this class to the static map
 			long initialTime = System.nanoTime();
@@ -198,13 +201,11 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	}
 
 	/**
-	 * This method is called when the {@code reasonerFactory} is null or not given on constructor.
-	 * It creates a new instance of the reasoner and set it to this References.
-	 * By default, it calls the Pellet reasoner through {@link OWLLibrary#createPelletReasoner(OWLReferencesInterface, boolean)}.<br>
-	 * Last but not the least, consider that this is the only calls that initialise the Pellet explanator object.
-	 * @param buffering set to {@code true} if the changes on the ontology should be buffered and
-	 * the effects will be applied by calling {@link #factory. Set to {@code false} if the reasoner has to
-	 * consider the changes on the ontology as soon as they are performed. 
+	 * Method called when the {@code reasonerFactory} is {@code null} or not given.
+	 * It creates a new instance of the reasoner and assign it to the reference.
+	 * By default, it creates an instance of the Pellet reasoner {@link OWLLibrary#setPelletReasoner(boolean, String)}.<br>
+	 * @param buffering if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+     *                  is called. Else, the reasoner is called after every change to the ontology.
 	 */
 	protected void setDefaultReasoner( Boolean buffering){ 
 		this.setPelletReasoner( buffering, referenceName);
@@ -213,8 +214,8 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	}
 	
 	/**
-	 * This method set the default reasoner explanator object for pellet.
-	 * To be called in {@link #initialiser(String, String, String, String, Boolean, Integer)}
+	 * Sets the default reasoner explanator object for pellet.
+	 * It is called in {@link #initializer(String, String, String, String, Boolean, Integer)}
 	 * and {@link #setDefaultReasoner(Boolean)}.
 	 */
 	private void setPelletReasonerExplanator(){
@@ -229,8 +230,8 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	}
 
 	/**
-	 * This method calls {@link OWLReferencesContainer#removeInstance(OWLReferencesInterface)}
-	 * in order to remove it from the complete static system map when this object gets finalised.
+	 * Calls {@link OWLReferencesContainer#removeInstance(OWLReferencesInterface)}
+	 * to remove to remove the reference from the static system map when this object gets finalized.
 	 * @see java.lang.Object#finalize()
 	 */
 	@Override
@@ -239,31 +240,48 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		super.finalize();
 	}
 
+	/**
+     * Modify the current reasoner buffering mode.
+	 * @param bufferize if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+     *                  is called. Else, the reasoner is called after every change to the ontology.
+	 */
+	public synchronized void setOWLManipulatorBuffering( Boolean bufferize){
+		manipulator.setManipulationBuffering( bufferize);
+	}
+
+	/**
+     * Modify the current enquirer completeness setting.
+	 * @param flag set to {@code true} if the enquirer should return all the sub/super
+	 * properties up to the leaves/root of the structure.
+	 * Else, it returns only the first direct assertion.
+	 */
+	public synchronized void setOWLEnquirerCompletenessFlag( Boolean flag){
+		this.enquirer.setReturningCompleteDescription( flag);
+	}
+
 	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   GETTERS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 	/**
-	 * @return the referenceName of this instance used by {@link OWLReferencesContainer}.
-	 * This is initialised during constructor and it can be used to retrieve a pointer to an  
-	 * already instantiated ontology reference. This name should be considered as an ontology
-	 * unique qualifier.
+	 * @return the referenceName in {@link OWLReferencesContainer} referring to this instance.
+	 * The reference name is initialized by the constructor and  can be used to retrieve a pointer
+     * to an instantiated ontology. This name should be considered as an ontology unique qualifier.
 	 */
 	public synchronized String getReferenceName() {
 		return referenceName;
 	}
 	/**
-	 * @return the directory path (or the URL) to the file that contains the ontology
-	 * given on constructor.
+	 * @return the directory path (or the URL) to the file that contains the ontology.
 	 */
 	public synchronized String getFilePath() {
 		return filePath;
 	}
 	/**
-	 * @return the ontology semantic path given on constructor.
+	 * @return the ontology semantic path (IRI).
 	 */
 	public synchronized String getOntologyPath() {
 		return ontologyPath;
 	}
 	/**
-	 * @return the command used on constructor. It range of values are: 
+	 * @return the mode this is instance has been initialized. Possible values are:
 	 * [{@link OWLReferencesContainer#COMMAND_CREATE}, {@link OWLReferencesContainer#COMMAND_LOAD_FILE}, 
 	 * {@link OWLReferencesContainer#COMMAND_LOAD_WEB}].
 	 */
@@ -271,71 +289,66 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		return usedCommand;
 	}
 	/**
-	 * @return the value of the reasoner buffering flag used on constructor.
+	 * @return the value of the reasoner buffering flag.
+     * If {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+     * is called. Else, the reasoner is called after every change to the ontology.
 	 */
 	public synchronized Boolean useBufferingReasoner(){ 
 		return bufferingReasoner;
 	}	
 	/**
-	 * @return the object that can explain the inconsistency of the reasoner.
-	 * It is only implemented for Pellet and it is initialised only if the default reasoner is used.
+	 * @return explanator object used to return the causes of an inconsistency.
+	 * It is only implemented for Pellet and it is automatically initialized if the default reasoner is used.
 	 */
-	public synchronized ReasonerExplanator getReasonerExplanator(){
+	public synchronized ReasonerExplanator getReasonerExplainer(){
 		return reasonerExplanator;
 	}
 	
 	/**
-	 * @return the object able to manipulate the ontology with not thread save implementation.
-	 * This object should not be used from an aMOR user. Use {@link OWLReferences} instead.
+	 * @return the object that applies manipulation to the ontology (not thread safe).
+	 * This object should not be used by a user. Use {@link OWLReferences} instead.
 	 */
 	protected synchronized OWLManipulator getOWLManipulator(){
 		return this.manipulator;
 	}
 	/**
-	 * @param willBufferise the flag to set in the {@link OWLManipulator#setManipulationBuffering(Boolean)}
-	 * in order to change the buffering (or not) behaviour for apply changes into the ontology.
-	 */
-	public synchronized void setOWLManipulatorBuffering( Boolean willBufferise){
-		manipulator.setManipulationBuffering( willBufferise);
-	}
-	/**
-	 * This method calls {@link OWLManipulator#applyChanges()}. This will apply all the
-	 * changes stored in a buffering manipulator.
+	 * This method calls {@link OWLManipulator#applyChanges()}.
+     * it caused all buffered manipulations to be immediately applied.
 	 */
 	public synchronized void applyOWLManipulatorChanges(){
 		manipulator.applyChanges();
 	}
 	/**
-	 * This method calls {@link OWLManipulator#applyChanges(OWLOntologyChange)}.
-	 * @param addAxiom the axiom to be applied into the ontology
+	 * Applies a single axiom (expressed as an ontology change) to the ontology by calling {@link OWLManipulator#applyChanges(OWLOntologyChange)}.
+	 * @param addAxiom the axiom to be applied into the ontology.
 	 */
 	public synchronized void applyOWLManipulatorChanges(OWLOntologyChange addAxiom){
 		manipulator.applyChanges(addAxiom);
 	}
 	/**
-	 * This method calls {@link OWLManipulator#applyChanges(List)}.
-	 * @param addAxiom the list of axioms to be applied into the ontology
+	 * Applies a list of axioms (expressed as ontology changes) to the ontology by calling {@link OWLManipulator#applyChanges(List)}.
+	 * @param addAxiom the list of axioms to be applied into the ontology.
 	 */
 	public synchronized void applyOWLManipulatorChanges(List<OWLOntologyChange> addAxiom){
 		manipulator.applyChanges(addAxiom);
 	}
 	
 	/**
-	 * This method calls {@link OWLManipulator#applyChanges(List)} with the input
-	 * parameter computed with {@link OWLManipulator#getAddAxiom(OWLAxiom)}.
-	 * @param addAxiom the axiom to be added and applyed to the ontology.
-	 * Dependign from {@link OWLManipulator#isChangeBuffering()} flag those changes would be
-	 * added (or not) to the interal manipulator buffer.
+     * Applies an axiom to the ontology. First, it gets the necessary changes using
+	 * {@link OWLManipulator#applyChanges(List)}, then calls {@link OWLManipulator#getAddAxiom(OWLAxiom)} to apply them.
+     * Depending on {@link OWLManipulator#isChangeBuffering()} flag, those changes would be
+     * added (or not) to the internal manipulator buffer.
+	 * @param addAxiom the axiom to be added and applied to the ontology.
 	 */
 	public synchronized void applyOWLManipulatorChangesAddAxiom( OWLAxiom addAxiom){
 		manipulator.applyChanges( manipulator.getAddAxiom( addAxiom));
 	}
 	/**
-	 * This method calls {@link OWLManipulator#applyChanges(List)} with the input
-	 * parameter computed with {@link OWLManipulator#getRemoveAxiom(OWLAxiom)}.
-	 * @param addAxiom the axiom to be removed and applyed to the ontology.
-	 * Dependign from {@link OWLManipulator#isChangeBuffering()} flag those changes would be
-	 * added (or not) to the interal manipulator buffer.
+	 * Removes an axiom to the ontology. First, it gets the necessary changes using
+     * {@link OWLManipulator#applyChanges(List)}, then calls {@link OWLManipulator#getAddAxiom(OWLAxiom)} to apply them.
+     * Depending on {@link OWLManipulator#isChangeBuffering()} flag, those changes would be
+     * added (or not) to the internal manipulator buffer.
+	 * @param removeAxiom the axiom to be removed and applied to the ontology.
 	 */
 	public synchronized void applyOWLManipulatorChangesRemoveAxiom( OWLAxiom removeAxiom){
 		manipulator.applyChanges( manipulator.getRemoveAxiom( removeAxiom));
@@ -343,98 +356,85 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	
 	
 	/**
-	 * @return the object able to query the ontology with not thread save implementation.
+	 * @return the object used to query the ontology (not thread safe).
 	 * This object should not be used from an aMOR user. Use {@link OWLReferences} instead.
 	 */
 	protected synchronized OWLEnquirer getOWLEnquirer(){
 		return this.enquirer;
 	}
 	/**
-	 * @return {@code true} if the enquirer would return all the sup/super
+	 * @return {@code true} if the enquirer is set to return all the sup/super
 	 * properties up to the leaf/root of the structure.
-	 * {@code false} it would return only the frist direct assertion.
+	 * Else, it returns only the first direct assertion.
 	 */
 	public synchronized Boolean getOWLEnquirerCompletenessFlag(){
 		return this.enquirer.isReturningCompleteDescription();
 	}
-	/**
-	 * @param flag set to {@code true} if the enquirer should return all the sup/super
-	 * properties up to the leaf/root of the structure.
-	 * {@code false} it would return only the frist direct assertion.
-	 */
-	public synchronized void setOWLEnquirerCompletenessFlag( Boolean flag){
-		this.enquirer.setReturningCompleteDescription( flag);
-	}
+
 	
 
 	// [[[[[[[[[[[[[[[[[[[[[[   METHODS TO CALL REASONING   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 	/**
-	 * If the Ontology is consistent it will synchronise a buffering reasoner
-	 * calling {@code reasoner.flush()}; if the reasoner has a false buffering 
-	 * flag, than this method has no effects. If an inconsistency error 
-	 * occurs than this method will print over console an explanation of the 
-	 * error. Such an explanation interface can be implemented with the {@link ReasonerExplanator} interface.
-	 * Note that if the ontology is inconsistent than all the methods
-	 * in this class may return a null value.
-	 * Moreover, consider that this methods calls {@link OWLManipulator#applyChanges()}
-	 * in order to synchronise the buffer before to reason.
-	 * Last but not the least note that for a buffering reasoner you can use
-	 * manually the method {@link #checkConsistent()}
+	 * If the Ontology is consistent, it will synchronise a buffering reasoner
+	 * calling {@code reasoner.flush()}; if the reasoner buffering is set to false,
+     * then this method has no effects. <br>
+     * If an inconsistency error occurs, it will print on console an explanation of the
+	 * error. Such an explanation interface can be implemented with the {@link ReasonerExplanator} interface. <br>
+	 * Note that if the ontology is inconsistent then all the methods in this class may return {@code null}.
+	 * WARNING: manipulation buffer is always flushed before synchronizing the reasoner by {@link OWLManipulator#applyChanges()}.
+	 * You can synchronize the reasoner manually (non-buffering mode) by using {@link #checkConsistent()}
 	 */
-	public synchronized void synchroniseReasoner(){
+	public synchronized void synchronizeReasoner(){
 		if( this.isConsistent()){
 			try{
 				Long initialTime = System.nanoTime(); 
 				this.getOWLManipulator().applyChanges(); // be sure to empty the buffer (if any)
 				this.callReasoning( initialTime);
 				if( !this.checkConsistent())
-					this.loggInconsistency();
+					this.logInconsistency();
 			} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-				this.loggInconsistency();
+				this.logInconsistency();
 			}
 		} else {
 			this.checkConsistent();
 		}
 	}
 	/**
-	 * If the Ontology is consistent it will synchronise a buffering reasoner
-	 * calling {@code reasoner.flush()}; if the reasoner has a false buffering 
-	 * flag, than this method has no effects. If an inconsistency error 
-	 * occurs than this method will print over console an explanation of the 
-	 * error. Such an explanation interface can be implemented with the {@link ReasonerExplanator} interface.
-	 * Note that if the ontology is inconsistent than all the methods
-	 * in this class may return a null value.
-	 * Moreover, consider that this methods calls {@link OWLManipulator#applyChanges( List)}
-	 * in order to use a custom buffer of ontology changes before to reason (see {@link OWLManipulator}).
-	 * Last but not the least note that for a buffering reasoner you can use
-	 * manually the method {@link #checkConsistent()}
-	 * @param changesBuffer the ontological changes to add and reason about.
-	 */
-	public synchronized void synchroniseReasoner( List< OWLOntologyChange> changesBuffer){
+     /**
+     * Applies some changes, then synchronize the reasoner.
+     * If the Ontology is consistent, it will synchronise a buffering reasoner
+     * calling {@code reasoner.flush()}; if the reasoner buffering is set to false,
+     * then this method has no effects. <br>
+     * If an inconsistency error occurs, it will print on console an explanation of the
+     * error. Such an explanation interface can be implemented with the {@link ReasonerExplanator} interface. <br>
+     * Note that if the ontology is inconsistent then all the methods in this class may return {@code null}.
+     * WARNING: manipulation buffer is always flushed before synchronizing the reasoner by {@link OWLManipulator#applyChanges()}.
+     * You can synchronize the reasoner manually (non-buffering mode) by using {@link #checkConsistent()}
+     */
+	public synchronized void synchronizeReasoner(List< OWLOntologyChange> changesBuffer){
 		if( this.isConsistent()){
 			try{
 				Long initialTime = System.nanoTime(); 
 				this.getOWLManipulator().applyChanges( changesBuffer);
 				this.callReasoning( initialTime);
 				if( !this.checkConsistent())
-					this.loggInconsistency();
+					this.logInconsistency();
 			} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-				this.loggInconsistency();
+				this.logInconsistency();
 			}
 		} else {
 			this.checkConsistent();
 		}
 	}
 	/**
-	 * @return the consistency flag for this OWL References
+	 * @return the consistency state flag for this OWL Reference.
 	 */
 	public synchronized boolean isConsistent() {
 		return consistent;
 	}
 	/**
-	 * call the reasoner to check ontology consistency and synchronises the internal flag of this class.
-	 * Finally it returns such a flag.
-	 * It return the results of {@link #isConsistent()} after the check.
+	 * Call the reasoner to check ontology consistency and synchronizes the consistency state flag of this instance.
+     * @return the consistency state after the reasoner is synchronized .
 	 */
 	protected synchronized boolean checkConsistent() {
 		consistent = this.getReasoner().isConsistent();
@@ -442,13 +442,14 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	}
 
 	/**
-	 * This method check if the {@link #reasonerExplanator} is initialised. And if yes calls {@link OWLLibrary.ReasonerExplanation#notifyInconsistency()}.
-	 * Otherwise, it log an error on the console by saying that an inconsistency occurs.
+	 * This method check if the {@link #reasonerExplanator} is initialised.
+     * If yes, it calls {@link ReasonerExplanator#notifyInconsistency()}.
+	 * Otherwise, it logs to console that no Reasoner Explanator implementation is initialized.
 	 */
-	protected synchronized void loggInconsistency(){
+	protected synchronized void logInconsistency(){
 		if( reasonerExplanator != null)
 			reasonerExplanator.notifyInconsistency();
-		else logger.addDebugString( "The ontology is not consistent but the system does not provide any ReasonerExplanation implementation.", true);
+		else logger.addDebugString( "The ontology is not consistent but the system does not provide any ReasonerExplanator implementation.", true);
 	}
 
 
@@ -463,27 +464,24 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	 * License: GPL v2 <br><br>
 	 *  
 	 * <p>
-	 * This class implements {@link OWLLibrary.ReasonerExplanation}
+	 * This class implements {@link ReasonerExplanator(OWLLibrary)}
 	 * only for the Pellet reasoner.
 	 * </p>
 	 * 
-	 * @see 
-	 *
-	 * 
 	 * @version 2.0
 	 */
+
 	public class PelletReasonerExplanation extends ReasonerExplanator{
 		/**
-		 * The References to the ontology from which explain inconsistency
+		 * The References to the ontology whose inconsistencies should be explained
 		 */
 		private OWLReferencesInterface ontoRef;
 
 		/**
-		 * This method instantiate this class without initialise
-		 * {@link #getOwlLibrary()}. Anyway, it saves in this object
+		 * This method instantiate this class without initializing
+		 * {@link #getOwlLibrary()}. Anyway, it saves this object in
 		 * a more general instance of {@link OWLReferencesInterface}
-		 * @param ontoRef the OWL References to the ontology to be used
-		 * for explain the consistency.
+		 * @param ontoRef the OWL References to the ontology whose inconsistencies should be explained.
 		 */
 		protected PelletReasonerExplanation(OWLReferencesInterface ontoRef) {
 			super( null); 
@@ -493,7 +491,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		/**
 		 * It uses Manchester syntax to explain possible inconsistencies.
 		 * @return an inconsistency explanation as a string of text.
-		 * @see aMOR.owlInterface.OWLLibrary.ReasonerExplanation#getExplanation()
+		 * @see ReasonerExplanator#getExplanation()
 		 */
 		@Override
 		protected String getExplanation() {
@@ -518,7 +516,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 				return(  ontoRef + "is not consistent. No message was give from the reasoner, an error occurs during explanation retrieves. " + e.getCause());
 			}
 			*/
-			return( "pellet exmplanation to be migrated");
+			return( "pellet explanation to be migrated");
 		}
 
 		@Override
@@ -530,13 +528,14 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 
 	// [[[[[[[[[[[[[[[[[[[[[[   METHODS TO PARSE ONTOLOGY NAMES   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 	/**
-	 * Its purposes is to be used when an entity of the ontology can
-	 * have only one element by semantic specifications. In particular, this method
-	 * returns {@code null} {@code if( set.size() == 0)}. Otherwise it will iterate over 
-	 * the set and return just the first value. Note that a set does not
-	 * guarantee that its order is always the same.
-	 * @param set a generic set of object
-	 * @return an element of the set
+	 * Utility method to get an object from a set which is supposed to have only one element.
+     * Returns {@code null} {@code if( set.size() == 0)}.
+     * If the set is non-empty, returns the first value, which can change since the sets are non ordered.
+     * Example: you need to get the value of an object property but you know from the design of your ontology
+     * that an individual can be assigned only one value for that specific property. If more than one are assigned,
+     * a random one is returned.
+	 * @param set a generic set of objects.
+	 * @return an element of the set.
 	 */
 	public synchronized Object getOnlyElement( Set< ?> set){
 		if( set != null){
@@ -544,33 +543,31 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 				return( i);
 			}
 		} 
-		logger.addDebugString("get only elements cannot work with an null or empty set", true);
+		logger.addDebugString("Get only elements cannot work with an null or empty set.", true);
 		return( null); 
 	}
 	/**
-	 * It uses a render defined as {@code OWLObjectRenderer renderer = new DLSyntaxObjectRenderer();}
-	 * to get the name of an ontological object from its IRI path. 
-	 * It returns null if the input parameter is {@code null}.
-	 * This is jsut a not static interface to the method {@link #getOWLName(OWLObject)}.
-	 * @param o the object for which get the ontological name 
+	 * It gets the name of an ontological object from its IRI path.
+	 * It returns {@code null} if the input parameter is {@code null}.
+	 * This is just a non-static interface to the method {@link #getOWLName(OWLObject)}.
+	 * @param obj the object for which to get the ontological name
 	 * @return the name of the ontological object given as input parameter.
 	 */
-	public synchronized String getOWLObjectName( OWLObject o){
-		return getOWLName( o);
+	public synchronized String getOWLObjectName( OWLObject obj){
+		return getOWLName( obj);
 	}
 	/**
-	 * It uses a render defined as {@code OWLObjectRenderer renderer = new DLSyntaxObjectRenderer();}
-	 * to get the name of an ontological object from its IRI path. 
-	 * It returns null if the input parameter is {@code null}.
-	 * @param o the object for which get the ontological name 
+	 * It gets the name of an ontological object from its IRI path.
+	 * It returns {@code null} if the input parameter is {@code null}.
+	 * @param obj the object for which get the ontological name
 	 * @return the name of the ontological object given as input parameter.
 	 */
-	public synchronized static String getOWLName( OWLObject o){
+	public synchronized static String getOWLName( OWLObject obj){
 		/*if( o != null)
 			return renderer.render( o));
 			*/
-		if( o != null){
-			String tmp = o.toString();
+		if( obj != null){
+			String tmp = obj.toString();
 			// ex: <http://www.co-ode.org/ontologies/pizza/pizza.owl#America>
 			int start = tmp.indexOf( "#");
 			int end = tmp.indexOf( ">");
@@ -589,13 +586,12 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
  			}
 		}	
 		staicLogger.addDebugString( "Cannot get the OWL name of a null OWL object", true);
-		return o.toString();
+		return obj.toString();
 	}
 	/**
-	 * It uses a render defined as {@code OWLObjectRenderer renderer = new DLSyntaxObjectRenderer();}
-	 * to get the name of a set of ontological objects from its IRI path. 
-	 * It returns null if the input parameter is {@code null}.
-	 *  This is jsut a not static interface to the method {@link #getOWLName(Set)}.
+	 * It gets the name of a set of ontological objects from its IRI path.
+	 * It returns {@code null} if the input parameter is {@code null}.
+	 * This is just a not static interface to the method {@link #getOWLName(Set)}.
 	 * @param objects the set of objects for which get the ontological name 
 	 * @return the name of the ontological objects given as input parameters.
 	 */
@@ -603,9 +599,8 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		return getOWLName( objects);
 	}
 	/**
-	 * It uses a render defined as {@code OWLObjectRenderer renderer = new DLSyntaxObjectRenderer();}
-	 * to get the name of a set of ontological objects from its IRI path. 
-	 * It returns null if the input parameter is {@code null}.
+	 * It gets the name of a set of ontological objects from its IRI path.
+	 * It returns {@code null} if the input parameter is {@code null}.
 	 * @param objects the set of objects for which get the ontological name 
 	 * @return the name of the ontological objects given as input parameters.
 	 */
@@ -623,7 +618,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 
 	// [[[[[[[[[[[[[[[[[[[[[[   METHODS TO SAVE (print) ONTOLOGY   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 	/**
-	 * Save the refereed Ontology by using the path stored on {@link #getIriFilePath()}.
+	 * Save the referenced ontology by using the path stored on {@link #getIriFilePath()}.
 	 */
 	public synchronized void saveOntology(){
 		try {
@@ -636,8 +631,8 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		}
 	}
 	/**
-	 * Save the refereed Ontology by using the path given as input argument.
-	 * @param filePath the directory path in which save the ontology
+	 * Save the referenced ontology by using the path given as input argument.
+	 * @param filePath the directory path in which save the ontology.
 	 */
 	public synchronized void saveOntology( String filePath){
 		try {
@@ -650,9 +645,9 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		}
 	}
 	/**
-	 * It prints the ontology on the java console using Manchester formatting. 
+	 * It prints the ontology on the java console using Manchester syntax.
 	 */
-	public void printOntonolyOnConsole() {
+	public void printOntologyOnConsole() {
 		/*try{
 			long initialTime = System.nanoTime();
 			ManchesterOWLSyntaxOntologyFormat manSyntaxFormat = new ManchesterOWLSyntaxOntologyFormat();
@@ -667,7 +662,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		} catch( OWLOntologyStorageException e){
 			e.printStackTrace();
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			this.loggInconsistency();
+			this.logInconsistency();
 		}*/
 		System.err.println( "The ontology printing on console has not been ported to owl 5 yet !!!");
 	}
@@ -684,14 +679,12 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	 * License: GPL v2 <br><br>
 	 *  
 	 * <p>
-	 * This class implements method to instantiate or retrieve a reference to an ontology.<br>
-	 * In particular, this is done by keeping track of all the created instances of the extending class
+	 * This class implements methods to instantiate or retrieve a reference to an ontology.<br>
+	 * This is done by keeping track of all instances of the extending classes
 	 * of {@link OWLReferencesInterface} in a static map ({@link #allReferences}). 
-	 * Which links each instance with respect to a name {@code ontoName} given on construction 
-	 * as an unique ontology qualifier. 
+	 * The database maps each instance with respect to a name ({@code ontoName})
+     * given when the reference was initialized as an unique ontology qualifier.
 	 * </p>
-	 * 
-	 * @see 
 	 *
 	 * 
 	 * @version 2.0
@@ -719,15 +712,15 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 
 		// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   CLASS PRIVATE FIELDS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 		/**
-		 * This static map contains all the OWL references instantiate by the system through this class. 
-		 * More in particular, this map is an instance of {@link ConcurrentHashMap}, please see its specification
-		 * for synchronisation on a thread save system.  
+		 * This static map contains all the OWL references instantiated by the system and stored in this class.
+		 * In particular, this map is an instance of {@link ConcurrentHashMap}, please see its specification
+		 * for synchronisation on a thread safe system.
 		 */
 		private static Map<String, OWLReferencesInterface> allReferences = new ConcurrentHashMap<String, OWLReferencesInterface>();
 
 		/**
-		 * This object is used to log informations about the owl references managed by this container class.
-		 * The logs can be activated by setting the flag: {@link LoggerFlag#LOG_REFERENCES_CONTAINER}
+		 * This object is used to log information about the owl references managed by this container class.
+		 * The logs can be activated by setting the flag {@link LoggerFlag#LOG_REFERENCES_CONTAINER}.
 		 */
 		private static Logger logger = new Logger( OWLReferencesContainer.class, LoggerFlag.LOG_REFERENCES_CONTAINER);
 
@@ -735,11 +728,11 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 
 		// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   METHODS TO MANAGE THE MAP   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 		/**
-		 * This method adds an instance to the internal map {@link #allReferences}. 
-		 * This procedure is automatically managed by using the creating procedure implemented by this class.
-		 * @param instance the new OWL reference to be add to the internal map
-		 * @return {@code false} if the map already contains an object with name {@link OWLReferencesInterface#getReferenceName()}.
-		 * This implies that the {@code instance} is not added to the map. {@code true} otherwise.
+		 * This method adds a reference instance to the internal map {@link #allReferences}.
+		 * This procedure is automatically managed by using the instantiating procedure implemented by this class.
+		 * @param instance the new OWL reference to be add to the internal map.
+		 * @return {@code false} if the map already contains an object with name {@link OWLReferencesInterface#getReferenceName()}
+         * and no action was taken. {@code true} otherwise.
 		 */
 		private static Boolean addInstance( OWLReferencesInterface instance){
 			String refName = instance.getReferenceName();
@@ -747,15 +740,15 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 				allReferences.putIfAbsent( refName, instance);
 				return( true);
 			}
-			logger.addDebugString( "Exception: cannot create another Ontology with referencing name : " + refName, true);
+			logger.addDebugString( "Exception: cannot create another Ontology with referencing name: " + refName, true);
 			return( false);
 		}	
 		/**
-		 * This method remove an instance to the internal map {@link #allReferences}.
-		 * This procedure is automatically managed by using the {@link OWLReferencesInterface#finalize()} method.
-		 * @param instance the OWL reference to be removed from the internal map
-		 * @return {@code false} if the map does not contain an object with name {@link OWLReferencesInterface#getReferenceName()}.
-		 * This implies that the {@code instance} is not removed from the map. {@code true} otherwise.
+		 * This method remove an instance from the internal map {@link #allReferences}.
+		 * This is automatically done when {@link OWLReferencesInterface#finalize()} method is called.
+		 * @param instance the OWL reference to be removed from the internal map.
+		 * @return {@code false} if the map does not contain an object with name {@link OWLReferencesInterface#getReferenceName()}
+         * and no action was taken. {@code true} otherwise.
 		 */
 		private static Boolean removeInstance( OWLReferencesInterface instance){
 			String refName = instance.getReferenceName();
@@ -763,48 +756,44 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 				allReferences.remove( refName);
 				return( true);
 			}
-			logger.addDebugString( "Exception: cannot remve an Ontology with referencing name : " + refName, true);
+			logger.addDebugString( "Exception: cannot remove an Ontology with referencing name: " + refName, true);
 			return( false);
 		}
 
 		/**
-		 * @param instance the OWL interfacing object to check.
+		 * @param instance the OWL interface object to check.
 		 * @return {@code true} if the internal map {@link #allReferences} 
-		 * contains this instance. It will return {@code false} otherwise.
+		 * contains this instance. {@code false} otherwise.
 		 */
 		public static Boolean isInstance( OWLReferencesInterface instance){
 			return isInstance( instance.getReferenceName());
 		}
 		/**
-		 * @param referenceName the referencing name to the OWL interfacing object to check.
+		 * @param referenceName the reference name to the OWL reference object to check.
 		 * @return {@code true} if the internal map {@link #allReferences} 
-		 * contains this instance. It will return {@code false} otherwise.
+		 * contains a matching instance. {@code false} otherwise.
 		 */
 		public static Boolean isInstance( String referenceName){
 			return allReferences.containsKey( referenceName);
 		}
 		/**
-		 * Return a particular OWL references, given its name {@link OWLReferencesInterface#getReferenceName()}. 
-		 * Basically this is done by just calling: 
-		 * {@code return( this.getAllInstances().get(referenceName))}.
+		 * Return a particular OWL reference, given its name.
 		 * 
-		 * @param referenceName the referring name to a particular instance of OWL ontology references.
-		 * @return the instance of this class attached to a particular name. 
-		 * {@code null} if the map does not contains an object with the key equal to the {@code referenceName}.
+		 * @param referenceName the reference name of a particular OWL ontology references instance.
+		 * @return the instance carrying the specified reference name name.
+		 *         Returns {@code null} if the map does not contains an object a matching {@code referenceName}.
 		 */
 		public static OWLReferencesInterface getOWLReferences( String referenceName){
 			return( allReferences.get( referenceName));
 		}
 		/**
-		 * @return the key set of the internal map that contains all the ontology references instances ({@link #allReferences}).
-		 * This is done by just calling: {@link Map#keySet()}
+		 * @return all reference names stored in ({@link #allReferences}).
 		 */
 		public static Set< String> getOWLReferencesKeys(){
 			return allReferences.keySet();
 		}
 		/**
-		 * @return the value set of the internal map that contains all the ontology references instances ({@link #allReferences}).
-		 * This is done by just calling: {@link Map#values()}
+		 * @return all the reference instances stored in ({@link #allReferences}).
 		 */
 		public static Collection< OWLReferencesInterface> getOWLReferencesValues(){
 			return allReferences.values();
@@ -814,16 +803,15 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 
 		/**
 		 * Creates a new OWL References by calling {@link OWLReferences#OWLReferences(String, String, String, Boolean, Integer)}
-		 * @param referenceName the unique identifier of this ontology references. This is the key with which this instance
-		 * is stored in the system map {@link OWLReferencesContainer#allReferences}
+		 * @param referenceName the unique identifier of this ontology references to store in {@link OWLReferencesContainer#allReferences}.
 		 * @param filePath the file path (or URL) to the ontology.
 		 * @param ontologyPath the IRI path of the ontology. 
-		 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-		 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link #synchroniseReasoner()} gets called. 
-		 * @param command specifying if the ontology should be created, loaded from file or from web. Possible value of {@code commands} are:
-		 * {@link OWLReferencesContainer#COMMAND_CREATE}, {@link OWLReferencesContainer#COMMAND_LOAD_FILE} or 
-		 * {@link OWLReferencesContainer#COMMAND_LOAD_WEB}.
-		 * @return the created and fully initialised OWL References object
+		 * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+         *                          is called. Else, the reasoner is called after every change to the ontology.
+		 * @param command specifying if the ontology should be created, loaded from file or from web. Possible values are:
+		 *                {@link OWLReferencesContainer#COMMAND_CREATE}, {@link OWLReferencesContainer#COMMAND_LOAD_FILE} or 
+		 *                {@link OWLReferencesContainer#COMMAND_LOAD_WEB}.
+		 * @return a fully initialised OWL Reference object.
 		 */
 		public static OWLReferences newOWLReferences( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner, Integer command){
 			return new OWLReferences( referenceName, filePath, ontologyPath, bufferingReasoner, command);
@@ -832,20 +820,19 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 
 		/**
 		 * Creates a new OWL References by calling {@link OWLReferences#OWLReferences(String, String, String, String, Boolean, Integer)}
-		 * @param referenceName the unique identifier of this ontology references. This is the key with which this instance
-		 * is stored in the system map {@link OWLReferencesContainer#allReferences}
+		 * @param referenceName the unique identifier of this ontology reference to store in {@link OWLReferencesContainer#allReferences}.
 		 * @param filePath the file path (or URL) to the ontology.
 		 * @param ontologyPath the IRI path of the ontology.
-		 * @param reasonerFactory the reasoner factory qualifier used to instance the reasoner assigned to the ontology refereed by this class. 
-		 * If this parameter is {@code null} the default reasoner type is given by the method {@link #getDefaultReasoner(Boolean)}.
-		 * The values of this parameter have to be in the range: [{@link OWLLibrary#REASONER_QUALIFIER_PELLET},
-		 * {@link OWLLibrary#REASONER_QUALIFIER_HERMIT}, {@link OWLLibrary#REASONER_QUALIFIER_SNOROCKET} or {@link OWLLibrary#REASONER_QUALIFIER_FACT}]. 
-		 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-		 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link #synchroniseReasoner()} gets called. 
+		 * @param reasonerFactory the reasoner factory qualifier referring to the reasoner to use.
+         *                        Possible values are: [{@link OWLLibrary#REASONER_QUALIFIER_PELLET},
+         *                        {@link OWLLibrary#REASONER_QUALIFIER_HERMIT}, {@link OWLLibrary#REASONER_QUALIFIER_SNOROCKET}
+         *                        or {@link OWLLibrary#REASONER_QUALIFIER_FACT}].
+		 * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+         *                          is called. Else, the reasoner is called after every change to the ontology.
 		 * @param command specifying if the ontology should be created, loaded from file or from web. Possible value of {@code commands} are:
-		 * {@link OWLReferencesContainer#COMMAND_CREATE}, {@link OWLReferencesContainer#COMMAND_LOAD_FILE} or 
-		 * {@link OWLReferencesContainer#COMMAND_LOAD_WEB}.
-		 * @return the created and fully initialised OWL References object
+		 *                {@link OWLReferencesContainer#COMMAND_CREATE}, {@link OWLReferencesContainer#COMMAND_LOAD_FILE} or 
+		 *                {@link OWLReferencesContainer#COMMAND_LOAD_WEB}.
+		 * @return a fully initialised OWL Reference object.
 		 */
 		public static OWLReferences newOWLReferences( String referenceName, String filePath, String ontologyPath, String reasonerFactory, Boolean bufferingReasoner, Integer command){
 			return new OWLReferences(referenceName, filePath, ontologyPath, reasonerFactory, bufferingReasoner, command);
@@ -853,61 +840,61 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 
 
 		/**
-		 * Create a new References to an new empty ontology with the default reasoner ({@link OWLReferencesInterface#setDefaultReasoner(Boolean)}). 
-		 * @param referenceName the unique identifier of the created References.
-		 * @param filePath the directory path to the file used (by default) for saving the ontology
+		 * Create a new References from a new empty ontology with the default reasoner ({@link OWLReferencesInterface#setDefaultReasoner(Boolean)}). 
+		 * @param referenceName the unique identifier of this ontology reference to store in {@link OWLReferencesContainer#allReferences}.
+		 * @param filePath the path to save the newly generated ontology.
 		 * @param ontologyPath the semantic IRI path of the ontology to be created
-		 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-		 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link OWLReferencesInterface#synchroniseReasoner()} gets called.
-		 * @return the created and fully initialised OWL References object
+		 * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+         *                          is called. Else, the reasoner is called after every change to the ontology.
+		 * @return a fully initialised OWL Reference object.
 		 */
 		public static OWLReferences newOWLReferencesCreated( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner){
 			return new OWLReferences( referenceName, filePath, ontologyPath, bufferingReasoner, COMMAND_CREATE);
 		}
 		/**
 		 * Create a new References to an new empty ontology with the Pellet reasoner. 
-		 * @param referenceName the unique identifier of the created References.
-		 * @param filePath the directory path to the file used (by default) for saving the ontology
+		 * @param referenceName the unique identifier of this ontology reference to store in {@link OWLReferencesContainer#allReferences}.
+		 * @param filePath the path to save the newly generated ontology.
 		 * @param ontologyPath the semantic IRI path of the ontology to be created
-		 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-		 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link OWLReferencesInterface#synchroniseReasoner()} gets called.
-		 * @return the created and fully initialised OWL References object
+		 * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+         *                          is called. Else, the reasoner is called after every change to the ontology.
+		 * @return a fully initialised OWL Reference object.
 		 */
 		public static OWLReferences newOWLReferencesCreatedWithPellet( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner){
 			return new OWLReferences(referenceName, filePath, ontologyPath, OWLLibrary.REASONER_QUALIFIER_PELLET, bufferingReasoner, COMMAND_CREATE);
 		}
 		/**
 		 * Create a new References to an new empty ontology with the Hermit reasoner. 
-		 * @param referenceName the unique identifier of the created References.
-		 * @param filePath the directory path to the file used (by default) for saving the ontology
-		 * @param ontologyPath the semantic IRI path of the ontology to be created
-		 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-		 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link OWLReferencesInterface#synchroniseReasoner()} gets called.
-		 * @return the created and fully initialised OWL References object
+		 * @param referenceName the unique identifier of this ontology reference to store in {@link OWLReferencesContainer#allReferences}.
+         * @param filePath the path to save the newly generated ontology.
+         * @param ontologyPath the semantic IRI path of the ontology to be created
+         * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+         *                          is called. Else, the reasoner is called after every change to the ontology.
+         * @return a fully initialised OWL Reference object.
 		 */
 		public static OWLReferences newOWLReferencesCreatedWithHermit( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner){
 			return new OWLReferences(referenceName, filePath, ontologyPath, OWLLibrary.REASONER_QUALIFIER_HERMIT, bufferingReasoner, COMMAND_CREATE);
 		}
 		/**
 		 * Create a new References to an new empty ontology with the Fact reasoner. 
-		 * @param referenceName the unique identifier of the created References.
-		 * @param filePath the directory path to the file used (by default) for saving the ontology
-		 * @param ontologyPath the semantic IRI path of the ontology to be created
-		 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-		 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link OWLReferencesInterface#synchroniseReasoner()} gets called.
-		 * @return the created and fully initialised OWL References object
+		 * @param referenceName the unique identifier of this ontology reference to store in {@link OWLReferencesContainer#allReferences}.
+         * @param filePath the path to save the newly generated ontology.
+         * @param ontologyPath the semantic IRI path of the ontology to be created
+         * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+         *                          is called. Else, the reasoner is called after every change to the ontology.
+         * @return a fully initialised OWL Reference object.
 		 */
 		public static OWLReferences newOWLReferencesCreatedWithFact( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner){
 			return new OWLReferences(referenceName, filePath, ontologyPath, OWLLibrary.REASONER_QUALIFIER_FACT, bufferingReasoner, COMMAND_CREATE);
 		}
 		/**
 		 * Create a new References to an new empty ontology with the Snorocket reasoner. 
-		 * @param referenceName the unique identifier of the created References.
-		 * @param filePath the directory path to the file used (by default) for saving the ontology
-		 * @param ontologyPath the semantic IRI path of the ontology to be created
-		 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-		 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link OWLReferencesInterface#synchroniseReasoner()} gets called.
-		 * @return the created and fully initialised OWL References object
+		 * @param referenceName the unique identifier of this ontology reference to store in {@link OWLReferencesContainer#allReferences}.
+         * @param filePath the path to save the newly generated ontology.
+         * @param ontologyPath the semantic IRI path of the ontology to be created
+         * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+         *                          is called. Else, the reasoner is called after every change to the ontology.
+         * @return a fully initialised OWL Reference object.
 		 */
 		public static OWLReferences newOWLReferencesCreatedWithSnorocket( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner){
 			return new OWLReferences(referenceName, filePath, ontologyPath, OWLLibrary.REASONER_QUALIFIER_SNOROCKET, bufferingReasoner, COMMAND_CREATE);
@@ -916,61 +903,61 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 
 		/**
 		 * Create a new References to an ontology loaded from file with the default reasoner ({@link OWLReferences#setDefaultReasoner(Boolean)}). 
-		 * @param referenceName the unique identifier of the created References.
-		 * @param filePath the directory path for load the ontology. (Used also as a default for saving).
-		 * @param ontologyPath the semantic IRI path of the ontology to be created
-		 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-		 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link OWLReferencesInterface#synchroniseReasoner()} gets called.
-		 * @return the created and fully initialised OWL References object
+		 * @param referenceName the unique identifier of this ontology reference to store in {@link OWLReferencesContainer#allReferences}.
+         * @param filePath path to the file to load (used by default for saving too).
+         * @param ontologyPath the semantic IRI path of the ontology to be created
+         * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+         *                          is called. Else, the reasoner is called after every change to the ontology.
+         * @return a fully initialised OWL Reference object.
 		 */
 		public static OWLReferences newOWLReferenceFromFile( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner){
 			return new OWLReferences( referenceName, filePath, ontologyPath, bufferingReasoner, COMMAND_LOAD_FILE);
 		}
 		/**
 		 * Create a new References to an ontology loaded from file with the Pellet reasoner. 
-		 * @param referenceName the unique identifier of the created References.
-		 * @param filePath the directory path for load the ontology. (Used also as a default for saving).
-		 * @param ontologyPath the semantic IRI path of the ontology to be created
-		 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-		 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link OWLReferencesInterface#synchroniseReasoner()} gets called.
-		 * @return the created and fully initialised OWL References object
+		 * @param referenceName the unique identifier of this ontology reference to store in {@link OWLReferencesContainer#allReferences}.
+         * @param filePath path to the file to load (used by default for saving too).
+         * @param ontologyPath the semantic IRI path of the ontology to be created
+         * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+         *                          is called. Else, the reasoner is called after every change to the ontology.
+         * @return a fully initialised OWL Reference object.
 		 */
 		public static OWLReferences newOWLReferenceFromFileWithPellet( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner){
 			return new OWLReferences( referenceName, filePath, ontologyPath,  OWLLibrary.REASONER_QUALIFIER_PELLET, bufferingReasoner, COMMAND_LOAD_FILE);
 		}
 		/**
 		 * Create a new References to an ontology loaded from file with the Hermit reasoner. 
-		 * @param referenceName the unique identifier of the created References.
-		 * @param filePath the directory path for load the ontology. (Used also as a default for saving).
-		 * @param ontologyPath the semantic IRI path of the ontology to be created
-		 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-		 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link OWLReferencesInterface#synchroniseReasoner()} gets called.
-		 * @return the created and fully initialised OWL References object
+		 * @param referenceName the unique identifier of this ontology reference to store in {@link OWLReferencesContainer#allReferences}.
+         * @param filePath path to the file to load (used by default for saving too).
+         * @param ontologyPath the semantic IRI path of the ontology to be created
+         * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+         *                          is called. Else, the reasoner is called after every change to the ontology.
+         * @return a fully initialised OWL Reference object.
 		 */
 		public static OWLReferences newOWLReferenceFromFileWithHermit( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner){
 			return new OWLReferences( referenceName, filePath, ontologyPath,  OWLLibrary.REASONER_QUALIFIER_HERMIT, bufferingReasoner, COMMAND_LOAD_FILE);
 		}
 		/**
 		 * Create a new References to an ontology loaded from file with the Fact reasoner. 
-		 * @param referenceName the unique identifier of the created References.
-		 * @param filePath the directory path for load the ontology. (Used also as a default for saving).
-		 * @param ontologyPath the semantic IRI path of the ontology to be created
-		 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-		 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link OWLReferencesInterface#synchroniseReasoner()} gets called.
-		 * @return the created and fully initialised OWL References object
-		 */
+		 * @param referenceName the unique identifier of this ontology reference to store in {@link OWLReferencesContainer#allReferences}.
+         * @param filePath path to the file to load (used by default for saving too).
+         * @param ontologyPath the semantic IRI path of the ontology to be created
+         * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+         *                          is called. Else, the reasoner is called after every change to the ontology.
+         * @return a fully initialised OWL Reference object.
+         */
 		public static OWLReferences newOWLReferenceFromFileWithFact( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner){
 			return new OWLReferences( referenceName, filePath, ontologyPath,  OWLLibrary.REASONER_QUALIFIER_FACT, bufferingReasoner, COMMAND_LOAD_FILE);
 		}		
 		/**
 		 * Create a new References to an ontology loaded from file with the Snorocket reasoner. 
-		 * @param referenceName the unique identifier of the created References.
-		 * @param filePath the directory path for load the ontology. (Used also as a default for saving).
-		 * @param ontologyPath the semantic IRI path of the ontology to be created
-		 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-		 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link OWLReferencesInterface#synchroniseReasoner()} gets called.
-		 * @return the created and fully initialised OWL References object
-		 */
+		 * @param referenceName the unique identifier of this ontology reference to store in {@link OWLReferencesContainer#allReferences}.
+         * @param filePath path to the file to load (used by default for saving too).
+         * @param ontologyPath the semantic IRI path of the ontology to be created
+         * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+         *                          is called. Else, the reasoner is called after every change to the ontology.
+         * @return a fully initialised OWL Reference object.
+         */
 		public static OWLReferences newOWLReferenceFromFileWithSnorocket( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner){
 			return new OWLReferences( referenceName, filePath, ontologyPath,  OWLLibrary.REASONER_QUALIFIER_SNOROCKET, bufferingReasoner, COMMAND_LOAD_FILE);
 		}		
@@ -978,13 +965,13 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 
 		/**
 		 * Create a new References to an ontology loaded from web with the default reasoner ({@link OWLReferences#setDefaultReasoner(Boolean)}). 
-		 * @param referenceName the unique identifier of the created References.
-		 * @param filePath the URL path for load the ontology.
-		 * @param ontologyPath the semantic IRI path of the ontology to be created
-		 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-		 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link OWLReferencesInterface#synchroniseReasoner()} gets called.
-		 * @return the created and fully initialised OWL References object.
-		 */
+		 * @param referenceName the unique identifier of this ontology reference to store in {@link OWLReferencesContainer#allReferences}.
+         * @param filePath the URL from which to load the ontology.
+         * @param ontologyPath the semantic IRI path of the ontology to be created
+         * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+         *                          is called. Else, the reasoner is called after every change to the ontology.
+         * @return a fully initialised OWL Reference object.
+         */
 		public static OWLReferences newOWLReferenceFromWeb( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner){
 			return new OWLReferences( referenceName, filePath, ontologyPath, bufferingReasoner, COMMAND_LOAD_WEB);
 		}
@@ -993,9 +980,9 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		 * @param referenceName the unique identifier of the created References.
 		 * @param filePath the URL path for load the ontology.
 		 * @param ontologyPath the semantic IRI path of the ontology to be created
-		 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-		 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link OWLReferencesInterface#synchroniseReasoner()} gets called.
-		 * @return the created and fully initialised OWL References object.
+		 * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+         *                          is called. Else, the reasoner is called after every change to the ontology.
+		 * @return a fully initialised OWL Reference object.
 		 */
 		public static OWLReferences newOWLReferenceFromWebWithPellet( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner){
 			return new OWLReferences( referenceName, filePath, ontologyPath,  OWLLibrary.REASONER_QUALIFIER_PELLET, bufferingReasoner, COMMAND_LOAD_WEB);
@@ -1005,9 +992,9 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		 * @param referenceName the unique identifier of the created References.
 		 * @param filePath the URL path for load the ontology.
 		 * @param ontologyPath the semantic IRI path of the ontology to be created
-		 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-		 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link OWLReferencesInterface#synchroniseReasoner()} gets called.
-		 * @return the created and fully initialised OWL References object.
+		 * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+         *                          is called. Else, the reasoner is called after every change to the ontology.
+		 * @return a fully initialised OWL Reference object.
 		 */
 		public static OWLReferences newOWLReferenceFromWebWithHermit( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner){
 			return new OWLReferences( referenceName, filePath, ontologyPath,  OWLLibrary.REASONER_QUALIFIER_HERMIT, bufferingReasoner, COMMAND_LOAD_WEB);
@@ -1017,9 +1004,9 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		 * @param referenceName the unique identifier of the created References.
 		 * @param filePath the URL path for load the ontology.
 		 * @param ontologyPath the semantic IRI path of the ontology to be created
-		 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-		 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link OWLReferencesInterface#synchroniseReasoner()} gets called.
-		 * @return the created and fully initialised OWL References object.
+		 * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+         *                          is called. Else, the reasoner is called after every change to the ontology.
+		 * @return a fully initialised OWL Reference object.
 		 */
 		public static OWLReferences newOWLReferenceFromWebWithFact( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner){
 			return new OWLReferences( referenceName, filePath, ontologyPath,  OWLLibrary.REASONER_QUALIFIER_FACT, bufferingReasoner, COMMAND_LOAD_WEB);
@@ -1029,9 +1016,9 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		 * @param referenceName the unique identifier of the created References.
 		 * @param filePath the URL path for load the ontology.
 		 * @param ontologyPath the semantic IRI path of the ontology to be created
-		 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-		 * {@code false} if the reasoner should evaluated all the changes of the ontology only if the method {@link OWLReferencesInterface#synchroniseReasoner()} gets called.
-		 * @return the created and fully initialised OWL References object.
+		 * @param bufferingReasoner if {@code true}, the reasoner is triggered only when {@link #synchronizeReasoner()}
+         *                          is called. Else, the reasoner is called after every change to the ontology.
+		 * @return a fully initialised OWL Reference object.
 		 */
 		public static OWLReferences newOWLReferenceFromWebWithSnorocket( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner){
 			return new OWLReferences( referenceName, filePath, ontologyPath,  OWLLibrary.REASONER_QUALIFIER_SNOROCKET, bufferingReasoner, COMMAND_LOAD_WEB);
@@ -1056,7 +1043,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 				+ ", getOntologyPath()=" + getOntologyPath()
 				+ ", getUsedCommand()=" + getUsedCommand()
 				+ ", useBufferingReasoner()=" + useBufferingReasoner()
-				+ ", getReasonerExplanator()=" + getReasonerExplanator()
+				+ ", getReasonerExplainer()=" + getReasonerExplainer()
 				+ ", isConsistent()=" + isConsistent() + " " + super.toString();
 	}
 

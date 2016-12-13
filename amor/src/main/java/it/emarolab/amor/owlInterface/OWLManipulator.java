@@ -163,7 +163,7 @@ public class OWLManipulator{
 			logger.addDebugString( "get add axiom in: " + (System.nanoTime() - initialTime) + " [ns]");
 			return( addAxiom);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 		return null;
 	}
@@ -196,7 +196,7 @@ public class OWLManipulator{
 			if( addToChangeList)
 				changeList.add( removeAxiom);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 		logger.addDebugString( "get remove axiom in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( removeAxiom);
@@ -212,7 +212,7 @@ public class OWLManipulator{
 			changeList.clear();
 			logger.addDebugString( "apply changes in: " + (System.nanoTime() - initialTime) + " [ns]");
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 	}
 	/**
@@ -225,7 +225,7 @@ public class OWLManipulator{
 			ontoRef.getManager().applyChange( addAxiom);
 			logger.addDebugString( "apply changes in: " + (System.nanoTime() - initialTime) + " [ns]");
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 	}
 	/**
@@ -238,7 +238,7 @@ public class OWLManipulator{
 			ontoRef.getManager().applyChanges( addAxiom);
 			logger.addDebugString( "apply changes in: " + (System.nanoTime() - initialTime) + " [ns]");
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 	}
 	
@@ -267,7 +267,7 @@ public class OWLManipulator{
 					+ " with value (" + ontoRef.getOWLObjectName( value) + ") in: " + (System.nanoTime() - initialTime) + " [ns]");
 			return( add);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 			return( null);
 		}
 	}
@@ -309,7 +309,7 @@ public class OWLManipulator{
 					+ "(" + ontoRef.getOWLObjectName( ind) + ") with value (" + ontoRef.getOWLObjectName( value) + ") in: " + (System.nanoTime() - initialTime) + " [ns]");
 			return( add);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 			return( null);
 		}
 	}
@@ -349,7 +349,7 @@ public class OWLManipulator{
 			logger.addDebugString( "add individual (" + ontoRef.getOWLObjectName( ind) + ") belong to class (" + ontoRef.getOWLObjectName( cls) + ") in: " + (System.nanoTime() - initialTime) + " [ns]");
 			return( add);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 			return( null);
 		}
 
@@ -413,7 +413,7 @@ public class OWLManipulator{
 			logger.addDebugString( "set sub class (" + ontoRef.getOWLObjectName( subClass) + ") of super class (" + ontoRef.getOWLObjectName( superClass) + ") in: " + (System.nanoTime() - initialTime) + " [ns]");
 			return( adding);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 			return( null);
 		}
 	}
@@ -478,7 +478,7 @@ public class OWLManipulator{
 					+ " with value (" + ontoRef.getOWLObjectName( value) + ") in: " + (System.nanoTime() - initialTime) + " [ns]");
 			return( remove);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 			return( null);
 		}
 
@@ -521,7 +521,7 @@ public class OWLManipulator{
 					+ "(" + ontoRef.getOWLObjectName( ind) + ") with value (" + ontoRef.getOWLObjectName( value) + ") in: " + (System.nanoTime() - initialTime) + " [ns]");
 			return( remove);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 			return( null);
 		}
 	}
@@ -562,7 +562,7 @@ public class OWLManipulator{
 					+ "(" + ontoRef.getOWLObjectName( cls) + ")in: " + (System.nanoTime() - initialTime) + " [ns]");
 			return( remove);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 			return( null);
 		}
 	}
@@ -647,7 +647,7 @@ public class OWLManipulator{
 			logger.addDebugString( "remove sub class (" + ontoRef.getOWLObjectName( subClass) + ") of super class (" + ontoRef.getOWLObjectName( superClass) + ") in: " + (System.nanoTime() - initialTime) + " [ns]");
 			return( adding);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 		return( null);
 	}
@@ -685,7 +685,7 @@ public class OWLManipulator{
 			logger.addDebugString( "remove sub class (" + ontoRef.getOWLObjectName( cls) + ") in: " + (System.nanoTime() - initialTime) + " [ns]");
 			return( remove);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 			return( null);
 		}
 	}
@@ -725,7 +725,7 @@ public class OWLManipulator{
 					changes.add( this.removeDataPropertyB2Individual( ind, prop, l));
 			changes.add( this.addDataPropertyB2Individual( ind, prop, newValue));
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 			return null;
 		}
 		return changes;
@@ -749,7 +749,7 @@ public class OWLManipulator{
 				changes.add( this.removeDataPropertyB2Individual( ind, prop, oldValue));
 			changes.add( this.addDataPropertyB2Individual( ind, prop, newValue));
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 			return null;
 		}	
 		return changes;
@@ -773,7 +773,7 @@ public class OWLManipulator{
 				changes.add( this.removeObjectPropertyB2Individual( ind, prop, oldValue));
 			changes.add( this.addObjectPropertyB2Individual( ind, prop, newValue));
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 			return null;
 		}	
 		return changes;
@@ -796,7 +796,7 @@ public class OWLManipulator{
 				changes.add( this.removeIndividualB2Class( ind, oldValue));
 			changes.add( this.addIndividualB2Class( ind, newValue));
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 			return null;
 		}	
 		return changes;
@@ -878,7 +878,7 @@ public class OWLManipulator{
 			logger.addDebugString( "make disjoint individuals: " + ontoRef.getOWLObjectName(individuals) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
 			return( adding);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 		return( null);
 	}
@@ -914,7 +914,7 @@ public class OWLManipulator{
 			logger.addDebugString( "make disjoint individuals: " + ontoRef.getOWLObjectName(individuals) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
 			return( adding);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 		return( null);
 	}
@@ -950,7 +950,7 @@ public class OWLManipulator{
 			logger.addDebugString( "remove disjoint class: " + ontoRef.getOWLObjectName(classes) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
 			return( adding);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 		return( null);
 	}
@@ -986,7 +986,7 @@ public class OWLManipulator{
 			logger.addDebugString( "remove disjoint class: " + ontoRef.getOWLObjectName(classes) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
 			return( adding);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 		return( null);
 	}

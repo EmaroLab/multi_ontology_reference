@@ -276,7 +276,7 @@ public class OWLLibrary {
 	 * {@link #REASONER_QUALIFIER_PELLET}, {@link #REASONER_QUALIFIER_SNOROCKET},
 	 * {@link #REASONER_QUALIFIER_HERMIT} or {@link #REASONER_QUALIFIER_FACT}.<br>
 	 * If the buffering flag is {@code true} then the reasoner will update its
-	 * state only if {@link OWLReferencesInterface#synchroniseReasoner()} is called.
+	 * state only if {@link OWLReferencesInterface#synchronizeReasoner()} is called.
 	 * Otherwise, the reasoner will synchronise itself after every change in the ontology.
 	 * The system will return {@code null} if a java reflection error occurs while instancing the
 	 * class defined by the parameter {@code reasonerFactoryName}. 
@@ -335,7 +335,7 @@ public class OWLLibrary {
 	 * @param buffering if {@code true} the reasoner must be synchronized manually. Else, sync is automatic.
      * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
 	 */
-	protected synchronized void createSnorocketReasoner( boolean buffering, String loggingName){
+	protected synchronized void setSnorocketReasoner(boolean buffering, String loggingName){
 		setReasoner( REASONER_QUALIFIER_SNOROCKET, buffering, loggingName);
 	}
 	/**
@@ -345,7 +345,7 @@ public class OWLLibrary {
 	 * @param buffering if {@code true} the reasoner must be synchronized manually. Else, sync is automatic.
      * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
 	 */
-	protected synchronized void createHermitReasoner( boolean buffering, String loggingName){
+	protected synchronized void setHermitReasoner(boolean buffering, String loggingName){
 		setReasoner( REASONER_QUALIFIER_HERMIT, buffering, loggingName);
 	}
 	/**
@@ -355,7 +355,7 @@ public class OWLLibrary {
 	 * @param buffering if {@code true} the reasoner must be synchronized manually. Else, sync is automatic.
      * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
 	 */
-	protected synchronized void createFactReasoner( boolean buffering, String loggingName){
+	protected synchronized void setFactReasoner(boolean buffering, String loggingName){
 		setReasoner( REASONER_QUALIFIER_FACT, buffering, loggingName);
 	}
 

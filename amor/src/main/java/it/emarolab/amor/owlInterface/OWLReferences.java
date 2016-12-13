@@ -48,7 +48,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param filePath the file path (or URL) to the ontology.
 	 * @param ontologyPath the IRI path of the ontology. 
 	 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-	 * {@code false} if the reasoner should evaluate all the changes of the ontology only if the method {@link #synchroniseReasoner()} gets called.
+	 * {@code false} if the reasoner should evaluate all the changes of the ontology only if the method {@link #synchronizeReasoner()} gets called.
 	 * @param command specifying if the ontology should be created, loaded from file or from web. Possible value of {@code commands} are:
 	 * {@link OWLReferencesContainer#COMMAND_CREATE}, {@link OWLReferencesContainer#COMMAND_LOAD_FILE} or 
 	 * {@link OWLReferencesContainer#COMMAND_LOAD_WEB}.
@@ -68,7 +68,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * The values of this parameter have to be in the range: [{@link OWLLibrary#REASONER_QUALIFIER_PELLET},
 	 * {@link OWLLibrary#REASONER_QUALIFIER_HERMIT}, {@link OWLLibrary#REASONER_QUALIFIER_SNOROCKET} or {@link OWLLibrary#REASONER_QUALIFIER_FACT}]. 
 	 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
-	 * {@code false} if the reasoner should evaluate all the changes of the ontology only if the method {@link #synchroniseReasoner()} gets called.
+	 * {@code false} if the reasoner should evaluate all the changes of the ontology only if the method {@link #synchronizeReasoner()} gets called.
 	 * @param command specifying if the ontology should be created, loaded from file or from web. Possible value of {@code commands} are:
 	 * {@link OWLReferencesContainer#COMMAND_CREATE}, {@link OWLReferencesContainer#COMMAND_LOAD_FILE} or 
 	 * {@link OWLReferencesContainer#COMMAND_LOAD_WEB}.
@@ -1462,13 +1462,13 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * {@link #mutexReasoner} by making this call thread safe with respect to 
 	 * the manipulations of (performed by {@link OWLManipulator}) and queries
 	 * (performed by {@link OWLEnquirer}). 
-	 * @see OWLReferencesInterface#synchroniseReasoner()
+	 * @see OWLReferencesInterface#synchronizeReasoner()
 	 */
 	@Override
-	public synchronized void synchroniseReasoner() {
+	public synchronized void synchronizeReasoner() {
 		mutexReasoner.lock();
 		try{
-			super.synchroniseReasoner();
+			super.synchronizeReasoner();
 		} finally{
 			mutexReasoner.unlock();
 		}
@@ -1492,7 +1492,7 @@ public class OWLReferences extends OWLReferencesInterface{
 				ontoRef = InferredAxiomExporter.exportOntology( ontoRef);
 			ontoRef.saveOntology();
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			this.loggInconsistency();
+			this.logInconsistency();
 		}
 	}
 
@@ -1515,7 +1515,7 @@ public class OWLReferences extends OWLReferencesInterface{
 				ontoRef = InferredAxiomExporter.exportOntology( ontoRef);
 			ontoRef.saveOntology( filePath);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			this.loggInconsistency();
+			this.logInconsistency();
 		}
 	}
 

@@ -138,7 +138,7 @@ public class OWLEnquirer {
 		try{
 			out.addAll( ontoRef.getReasoner().getInstances( ontoClass, !returnCompleteDescription).getFlattened());
 		} catch( InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 		logger.addDebugString( "Individual belonging to class given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
@@ -204,7 +204,7 @@ public class OWLEnquirer {
 		try{
 			out.addAll( ontoRef.getReasoner().getTypes( individual, !returnCompleteDescription).getFlattened());
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 		logger.addDebugString( "Types of individual given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return out;
@@ -280,7 +280,7 @@ public class OWLEnquirer {
 			Set<OWLLiteral> valueInf = ontoRef.getReasoner().getDataPropertyValues( individual, property);
 			value.addAll( valueInf);
 		} catch( InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 		logger.addDebugString( "Data property belonging to individual given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return ( value);
@@ -353,7 +353,7 @@ public class OWLEnquirer {
 			Set<OWLNamedIndividual> reasoned = ontoRef.getReasoner().getObjectPropertyValues( individual, property).getFlattened();
 			out.addAll( reasoned);
 		} catch( InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 		logger.addDebugString( "Object property belonging to individual given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
@@ -570,7 +570,7 @@ public class OWLEnquirer {
 			for( OWLObjectPropertyExpression e : inferred)
 				out.add( e.asOWLObjectProperty());
 		} catch( InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
@@ -610,7 +610,7 @@ public class OWLEnquirer {
 			for( OWLObjectPropertyExpression e : inferred)
 				out.add( e.asOWLObjectProperty());
 		} catch( InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
@@ -650,7 +650,7 @@ public class OWLEnquirer {
 			Set<OWLDataProperty> inferred = ontoRef.getReasoner().getSubDataProperties(prop, !returnCompleteDescription).getFlattened();
 			out.addAll( inferred);
 		} catch( InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
@@ -690,7 +690,7 @@ public class OWLEnquirer {
 			Set<OWLDataProperty> infered = ontoRef.getReasoner().getSuperDataProperties(prop, !returnCompleteDescription).getFlattened();
 			out.addAll( infered);
 		} catch( InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
@@ -741,7 +741,7 @@ public class OWLEnquirer {
 		try{
 			out.addAll( ontoRef.getReasoner().getSubClasses( cl, !returnCompleteDescription).getFlattened());
 		} catch( InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
@@ -780,7 +780,7 @@ public class OWLEnquirer {
 		try{
 			classes.addAll( ontoRef.getReasoner().getSuperClasses( cl, !returnCompleteDescription).getFlattened());
 		} catch( InconsistentOntologyException e){
-			ontoRef.loggInconsistency();
+			ontoRef.logInconsistency();
 		}
 		logger.addDebugString( "get super classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( classes);

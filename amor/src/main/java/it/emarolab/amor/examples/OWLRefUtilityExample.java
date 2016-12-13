@@ -26,7 +26,7 @@ public class OWLRefUtilityExample {
 		ontoRef.applyOWLManipulatorChanges();
 		
 		// 3) [REASON__] to call the reasoner
-		ontoRef.synchroniseReasoner();
+		ontoRef.synchronizeReasoner();
 		
 		// 4) [SAVE__] to save ontology 
 		String path = "";

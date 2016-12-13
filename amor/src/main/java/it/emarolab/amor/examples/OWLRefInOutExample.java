@@ -51,7 +51,7 @@ public class OWLRefInOutExample {
 		String pizzaOntologyIri = "http://protege.stanford.edu/ontologies/pizza/pizza.owl";
 		OWLReferences ontoRef2 = OWLReferencesContainer.newOWLReferenceFromWebWithHermit( ontoRefName2, filePath2, pizzaOntologyIri, true);
 		// print the ontlogy for debugging
-		ontoRef2.printOntonolyOnConsole();
+		ontoRef2.printOntologyOnConsole();
 		// if you do not change the file path it will use filePath2 that may is not what you are looking for in the case of loading from web.
 		ontoRef2.saveOntology( ONTOLOGY_FILE_BASE + "test_loadFromWeb.owl"); 
 
@@ -62,7 +62,7 @@ public class OWLRefInOutExample {
 		String ontoRefName3 = "ontoRef3"; // this must be a unique identifier for all the references you what to create into the system
 		Boolean bufferingReasoner = true; // reasoning is not synchronised and must be called manually
 		OWLReferences ontoRef3 = OWLReferencesContainer.newOWLReferenceFromWebWithFact( ontoRefName3, filePath2, pizzaOntologyIri, bufferingReasoner);
-		ontoRef3.synchroniseReasoner(); // perform reasoning
+		ontoRef3.synchronizeReasoner(); // perform reasoning
 		// export all the inferences made by the reasoner in the saving file
 		ontoRef3.saveOntology( true, ONTOLOGY_FILE_BASE + "test_loadFromFile.owl"); // change also the saving path with respect to the one given on constructor 
 */

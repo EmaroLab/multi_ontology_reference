@@ -61,7 +61,7 @@ public class OWLRefManipulationExample {
 		ontoRef.applyOWLManipulatorChanges();
 
 		// 9) print the ontology to check the changes (or save it if you prefer)
-		ontoRef.printOntonolyOnConsole();
+		ontoRef.printOntologyOnConsole();
 
 		// 10) [REMOVE_IND] let remove an individual from the ontology
 		ontoRef.removeIndividual( "newIndividualName0");
@@ -114,7 +114,7 @@ public class OWLRefManipulationExample {
 		ontoRef.renameEntity( objProp, "hasObjectProperty_renamed");
 
 		// print the ontology and save for manipulation check
-		ontoRef.printOntonolyOnConsole();
+		ontoRef.printOntologyOnConsole();
 		ontoRef.saveOntology();
 
 		System.out.println( "DONE !!");
