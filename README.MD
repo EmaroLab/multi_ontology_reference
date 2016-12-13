@@ -19,4 +19,4 @@ For legacy support (Java 7 and OWL API 3.4.5) and more reasoner choices, use the
 
 **master** and **OWL-api5** branches are OWL api 5 based and currently support only [*Openllet*](https://github.com/Galigator/openllet), an open source fork of the Pellet reasoner. More will be added as they are ported to OWL api 5.
 
-Full documentation coming soon. If you need, you can refer to the code itself since most public functions already come with docstrings.
+Javadoc documentation is now complete and will soon be generated and uploaded.
