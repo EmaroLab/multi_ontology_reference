@@ -13,6 +13,8 @@
 
 This is the ROS version of the library, ready to be included in your ROS projects. 
 
+A ROS service for ontology manipulation and querying based on this library is available on EMAROLab@ARS ([**ARMOR**](https://github.com/EmaroLab/armor)).
+
 For legacy support (Java 7 and OWL API 3.4.5) and more reasoner choices, use the [OWL-api3](https://github.com/EmaroLab/multi_ontology_reference/tree/OWL-api3) branch.
 
 **master** and **OWL-api5** branches are OWL api 5 based and currently support only [*Openllet*](https://github.com/Galigator/openllet), an open source fork of the Pellet reasoner. More will be added as they are ported to OWL api 5.
