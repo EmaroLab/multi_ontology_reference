@@ -20,3 +20,9 @@ For legacy support (Java 7 and OWL API 3.4.5) and more reasoner choices, use the
 **master** and **OWL-api5** branches are OWL api 5 based and currently support only [*Openllet*](https://github.com/Galigator/openllet), an open source fork of the Pellet reasoner. More will be added as they are ported to OWL api 5.
 
 Javadoc documentation is now complete and will soon be generated and uploaded.
+
+
+## Contacts
+For comment, discussions or support refer to this git repository or contact us at:
+ - [luca.buoncompagni@edu.unige.it](mailto:luca.buoncompagni@edu.unige.it), 
+ - [alessio.capitanelli@dibris.unige.it](mailto:alessio.capitanelli@dibris.unige.it).
