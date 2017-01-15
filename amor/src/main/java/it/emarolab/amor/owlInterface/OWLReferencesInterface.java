@@ -586,7 +586,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
  			}
 		}	
 		staicLogger.addDebugString( "Cannot get the OWL name of a null OWL object", true);
-		return obj.toString();
+		return null;
 	}
 	/**
 	 * It gets the name of a set of ontological objects from its IRI path.
