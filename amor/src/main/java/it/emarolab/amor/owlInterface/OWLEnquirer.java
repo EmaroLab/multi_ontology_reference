@@ -183,7 +183,7 @@ public class OWLEnquirer {
 	}
 
 	/**
-	 * Returns the set of classes in which an individual has been classified.
+	 * Returns the set of classes in which an individual has been classified (except for OWLREA).
 	 * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
 	 * 
 	 * @param individual
@@ -206,6 +206,7 @@ public class OWLEnquirer {
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
 			ontoRef.logInconsistency();
 		}
+		out.remove( ontoRef.getFactory().getOWLThing());
 		logger.addDebugString( "Types of individual given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return out;
 	}
@@ -720,8 +721,8 @@ public class OWLEnquirer {
 		return( getSubClassOf( cl));
 	}
 	/**
-	 * Returns all sub-classes of a given class.
-     * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+	 * Returns all sub-classes of a given class (except for {@link OWLDataFactory#getOWLThing()}).
+         * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
 	 * 
 	 * @param cl an OWL class.
 	 * @return non-ordered set of sub-classes.
@@ -743,13 +744,14 @@ public class OWLEnquirer {
 		} catch( InconsistentOntologyException e){
 			ontoRef.logInconsistency();
 		}
+		out.remove( ontoRef.getFactory().getOWLThing());
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
 
 	/**
 	 * Returns all super-classes of a given class.
-     * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+         * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
 	 * 
 	 * @param className name of an OWL class.
 	 * @return non-ordered set of sub-classes.
@@ -759,8 +761,8 @@ public class OWLEnquirer {
 		return( getSuperClassOf( cl));
 	}
 	/**
-	 * Returns all super-classes of a given class.
-     * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+	 * Returns all super-classes of a given class (except for {@link OWLDataFactory#getOWLThing()}).
+         * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
 	 * 
 	 * @param cl an OWL class.
 	 * @return non-ordered set of sub-classes.
@@ -782,6 +784,7 @@ public class OWLEnquirer {
 		} catch( InconsistentOntologyException e){
 			ontoRef.logInconsistency();
 		}
+		classes.remove( ontoRef.getFactory().getOWLThing());
 		logger.addDebugString( "get super classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( classes);
 	}
