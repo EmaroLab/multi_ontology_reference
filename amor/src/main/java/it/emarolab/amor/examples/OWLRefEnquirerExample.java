@@ -19,14 +19,14 @@ import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContain
 public class OWLRefEnquirerExample {
 
 	public static final String OWLREFERENCES_NAME = "refName";
-	public static final String ONTOLOGY_FILE_PATH = "http://protege.stanford.edu/ontologies/pizza/pizza.owl";
+	public static final String ONTOLOGY_FILE_PATH = "httpc://protege.stanford.edu/ontologies/pizza/pizza.owl";
 	public static final String ONTOLOGY_IRI_PATH = "http://www.co-ode.org/ontologies/pizza/pizza.owl";
 	public static final String REASONER_FACTORY = OWLLibrary.REASONER_QUALIFIER_PELLET;
 	public static final Boolean BUFFERING_REASONER = true; // if true you must to update manually the reasoner. Otherwise it synchronises itself any time is needed
 	public static final Integer COMMAND = OWLReferencesContainer.COMMAND_LOAD_WEB;
 	public static final Boolean BUFFERING_OWLMANIPULATOR = false; // if true you must to apply changes manually. Otherwise their are applied as soon as possible.
 
-	public static final String ONTOLOGY_SAVING_PATH = "amor/files/ontologies/pizza_enquired.owl";
+	public static final String ONTOLOGY_SAVING_PATH = "files/ontologies/pizza_enquired.owl";
 
 	private static Logger logger = new Logger( OWLRefEnquirerExample.class, Logger.LoggerFlag.getLogOWLEnquirer());
 

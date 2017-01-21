@@ -69,7 +69,7 @@ public class ClassExchange {
 	public static final String classRootLabel = "Class Root :";
 	public static final String findLabel = "Find :";
 	public static final String defaultRootClass = "PredefinedOntology";//"rootTime";//JavaInterfaces";
-	public static final String defaultSavingPath = System.getProperty("user.dir") + "/amor/files/OntologyGui/";
+	public static final String defaultSavingPath = System.getProperty("user.dir") + "/files/OntologyGui/";
 	private static final String defaultSavingName = "";//"default";
 	 
     public final static String indAssertLabel = "[ asserted individual ]";
@@ -91,7 +91,7 @@ public class ClassExchange {
 	public static final char DOWN = 40;
 	
 	// icons
-	private final static String iconpath = System.getProperty("user.dir") + "/amor/files/Icon/";//"images/middle.gif";
+	private final static String iconpath = System.getProperty("user.dir") + "/files/icons/";//"images/middle.gif";
     private final static String iconClass = iconpath + "Class.gif";
     private final static String iconClassInf = iconpath + "inferedClass.gif";
     private final static String iconInd = iconpath + "Individual.gif";

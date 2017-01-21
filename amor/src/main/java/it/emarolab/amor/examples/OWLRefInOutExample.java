@@ -31,7 +31,7 @@ import it.emarolab.amor.owlInterface.ReasonerExplanator;
 public class OWLRefInOutExample {
 
 	public static final String ONTOLOGY_IRI_PATH = "http://www.semanticweb.org/luca-buoncompagni/aMor/examples";
-	public static final String ONTOLOGY_FILE_BASE = "amor/files/ontologies/";
+	public static final String ONTOLOGY_FILE_BASE = "files/ontologies/";
 
 	public static void main(String[] args) throws Throwable {
 		// 1) create an new ontology by using the default reasoner (it has also explanation (no more with api 5.0???)) and save it to file

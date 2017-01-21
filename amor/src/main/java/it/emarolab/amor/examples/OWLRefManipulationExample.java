@@ -11,7 +11,7 @@ import java.util.Set;
 public class OWLRefManipulationExample {
 
 	public static final String OWLREFERENCES_NAME = "refName";
-	public static final String ONTOLOGY_FILE_PATH = "amor/files/ontologies/ontology_manipulation1.owl";
+	public static final String ONTOLOGY_FILE_PATH = "files/ontologies/ontology_manipulation1.owl";
 	public static final String ONTOLOGY_IRI_PATH = "http://www.semanticweb.org/luca-buoncompagni/aMor/examples";
 	public static final Boolean BUFFERING_REASONER = true; // if true you must to update manually the reasoner. Otherwise it synchronises itself any time is needed
 	public static final Boolean BUFFERING_OWLMANIPULATOR = true; // if true you must to apply changes manually. Otherwise their are applied as soon as possible.
