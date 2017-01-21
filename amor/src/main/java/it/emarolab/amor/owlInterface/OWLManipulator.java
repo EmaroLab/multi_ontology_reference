@@ -6,37 +6,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.semanticweb.owlapi.model.AddAxiom;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
-import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
-import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
-import org.semanticweb.owlapi.model.OWLOntologyChange;
-import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
-import org.semanticweb.owlapi.model.RemoveAxiom;
+import org.semanticweb.owlapi.change.ConvertSuperClassesToEquivalentClass;
+import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OWLEntityRemover;
 import org.semanticweb.owlapi.util.OWLEntityRenamer;
 
 import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
+import org.semanticweb.owlapi.vocab.OWL2Datatype;
+
 
 // TODO :  SWRL
+// TODO : move mutex management from owl reference to here, and make this an interface
 
 /**
- * Project: aMOR <br>
- * File: .../src/aMOR.owlInterface/OWLLibrary.java <br>
- *  
- * @author Buoncompagni Luca <br><br>
- * DIBRIS emaroLab,<br> 
- * University of Genoa. <br>
- * Feb 11, 2016 <br>
- * License: GPL v2 <br><br>
+ * <div style="text-align:center;"><small>
+ * <b>Project</b>:    aMOR <br>
+ * <b>File</b>:       it.emarolab.amor.owlInterface.OWLManipulator <br>
+ * <b>Licence</b>:    GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
+ * <b>Author</b>:     Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
+ * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
+ * <b>date</b>:       Feb 10, 2016 <br>
+ * </small></div>
  *  
  * <p>
  * This class implements basic ontology manipulations.<br>
@@ -55,9 +46,35 @@ import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
  * {@literal B2} stands for "belong to".
  * </p>
  * 
- * @version 2.0
+ * @version 2.1
  */
 public class OWLManipulator{
+
+    /**
+     * An internal tag to represent an universal restriction expression.
+     * (see: {@link ClassExpressionType#OBJECT_ALL_VALUES_FROM})
+     */
+    protected static final int RESTRICTION_ONLY = 1;
+    /**
+     * A tag to represent an existential restriction expression.
+     * {@link ClassExpressionType#OBJECT_SOME_VALUES_FROM}
+     */
+    protected static final int RESTRICTION_SOME = 2;
+    /**
+     * A tag to represent an minimal cardinality restriction expression.
+     * {@link ClassExpressionType#OBJECT_MIN_CARDINALITY})
+     */
+    protected static final int RESTRICTION_MIN = 3; // >= 3 has cardinality
+    /**
+     * A tag to represent an exact cardinality restriction expression.
+     * {@link ClassExpressionType#OBJECT_EXACT_CARDINALITY})
+     */
+    protected static final int RESTRICTION_EXACT = 4;
+    /**
+     * A tag to represent an maximal cardinality restriction expression.
+     * {@link ClassExpressionType#OBJECT_MAX_CARDINALITY})
+     */
+    protected static final int RESTRICTION_MAX = 5;
 
 	/**
 	 * Member required to log class activity.
@@ -157,7 +174,7 @@ public class OWLManipulator{
 	public synchronized OWLOntologyChange getAddAxiom( OWLAxiom axiom, boolean addToChangeList){
 		try{
 			long initialTime = System.nanoTime();
-			AddAxiom addAxiom = new AddAxiom( ontoRef.getOntology(), axiom);//ontoRef.getManager().addAxiom( ontoRef.getOntology(), axiom);
+			AddAxiom addAxiom = new AddAxiom( ontoRef.getOWLOntology(), axiom);//ontoRef.getOWLManager().addAxiom( ontoRef.getOWLOntology(), axiom);
 			if( addToChangeList)
 				changeList.add( addAxiom);
 			logger.addDebugString( "get add axiom in: " + (System.nanoTime() - initialTime) + " [ns]");
@@ -192,7 +209,7 @@ public class OWLManipulator{
 		long initialTime = System.nanoTime();
 		RemoveAxiom removeAxiom = null;
 		try{
-			removeAxiom = new RemoveAxiom( ontoRef.getOntology(), axiom);//ontoRef.getManager().removeAxiom( ontoRef.getOntology(), axiom);
+			removeAxiom = new RemoveAxiom( ontoRef.getOWLOntology(), axiom);//ontoRef.getOWLManager().removeAxiom( ontoRef.getOWLOntology(), axiom);
 			if( addToChangeList)
 				changeList.add( removeAxiom);
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
@@ -208,7 +225,7 @@ public class OWLManipulator{
 	public synchronized void applyChanges(){
 		long initialTime = System.nanoTime();
 		try{
-			ontoRef.getManager().applyChanges( changeList);
+			ontoRef.getOWLManager().applyChanges( changeList);
 			changeList.clear();
 			logger.addDebugString( "apply changes in: " + (System.nanoTime() - initialTime) + " [ns]");
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
@@ -216,26 +233,26 @@ public class OWLManipulator{
 		}
 	}
 	/**
-	 * It applies a change stored in {@param addAxiom} to the ontology.
+	 * It applies a change stored in {@code addAxiom} to the ontology.
 	 * @param addAxiom a change to be applied.
 	 */
 	public synchronized void applyChanges( OWLOntologyChange addAxiom){
 		long initialTime = System.nanoTime();
 		try{
-			ontoRef.getManager().applyChange( addAxiom);
+			ontoRef.getOWLManager().applyChange( addAxiom);
 			logger.addDebugString( "apply changes in: " + (System.nanoTime() - initialTime) + " [ns]");
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
 			ontoRef.logInconsistency();
 		}
 	}
 	/**
-	 * It applies all changes stored in {@param addAxiom} to the ontology.
+	 * It applies all changes stored in {@code addAxiom} to the ontology.
 	 * @param addAxiom a the changes to be applied.
 	 */
 	public synchronized void applyChanges( List< OWLOntologyChange> addAxiom){
 		long initialTime = System.nanoTime();
 		try{
-			ontoRef.getManager().applyChanges( addAxiom);
+			ontoRef.getOWLManager().applyChanges( addAxiom);
 			logger.addDebugString( "apply changes in: " + (System.nanoTime() - initialTime) + " [ns]");
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
 			ontoRef.logInconsistency();
@@ -259,7 +276,7 @@ public class OWLManipulator{
 	public OWLOntologyChange addObjectPropertyB2Individual( OWLNamedIndividual ind, OWLObjectProperty prop, OWLNamedIndividual value){
 		long initialTime = System.nanoTime();
 		try{
-			OWLAxiom propertyAssertion = ontoRef.getFactory().getOWLObjectPropertyAssertionAxiom( prop, ind, value);
+			OWLAxiom propertyAssertion = ontoRef.getOWLFactory().getOWLObjectPropertyAssertionAxiom( prop, ind, value);
 			OWLOntologyChange add = getAddAxiom( propertyAssertion, manipulationBuffering);
 			if( !manipulationBuffering)
 				applyChanges( add);
@@ -301,7 +318,7 @@ public class OWLManipulator{
 	public OWLOntologyChange addDataPropertyB2Individual(OWLNamedIndividual ind, OWLDataProperty prop, OWLLiteral value) {
 		try{
 			long initialTime = System.nanoTime();
-			OWLAxiom newAxiom = ontoRef.getFactory().getOWLDataPropertyAssertionAxiom( prop, ind, value);
+			OWLAxiom newAxiom = ontoRef.getOWLFactory().getOWLDataPropertyAssertionAxiom( prop, ind, value);
 			OWLOntologyChange add = getAddAxiom( newAxiom, manipulationBuffering);
 			if( !manipulationBuffering)
 				applyChanges( add);
@@ -342,7 +359,7 @@ public class OWLManipulator{
 	public OWLOntologyChange addIndividualB2Class(OWLNamedIndividual ind, OWLClass cls) {
 		long initialTime = System.nanoTime();
 		try{
-			OWLAxiom newAxiom = ontoRef.getFactory().getOWLClassAssertionAxiom( cls, ind);
+			OWLAxiom newAxiom = ontoRef.getOWLFactory().getOWLClassAssertionAxiom( cls, ind);
 			OWLOntologyChange add = getAddAxiom( newAxiom, manipulationBuffering);
 			if( !manipulationBuffering)
 				applyChanges(add);
@@ -390,7 +407,7 @@ public class OWLManipulator{
 	 * Returned object can be ignored while working in buffering mode.
 	 */
 	public OWLOntologyChange addIndividual( OWLNamedIndividual ind){
-		OWLClass things = ontoRef.getFactory().getOWLThing();
+		OWLClass things = ontoRef.getOWLFactory().getOWLThing();
 		return addIndividualB2Class( ind, things);		
 	}
 
@@ -406,7 +423,7 @@ public class OWLManipulator{
 	public OWLOntologyChange addSubClassOf( OWLClass superClass, OWLClass subClass){
 		try{
 			long initialTime = System.nanoTime();
-			OWLSubClassOfAxiom subClAxiom = ontoRef.getFactory().getOWLSubClassOfAxiom( subClass, superClass);
+			OWLSubClassOfAxiom subClAxiom = ontoRef.getOWLFactory().getOWLSubClassOfAxiom( subClass, superClass);
 			OWLOntologyChange adding = getAddAxiom( subClAxiom, manipulationBuffering);
 			if( !manipulationBuffering)
 				applyChanges( adding);
@@ -440,7 +457,7 @@ public class OWLManipulator{
 	 * Returned object can be ignored while working in buffering mode.
 	 */
 	public OWLOntologyChange addClass( OWLClass cls){
-		OWLClass think = ontoRef.getFactory().getOWLThing();
+		OWLClass think = ontoRef.getOWLFactory().getOWLThing();
 		return addSubClassOf(think, cls);
 	}
 	/**
@@ -454,8 +471,563 @@ public class OWLManipulator{
 		return addClass( ontoRef.getOWLClass( className));
 	}
 
-	
-	
+	/**
+	 * Returns the changes required to set a property as sub-property of another data property.
+	 * If either property does not exists, it is created.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param superProperty the super data property.
+	 * @param subProperty the sub data property.
+	 * @return changes required to add a data property as sub-property of another data property.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public OWLOntologyChange addSubDataPropertyOf(OWLDataProperty superProperty, OWLDataProperty subProperty){
+		try{
+			long initialTime = System.nanoTime();
+			OWLSubDataPropertyOfAxiom subPropAxiom = ontoRef.getOWLFactory().getOWLSubDataPropertyOfAxiom(subProperty, superProperty);
+			OWLOntologyChange adding = getAddAxiom( subPropAxiom, manipulationBuffering);
+			if( !manipulationBuffering)
+				applyChanges( adding);
+			logger.addDebugString( "set sub data property (" + ontoRef.getOWLObjectName( superProperty) + ") of super property (" + ontoRef.getOWLObjectName( subProperty) + ") in: " + (System.nanoTime() - initialTime) + " [ns]");
+			return( adding);
+		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+			ontoRef.logInconsistency();
+			return( null);
+		}
+	}
+	/**
+	 * Returns the changes required to set a property as sub-property of another data property.
+	 * If either property does not exists, it is created.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param superPropertyName the name of the super data property.
+	 * @param subPropertyName the name of sub data property.
+	 * @return changes required to add a data property as sub-property of another data property.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public OWLOntologyChange addSubDataPropertyOf(String superPropertyName, String subPropertyName){
+		OWLDataProperty sup = ontoRef.getOWLDataProperty( superPropertyName);
+		OWLDataProperty sub = ontoRef.getOWLDataProperty( subPropertyName);
+		return( addSubDataPropertyOf( sup, sub));
+	}
+
+	/**
+	 * Returns the changes required to set a property as sub-property of another data property.
+	 * If either property does not exists, it is created.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param superProperty the super object property.
+	 * @param subProperty the sub object property.
+	 * @return changes required to add a object property as sub-property of another object property.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public OWLOntologyChange addSubObjectPropertyOf(OWLObjectProperty superProperty, OWLObjectProperty subProperty){
+		try{
+			long initialTime = System.nanoTime();
+			OWLSubObjectPropertyOfAxiom subPropAxiom = ontoRef.getOWLFactory().getOWLSubObjectPropertyOfAxiom(subProperty, superProperty);
+			OWLOntologyChange adding = getAddAxiom( subPropAxiom, manipulationBuffering);
+			if( !manipulationBuffering)
+				applyChanges( adding);
+			logger.addDebugString( "set sub object property (" + ontoRef.getOWLObjectName( superProperty) + ") of super property (" + ontoRef.getOWLObjectName( subProperty) + ") in: " + (System.nanoTime() - initialTime) + " [ns]");
+			return( adding);
+		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+			ontoRef.logInconsistency();
+			return( null);
+		}
+	}
+	/**
+	 * Returns the changes required to set a property as sub-property of another object property.
+	 * If either property does not exists, it is created.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param superPropertyName the name of the super object property.
+	 * @param subPropertyName the name of sub object property.
+	 * @return changes required to add an object property as sub-property of another object property.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public OWLOntologyChange addSubObjectPropertyOf(String superPropertyName, String subPropertyName){
+		OWLObjectProperty sup = ontoRef.getOWLObjectProperty( superPropertyName);
+		OWLObjectProperty sub = ontoRef.getOWLObjectProperty( subPropertyName);
+		return( addSubObjectPropertyOf( sup, sub));
+	}
+
+    /**
+     * Returns the changes to make a class be a sub class of an object property in existence with a class value.
+     * In symbols: {@code C &sub; p(&exist; V)}, where: {@code C} is the class, {@code p} the object property
+     * and {@code V}, the class value.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of an existential property.
+     */
+    public OWLOntologyChange addSomeObjectClassExpression(OWLClass cl, OWLObjectProperty property, OWLClass value){
+        return addObjectClassExpression( cl, property, 0, value, RESTRICTION_SOME);
+    }
+    /**
+     * Returns the changes to make a class be a sub class of an object property in existence with a class value.
+     * In symbols: {@code C &sub; p(&exist; V)}, where: {@code C} is the class, {@code p} the object property
+     * and {@code V}, the class value.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param valueName the name the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of an existential property.
+     */
+    public OWLOntologyChange addSomeObjectClassExpression(String className, String propertyName, String valueName){
+        OWLClass cl = ontoRef.getOWLClass( className);
+        OWLObjectProperty property = ontoRef.getOWLObjectProperty( propertyName);
+        OWLClass value = ontoRef.getOWLClass( valueName);
+        return addSomeObjectClassExpression( cl, property, value);
+    }
+    /**
+     * Returns the changes to make a class be a sub class of an object property universally identifying a class value.
+     * In symbols: {@code C &sub; p(&forall; V)}, where: {@code C} is the class, {@code p} the object property
+     * and {@code V}, the class value.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of an universal property.
+     */
+    public OWLOntologyChange addOnlyObjectClassExpression(OWLClass cl, OWLObjectProperty property, OWLClass value){
+        return addObjectClassExpression( cl, property, 0, value, RESTRICTION_ONLY);
+    }
+    /**
+     * Returns the changes to make a class be a sub class of an object property universally identifying a class value.
+     * In symbols: {@code C &sub; p(&forall; V)}, where: {@code C} is the class, {@code p} the object property
+     * and {@code V}, the class value.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param valueName the name the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of an universal property.
+     */
+    public OWLOntologyChange addOnlyObjectClassExpression(String className, String propertyName, String valueName){
+        OWLClass cl = ontoRef.getOWLClass( className);
+        OWLObjectProperty property = ontoRef.getOWLObjectProperty( propertyName);
+        OWLClass value = ontoRef.getOWLClass( valueName);
+        return addOnlyObjectClassExpression( cl, property, value);
+    }
+    /**
+     * Returns the changes to make a class be a sub class of an object property expression
+     * minimally identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(&lt;<sub>d</sub> V)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of a minimum number of properties
+     * restricted to a class.
+     */
+    public OWLOntologyChange addMinObjectClassExpression(OWLClass cl, OWLObjectProperty property, int cardinality, OWLClass value){
+		return addObjectClassExpression( cl, property, cardinality, value, RESTRICTION_MIN);
+	}
+    /**
+     * Returns the changes to make a class be a sub class of an object property  expression
+     * minimally identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(&lt;<sub>d</sub> V)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param valueName the name of the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of a minimum number of properties
+     * restricted to a class.
+     */
+	public OWLOntologyChange addMinObjectClassExpression(String className, String propertyName, int cardinality, String valueName){
+		OWLClass cl = ontoRef.getOWLClass( className);
+		OWLObjectProperty property = ontoRef.getOWLObjectProperty( propertyName);
+		OWLClass value = ontoRef.getOWLClass( valueName);
+		return addMinObjectClassExpression( cl, property, cardinality, value);
+	}
+    /**
+     * Returns the changes to make a class be a sub class of an object property  expression
+     * maximally identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(&gt;<sub>d</sub> V)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of a maximum number of properties
+     * restricted to a class.
+     */
+	public OWLOntologyChange addMaxObjectClassExpression(OWLClass cl, OWLObjectProperty property, int cardinality, OWLClass value){
+        return addObjectClassExpression( cl, property, cardinality, value, RESTRICTION_MAX);
+    }
+    /**
+     * Returns the changes to make a class be a sub class of an object property expression
+     * maximally identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(&gt;<sub>d</sub> V)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param valueName the name of the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of a maximum number of properties
+     * restricted to a class.
+     */
+    public OWLOntologyChange addMaxObjectClassExpression( String className, String propertyName, int cardinality, String valueName){
+        OWLClass cl = ontoRef.getOWLClass( className);
+        OWLObjectProperty property = ontoRef.getOWLObjectProperty( propertyName);
+        OWLClass value = ontoRef.getOWLClass( valueName);
+        return addMaxObjectClassExpression( cl, property, cardinality, value);
+    }
+    /**
+     * Returns the changes to make a class be a sub class of an object property expression
+     * exactly identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(=<sub>d</sub> V)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of a exact number of properties
+     * restricted to a class.
+     */
+    public OWLOntologyChange addExactObjectClassExpression(OWLClass cl, OWLObjectProperty property, int cardinality, OWLClass value){
+        return addObjectClassExpression( cl, property, cardinality, value, RESTRICTION_EXACT);
+    }
+    /**
+     * Returns the changes to make a class be a sub class of an object property expression
+     * exactly identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(=<sub>d</sub> V)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param valueName the name of the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of a exact number of properties
+     * restricted to a class.
+     */
+    public OWLOntologyChange addExactObjectClassExpression( String className, String propertyName, int cardinality, String valueName){
+        OWLClass cl = ontoRef.getOWLClass( className);
+        OWLObjectProperty property = ontoRef.getOWLObjectProperty( propertyName);
+        OWLClass value = ontoRef.getOWLClass( valueName);
+        return addExactObjectClassExpression( cl, property, cardinality, value);
+    }
+    private OWLOntologyChange addObjectClassExpression(OWLClass cl, OWLObjectProperty property, int cardinality, OWLClass value, int directive){
+        try{
+            long initialTime = System.nanoTime();
+            if( cardinality < 0){
+                logger.addDebugString( "cannot assign a negative cardinality to " + ontoRef.getOWLObjectName( cl), true);
+                return null;
+            }
+            OWLObjectRestriction cardinalityAxiom = getObjectCardinalityAxioms(cardinality, property, value, directive);
+            OWLSubClassOfAxiom subClassAxiom = ontoRef.getOWLFactory().getOWLSubClassOfAxiom( cl, cardinalityAxiom);
+            OWLOntologyChange adding = getAddAxiom( subClassAxiom, manipulationBuffering);
+            if( !manipulationBuffering)
+                applyChanges( adding);
+            logger.addDebugString( "add class expression on entity: " + ontoRef.getOWLObjectName( cl) + " " + ontoRef.getOWLObjectName( property)
+                    + " " + getCardinalityDebug( directive) + " " + cardinality + " of " + ontoRef.getOWLObjectName( value)  +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return( adding);
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+    private OWLObjectRestriction getObjectCardinalityAxioms(int cardinality, OWLObjectProperty property, OWLClass value, int directive){
+        // shared between add and removing (mutex)
+        if( directive == RESTRICTION_EXACT)
+            return ontoRef.getOWLFactory().getOWLObjectExactCardinality( cardinality, property, value);
+        if( directive == RESTRICTION_MIN)
+            return ontoRef.getOWLFactory().getOWLObjectMinCardinality( cardinality, property, value);
+        if( directive == RESTRICTION_MAX)
+            return ontoRef.getOWLFactory().getOWLObjectMaxCardinality( cardinality, property, value);
+        if( directive == RESTRICTION_SOME)
+            return ontoRef.getOWLFactory().getOWLObjectSomeValuesFrom( property, value);
+        if( directive == RESTRICTION_ONLY)
+            return ontoRef.getOWLFactory().getOWLObjectAllValuesFrom( property, value);
+        return null; // should never happen
+    }
+    private String getCardinalityDebug( int directive){
+        if( directive == RESTRICTION_EXACT)
+            return  "EXACT";
+        if( directive == RESTRICTION_MIN)
+            return  "MIN";
+        if( directive == RESTRICTION_MAX)
+            return  "MAX";
+        if( directive == RESTRICTION_ONLY)
+            return "ONLY";
+        if( directive == RESTRICTION_SOME)
+            return "SOME";
+        return null; // should never happen
+    }
+
+    /**
+     * Returns the changes to make a class be a sub class of a data property in existence with a data type value.
+     * In symbols: {@code C &sub; p(&exist; D)}, where: {@code C} is the class, {@code p} the data property
+     * and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of an existential property.
+     */
+    public OWLOntologyChange addSomeDataClassExpression(OWLClass cl, OWLDataProperty property, Class type){
+        return addDataClassExpression( cl, property, 0, type, RESTRICTION_SOME);
+    }
+    /**
+     * Returns the changes to make a class be a sub class of a data property in existence with a data type value.
+     * In symbols: {@code C &sub; p(&exist; D)}, where: {@code C} is the class, {@code p} the data property
+     * and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of an existential property.
+     */
+    public OWLOntologyChange addSomeDataClassExpression(String className, String propertyName, Class type){
+        OWLClass cl = ontoRef.getOWLClass( className);
+        OWLDataProperty property = ontoRef.getOWLDataProperty( propertyName);
+        return addSomeDataClassExpression( cl, property, type);
+    }
+    /**
+     * Returns the changes to make a class be a sub class of a data property universally identified by a data type value.
+     * In symbols: {@code C &sub; p(&forall; D)}, where: {@code C} is the class, {@code p} the data property
+     * and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of an universal property.
+     */
+    public OWLOntologyChange addOnlyDataClassExpression(OWLClass cl, OWLDataProperty property, Class type){
+        return addDataClassExpression( cl, property, 0, type, RESTRICTION_ONLY);
+    }
+    /**
+     * Returns the changes to make a class be a sub class of a data property universally identified by a data type value.
+     * In symbols: {@code C &sub; p(&forall; D)}, where: {@code C} is the class, {@code p} the data property
+     * and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of an universal property.
+     */
+    public OWLOntologyChange addOnlyDataClassExpression(String className, String propertyName, Class type){
+        OWLClass cl = ontoRef.getOWLClass( className);
+        OWLDataProperty property = ontoRef.getOWLDataProperty( propertyName);
+        return addOnlyDataClassExpression( cl, property, type);
+    }
+    /**
+     * Returns the changes to make a class be a sub class of a data property expression
+     * minimally identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(&lt;<sub>d</sub> D)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of a minimum number of
+     * properties restricted to a data type.
+     */
+    public OWLOntologyChange addMinDataClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, Class type){
+		return addDataClassExpression( cl, property, cardinality, type, RESTRICTION_MIN);
+	}
+    /**
+     * Returns the changes to make a class be a sub class of a data property expression
+     * minimally identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(&lt;<sub>d</sub> D)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of a minimum number of
+     * properties restricted to a data type.
+     */
+	public OWLOntologyChange addMinDataClassExpression( String className, String propertyName, int cardinality, Class type){
+		OWLClass cl = ontoRef.getOWLClass( className);
+		OWLDataProperty property = ontoRef.getOWLDataProperty( propertyName);
+		return addMinDataClassExpression( cl, property, cardinality, type);
+	}
+    /**
+     * Returns the changes to make a class be a sub class of a data property expression
+     * maximally identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(&gt;<sub>d</sub> D)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of a maximum number of
+     * properties restricted to a data type.
+     */
+	public OWLOntologyChange addMaxDataClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, Class type){
+		return addDataClassExpression( cl, property, cardinality, type, RESTRICTION_MAX);
+	}
+    /**
+     * Returns the changes to make a class be a sub class of a data property expression
+     * maximally identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(&gt;<sub>d</sub> D)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of a maximum number of
+     * properties restricted to a data type.
+     */
+	public OWLOntologyChange addMaxDataClassExpression(String className, String propertyName, int cardinality, Class type){
+		OWLClass cl = ontoRef.getOWLClass( className);
+		OWLDataProperty property = ontoRef.getOWLDataProperty( propertyName);
+		return addMaxDataClassExpression( cl, property, cardinality, type);
+	}
+    /**
+     * Returns the changes to make a class be a sub class of a data property expression
+     * exactly identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(=<sub>d</sub> D)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of an exact number of
+     * properties restricted to a data type.
+     */
+	public OWLOntologyChange addExactDataClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, Class type){
+		return addDataClassExpression( cl, property, cardinality, type, RESTRICTION_EXACT);
+	}
+    /**
+     * Returns the changes to make a class be a sub class of a data property expression
+     * exactly identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(=<sub>d</sub> D)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of an exact number of
+     * properties restricted to a data type.
+     */
+	public OWLOntologyChange addExactDataClassExpression( String className, String propertyName, int cardinality, Class type){
+		OWLClass cl = ontoRef.getOWLClass( className);
+		OWLDataProperty property = ontoRef.getOWLDataProperty( propertyName);
+		return addExactDataClassExpression( cl, property, cardinality, type);
+	}
+	private OWLOntologyChange addDataClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, Class c, int directive){
+		try{
+			long initialTime = System.nanoTime();
+            if( cardinality < 0){
+                logger.addDebugString( "cannot assign a negative cardinality to " + ontoRef.getOWLObjectName( cl), true);
+                return null;
+            }
+            OWLDatatype value = getDataType( c);
+            if( value == null)
+                return null;
+            OWLDataRestriction cardinalityAxiom = getDataCardinalityAxioms(cardinality, property, value, directive);
+			OWLSubClassOfAxiom subClassAxiom = ontoRef.getOWLFactory().getOWLSubClassOfAxiom( cl, cardinalityAxiom);
+			OWLOntologyChange adding = getAddAxiom( subClassAxiom, manipulationBuffering);
+			if( !manipulationBuffering)
+				applyChanges( adding);
+			logger.addDebugString( "add class expression on entity: " + ontoRef.getOWLObjectName( cl) + " " + ontoRef.getOWLObjectName( property)
+					+ " " + getCardinalityDebug( directive) + " " + cardinality + " of " + ontoRef.getOWLObjectName( value)  +
+					" in: " + (System.nanoTime() - initialTime) + " [ns]");
+			return( adding);
+		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+			ontoRef.logInconsistency();
+			return( null);
+		}
+	}
+    private OWLDataRestriction getDataCardinalityAxioms(int cardinality, OWLDataProperty property, OWLDatatype type, int directive){
+        if( directive == RESTRICTION_EXACT)
+            return ontoRef.getOWLFactory().getOWLDataExactCardinality( cardinality, property, type);
+        if( directive == RESTRICTION_MIN)
+            return ontoRef.getOWLFactory().getOWLDataMinCardinality( cardinality, property, type);
+        if( directive == RESTRICTION_MAX)
+            return ontoRef.getOWLFactory().getOWLDataMaxCardinality( cardinality, property, type);
+        if( directive == RESTRICTION_SOME)
+            return ontoRef.getOWLFactory().getOWLDataSomeValuesFrom( property, type);
+        if( directive == RESTRICTION_ONLY)
+            return ontoRef.getOWLFactory().getOWLDataAllValuesFrom( property, type);
+        return null; // should never happen
+    }
+    private OWLDatatype getDataType( Class c){
+        if( c.equals( Double.class))
+            return ontoRef.getOWLFactory().getDoubleOWLDatatype();
+        else if( c.equals( Float.class))
+            return ontoRef.getOWLFactory().getFloatOWLDatatype();
+        else if( c.equals( String.class))
+            return ontoRef.getOWLFactory().getStringOWLDatatype();
+        else if( c.equals( Boolean.class))
+            return ontoRef.getOWLFactory().getBooleanOWLDatatype();
+        else if( c.equals( Long.class))
+            return ontoRef.getOWLFactory().getOWLDatatype( OWL2Datatype.XSD_LONG.getIRI());
+        else if( c.equals( Integer.class))
+            return ontoRef.getOWLFactory().getIntegerOWLDatatype();
+        else {
+            logger.addDebugString( "cannot add data property cardinality over a class that is not ether: Float, Double, Boolean, Integer, Long or String. "
+                    + c.getSimpleName() + " found instead.", true);
+            return null;
+        }
+    }
+
+    /**
+     * Given a class {@code C}, it uses {@link org.semanticweb.owlapi.change.ConvertEquivalentClassesToSuperClasses}
+     * to convert all the sub class axioms of {@code C} into a conjunctions of expressions
+     * in the definition of the class itself.
+     * <b>REMARK:</b> remember to apply all changes to be sure that this method
+     * behaves correctly.
+     * @param className the name of the class to be converted from sub classing to equivalent expression.
+     * @return the changes to be applied in order to make all the sub axioms of a class being
+     * the conjunction of its equivalent expression.
+     */
+    public List<OWLOntologyChange> convertSuperClassesToEquivalentClass(String className){
+        return convertSuperClassesToEquivalentClass( ontoRef.getOWLClass( className));
+    }
+    /**
+     * Given a class {@code C}, it uses {@link org.semanticweb.owlapi.change.ConvertEquivalentClassesToSuperClasses}
+     * to convert all the sub class axioms of {@code C} into a conjunctions of expressions
+     * in the definition of the class itself.
+     * <b>REMARK:</b> remember to apply all changes to be sure that this method
+     * behaves correctly.
+     * @param cl the class to be converted from sub classing to equivalent expression.
+     * @return the changes to be applied in order to make all the sub axioms of a class being
+     * the conjunction of its equivalent expression.
+     */
+    public List<OWLOntologyChange> convertSuperClassesToEquivalentClass(OWLClass cl){
+        try {
+            long initialTime = System.nanoTime();
+            Set<OWLOntology> onts = new HashSet<>();// todo move to MOR manipulator
+            onts.add( ontoRef.getOWLOntology());
+            List<OWLOntologyChange> changes = new ConvertSuperClassesToEquivalentClass( ontoRef.getOWLFactory(), cl, onts, ontoRef.getOWLOntology()).getChanges();
+            for( OWLOntologyChange c : changes) {
+                if ( ! manipulationBuffering)
+                    applyChanges( c);
+                else changeList.add( c);
+            }
+            logger.addDebugString( "converting super class: " + ontoRef.getOWLObjectName( cl) + " to equivalent class" +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return( changes);
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
+
 	// ---------------------------   methods for removing entities to the ontology
 	/**
 	 * Returns the changes required to remove an object property instance with a specific value from an individual.
@@ -470,7 +1042,7 @@ public class OWLManipulator{
 	public OWLOntologyChange removeObjectPropertyB2Individual( OWLNamedIndividual ind, OWLObjectProperty prop, OWLNamedIndividual value){
 		try{
 			long initialTime = System.nanoTime();
-			OWLAxiom propertyAssertion = ontoRef.getFactory().getOWLObjectPropertyAssertionAxiom( prop, ind, value);
+			OWLAxiom propertyAssertion = ontoRef.getOWLFactory().getOWLObjectPropertyAssertionAxiom( prop, ind, value);
 			OWLOntologyChange remove = getRemoveAxiom( propertyAssertion, manipulationBuffering);
 			if( !manipulationBuffering)
 				applyChanges(remove);
@@ -513,7 +1085,7 @@ public class OWLManipulator{
 	public OWLOntologyChange removeDataPropertyB2Individual(OWLNamedIndividual ind, OWLDataProperty prop, OWLLiteral value) {
 		long initialTime = System.nanoTime();
 		try{
-			OWLAxiom newAxiom = ontoRef.getFactory().getOWLDataPropertyAssertionAxiom( prop, ind, value);
+			OWLAxiom newAxiom = ontoRef.getOWLFactory().getOWLDataPropertyAssertionAxiom( prop, ind, value);
 			OWLOntologyChange remove = getRemoveAxiom( newAxiom, manipulationBuffering);
 			if( !manipulationBuffering)
 				applyChanges( remove);
@@ -554,7 +1126,7 @@ public class OWLManipulator{
 	public OWLOntologyChange removeIndividualB2Class(OWLNamedIndividual ind, OWLClass cls) {
 		long initialTime = System.nanoTime();
 		try{
-			OWLAxiom newAxiom = ontoRef.getFactory().getOWLClassAssertionAxiom( cls, ind);
+			OWLAxiom newAxiom = ontoRef.getOWLFactory().getOWLClassAssertionAxiom( cls, ind);
 			OWLOntologyChange remove = getRemoveAxiom( newAxiom, manipulationBuffering);
 			if( !manipulationBuffering)
 				applyChanges( remove);
@@ -590,7 +1162,7 @@ public class OWLManipulator{
 	 * Returned object can be ignored while working in buffering mode.
 	 */
 	public List<RemoveAxiom> removeIndividual( OWLNamedIndividual individual){
-		OWLEntityRemover remover = new OWLEntityRemover( Collections.singleton( ontoRef.getOntology())); // ontoRef.getManager(), Collections.singleton( ontoRef.getOntology()));
+		OWLEntityRemover remover = new OWLEntityRemover( Collections.singleton( ontoRef.getOWLOntology())); // ontoRef.getOWLManager(), Collections.singleton( ontoRef.getOWLOntology()));
 		individual.accept(remover);
 		long initialTime = System.nanoTime();
 		List<RemoveAxiom> remove = remover.getChanges();
@@ -639,7 +1211,7 @@ public class OWLManipulator{
 	public OWLOntologyChange removeSubClassOf( OWLClass superClass, OWLClass subClass){
 		try{
 			long initialTime = System.nanoTime();
-			OWLSubClassOfAxiom subClAxiom = ontoRef.getFactory().getOWLSubClassOfAxiom( subClass, superClass);
+			OWLSubClassOfAxiom subClAxiom = ontoRef.getOWLFactory().getOWLSubClassOfAxiom( subClass, superClass);
 			OWLOntologyChange adding = getRemoveAxiom( subClAxiom, manipulationBuffering);
 
 			if( !manipulationBuffering)
@@ -677,8 +1249,8 @@ public class OWLManipulator{
 	public OWLOntologyChange removeClass( OWLClass cls){
 		try{
 			long initialTime = System.nanoTime();
-			OWLClass think = ontoRef.getFactory().getOWLThing();
-			OWLSubClassOfAxiom subClAxiom = ontoRef.getFactory().getOWLSubClassOfAxiom( cls, think);
+			OWLClass think = ontoRef.getOWLFactory().getOWLThing();
+			OWLSubClassOfAxiom subClAxiom = ontoRef.getOWLFactory().getOWLSubClassOfAxiom( cls, think);
 			OWLOntologyChange remove = getRemoveAxiom( subClAxiom, manipulationBuffering);
 			if( !manipulationBuffering)
 				applyChanges( remove);
@@ -701,9 +1273,511 @@ public class OWLManipulator{
 		return removeClass( ontoRef.getOWLClass( className));
 	}
 
+	/**
+	 * Returns the changes required to remove the fact that a property is a sub-property of another data property.
+	 * If either property does not exists, it is created.
+	 * Unlike addition manipulations, if an entity does not exists, it will not be created automatically.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param superProperty the super data property, from which to remove the child.
+	 * @param subProperty the sub data property, to be removed from its super property.
+	 * @return changes required to remove a data property from being a sub-property of another data property.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public OWLOntologyChange removeSubDataPropertyOf(OWLDataProperty superProperty, OWLDataProperty subProperty){
+		try{
+			long initialTime = System.nanoTime();
+			OWLSubDataPropertyOfAxiom subPropAxiom = ontoRef.getOWLFactory().getOWLSubDataPropertyOfAxiom(subProperty, superProperty);
+			OWLOntologyChange adding = getRemoveAxiom( subPropAxiom, manipulationBuffering);
+			if( !manipulationBuffering)
+				applyChanges( adding);
+			logger.addDebugString( "set sub data property (" + ontoRef.getOWLObjectName( superProperty) + ") of super property (" + ontoRef.getOWLObjectName( subProperty) + ") in: " + (System.nanoTime() - initialTime) + " [ns]");
+			return( adding);
+		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+			ontoRef.logInconsistency();
+			return( null);
+		}
+	}
+	/**
+	 * Returns the changes required to remove the fact that a property is a sub-property of another data property.
+	 * Unlike addition manipulations, if an entity does not exists, it will not be created automatically.
+	 * If either property does not exists, it is created.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param superPropertyName the name of the super data property, from which to remove the child.
+	 * @param subPropertyName the name of sub data property, to be removed from its super property.
+	 * @return changes required to remove a data property from being a sub-property of another data property.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public OWLOntologyChange removeSubDataPropertyOf(String superPropertyName, String subPropertyName){
+		OWLDataProperty sup = ontoRef.getOWLDataProperty( superPropertyName);
+		OWLDataProperty sub = ontoRef.getOWLDataProperty( subPropertyName);
+		return( removeSubDataPropertyOf( sup, sub));
+	}
+
+	/**
+	 * Returns the changes required to remove the fact that a property is a sub-property of another object property.
+	 * Unlike addition manipulations, if an entity does not exists, it will not be created automatically.
+	 * If either property does not exists, it is created.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param superProperty the super object property, from which to remove the child.
+	 * @param subProperty the sub object property, to be removed from its super property.
+	 * @return changes required to remove a object property from being a sub-property of another object property.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public OWLOntologyChange removeSubObjectPropertyOf(OWLObjectProperty superProperty, OWLObjectProperty subProperty){
+		try{
+			long initialTime = System.nanoTime();
+			OWLSubObjectPropertyOfAxiom subPropAxiom = ontoRef.getOWLFactory().getOWLSubObjectPropertyOfAxiom(subProperty, superProperty);
+			OWLOntologyChange adding = getRemoveAxiom( subPropAxiom, manipulationBuffering);
+			if( !manipulationBuffering)
+				applyChanges( adding);
+			logger.addDebugString( "set sub object property (" + ontoRef.getOWLObjectName( superProperty) + ") of super property (" + ontoRef.getOWLObjectName( subProperty) + ") in: " + (System.nanoTime() - initialTime) + " [ns]");
+			return( adding);
+		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+			ontoRef.logInconsistency();
+			return( null);
+		}
+	}
+	/**
+	 * Returns the changes required to remove the fact that a property is a sub-property of another object property.
+	 * Unlike addition manipulations, if an entity does not exists, it will not be created automatically.
+	 * If either property does not exists, it is created.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param superPropertyName the name of the super object property, from which to remove the child.
+	 * @param subPropertyName the name of sub object property, to be removed from its super property.
+	 * @return changes required to remove an object property from being a sub-property of another object property.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public OWLOntologyChange removeSubObjectPropertyOf(String superPropertyName, String subPropertyName){
+		OWLObjectProperty sup = ontoRef.getOWLObjectProperty( superPropertyName);
+		OWLObjectProperty sub = ontoRef.getOWLObjectProperty( subPropertyName);
+		return( removeSubObjectPropertyOf( sup, sub));
+	}
 
 
-	// ---------------------------   methods for replace entities to the ontology
+    // all on the same mutex oa add!!!!!
+    /**
+     * Returns the changes to make a class no more being a sub class of an
+     * object property in existence with a class value.
+     * In symbols, it will be no more true that: {@code C &sub; p(&exist; V)},
+     * where: {@code C} is the class, {@code p} the object property
+     * and {@code V}, the class value.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is a sub-set of an existential property.
+     */
+    public OWLOntologyChange removeSomeObjectClassExpression(OWLClass cl, OWLObjectProperty property, OWLClass value){
+        return removeObjectClassExpression( cl, property, 0, value, RESTRICTION_SOME);
+    }
+    /**
+     * Returns the changes to make a class no more being a sub class of an
+     * object property in existence with a class value.
+     * In symbols, it will be no more true that: {@code C &sub; p(&exist; V)},
+     * where: {@code C} is the class, {@code p} the object property
+     * and {@code V}, the class value.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param valueName the name of the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is a sub-set of an existential property.
+     */
+    public OWLOntologyChange removeSomeObjectClassExpression(String className, String propertyName, String valueName){
+        OWLClass cl = ontoRef.getOWLClass( className);
+        OWLObjectProperty property = ontoRef.getOWLObjectProperty( propertyName);
+        OWLClass value = ontoRef.getOWLClass( valueName);
+        return removeSomeObjectClassExpression( cl, property, value);
+    }
+    /**
+     * Returns the changes to make a class no more being a sub class of an
+     * object property universally identified with a class value.
+     * In symbols, it will be no more true that: {@code C &sub; p(&forall; V)},
+     * where: {@code C} is the class, {@code p} the object property
+     * and {@code V}, the class value.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is a sub-set of an universal property.
+     */
+    public OWLOntologyChange removeOnlyObjectClassExpression(OWLClass cl, OWLObjectProperty property, OWLClass value){
+        return removeObjectClassExpression( cl, property, 0, value, RESTRICTION_ONLY);
+    }
+    /**
+     * Returns the changes to make a class no more being a sub class of an
+     * object property universally identified with a class value.
+     * In symbols, it will be no more true that: {@code C &sub; p(&forall; V)},
+     * where: {@code C} is the class, {@code p} the object property
+     * and {@code V}, the class value.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param valueName the name of the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is a sub-set of an universal property.
+     */
+    public OWLOntologyChange removeOnlyObjectClassExpression(String className, String propertyName, String valueName){
+        OWLClass cl = ontoRef.getOWLClass( className);
+        OWLObjectProperty property = ontoRef.getOWLObjectProperty( propertyName);
+        OWLClass value = ontoRef.getOWLClass( valueName);
+        return removeOnlyObjectClassExpression( cl, property, value);
+    }
+    /**
+     * Returns the changes to make a class not being a sub class of an object property expression,
+     * minimally identified by a given cardinality class restriction, anymore.
+     * In symbols, it will be no more true that:: {@code C &sub; p(&lt;<sub>d</sub> V)}, 
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove tha fact that
+     * a class is a sub-set of a minimum number of properties
+     * restricted to a class.
+     */
+    public OWLOntologyChange removeMinObjectClassExpression(OWLClass cl, OWLObjectProperty property, int cardinality, OWLClass value){
+        return removeObjectClassExpression( cl, property, cardinality, value, RESTRICTION_MIN);
+    }
+    /**
+     * Returns the changes to make a class not being a sub class of an object property expression,
+     * minimally identified by a given cardinality class restriction, anymore.
+     * In symbols, it will be no more true that:: {@code C &sub; p(&lt;<sub>d</sub> V)}, 
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param valueName the name of the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove tha fact that
+     * a class is a sub-set of a minimum number of properties
+     * restricted to a class.
+     */
+    public OWLOntologyChange removeMinObjectClassExpression(String className, String propertyName, int cardinality, String valueName){
+        OWLClass cl = ontoRef.getOWLClass( className);
+        OWLObjectProperty property = ontoRef.getOWLObjectProperty( propertyName);
+        OWLClass value = ontoRef.getOWLClass( valueName);
+        return removeMinObjectClassExpression( cl, property, cardinality, value);
+    }
+    /**
+     * Returns the changes to make a class not being a sub class of an object property expression,
+     * maximally identified by a given cardinality class restriction, anymore.
+     * In symbols, it will be no more true that:: {@code C &sub; p(&gt;<sub>d</sub> V)}, 
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove tha fact that
+     * a class is a sub-set of a maximum number of properties
+     * restricted to a class.
+     */
+    public OWLOntologyChange removeMaxObjectClassExpression(OWLClass cl, OWLObjectProperty property, int cardinality, OWLClass value){
+        return removeObjectClassExpression( cl, property, cardinality, value, RESTRICTION_MAX);
+    }
+    /**
+     * Returns the changes to make a class not being a sub class of an object property expression,
+     * maximally identified by a given cardinality class restriction, anymore.
+     * In symbols, it will be no more true that:: {@code C &sub; p(&gt;<sub>d</sub> V)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param valueName the name of the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove tha fact that
+     * a class is a sub-set of a maximum number of properties
+     * restricted to a class.
+     */
+    public OWLOntologyChange removeMaxObjectClassExpression( String className, String propertyName, int cardinality, String valueName){
+        OWLClass cl = ontoRef.getOWLClass( className);
+        OWLObjectProperty property = ontoRef.getOWLObjectProperty( propertyName);
+        OWLClass value = ontoRef.getOWLClass( valueName);
+        return removeMaxObjectClassExpression( cl, property, cardinality, value);
+    }
+    /**
+     * Returns the changes to make a class not being a sub class of an object property expression,
+     * exactly identified by a given cardinality class restriction, anymore.
+     * In symbols, it will be no more true that:: {@code C &sub; p(=<sub>d</sub> V)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove tha fact that
+     * a class is a sub-set of a exact number of properties
+     * restricted to a class.
+     */
+    public OWLOntologyChange removeExactObjectClassExpression(OWLClass cl, OWLObjectProperty property, int cardinality, OWLClass value){
+        return removeObjectClassExpression( cl, property, cardinality, value, RESTRICTION_EXACT);
+    }
+    /**
+     * Returns the changes to make a class not being a sub class of an object property expression,
+     * exactly identified by a given cardinality class restriction, anymore.
+     * In symbols, it will be no more true that:: {@code C &sub; p(=<sub>d</sub> V)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the nme of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param valueName the name of the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove tha fact that
+     * a class is a sub-set of a exact number of properties
+     * restricted to a class.
+     */
+    public OWLOntologyChange removeExactObjectClassExpression( String className, String propertyName, int cardinality, String valueName){
+        OWLClass cl = ontoRef.getOWLClass( className);
+        OWLObjectProperty property = ontoRef.getOWLObjectProperty( propertyName);
+        OWLClass value = ontoRef.getOWLClass( valueName);
+        return removeExactObjectClassExpression( cl, property, cardinality, value);
+    }
+    private OWLOntologyChange removeObjectClassExpression(OWLClass cl, OWLObjectProperty property, int cardinality, OWLClass value, int directive){
+        try{
+            long initialTime = System.nanoTime();
+            if( cardinality < 0){
+                logger.addDebugString( "cannot assign a negative cardinality to " + ontoRef.getOWLObjectName( cl), true);
+                return null;
+            }
+            OWLObjectRestriction cardinalityAxiom = getObjectCardinalityAxioms(cardinality, property, value, directive);
+            OWLSubClassOfAxiom subClassAxiom = ontoRef.getOWLFactory().getOWLSubClassOfAxiom( cl, cardinalityAxiom);
+            OWLOntologyChange adding = getRemoveAxiom( subClassAxiom, manipulationBuffering);
+            if( !manipulationBuffering)
+                applyChanges( adding);
+            logger.addDebugString( "remove class expression on entity: " + ontoRef.getOWLObjectName( cl) + " " + ontoRef.getOWLObjectName( property)
+                    + " " + getCardinalityDebug( directive) + " " + cardinality + " of " + ontoRef.getOWLObjectName( value)  +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return( adding);
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
+    // all on the same mutex!!!!!
+    /**
+     * Returns the changes to make a class not being a sub class of a data property,
+     * in existence with a data type value, anymore.
+     * In symbols, it will be not long true that: {@code C &sub; p(&exist; D)},
+     * where: {@code C} is the class, {@code p} the data property
+     * and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that
+     * a class is a sub-set of an existential property.
+     */
+    public OWLOntologyChange removeSomeDataClassExpression(OWLClass cl, OWLDataProperty property, Class type){
+        return removeDataClassExpression( cl, property, 0, type, RESTRICTION_SOME);
+    }
+    /**
+     * Returns the changes to make a class not being a sub class of a data property,
+     * in existence with a data type value, anymore.
+     * In symbols, it will be not long true that: {@code C &sub; p(&exist; D)},
+     * where: {@code C} is the class, {@code p} the data property
+     * and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that
+     * a class is a sub-set of an existential property.
+     */
+    public OWLOntologyChange removeSomeDataClassExpression(String className, String propertyName, Class type){
+        OWLClass cl = ontoRef.getOWLClass( className);
+        OWLDataProperty property = ontoRef.getOWLDataProperty( propertyName);
+        return removeSomeDataClassExpression( cl, property, type);
+    }
+    /**
+     * Returns the changes to make a class not being a sub class of a data property,
+     * universally qualified by a data type value, anymore.
+     * In symbols, it will be not long true that: {@code C &sub; p(&forall; D)},
+     * where: {@code C} is the class, {@code p} the data property
+     * and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that
+     * a class is a sub-set of an universal property.
+     */
+    public OWLOntologyChange removeOnlyDataClassExpression(OWLClass cl, OWLDataProperty property, Class type){
+        return removeDataClassExpression( cl, property, 0, type, RESTRICTION_ONLY);
+    }
+    /**
+     * Returns the changes to make a class not being a sub class of a data property,
+     * universally qualified by a data type value, anymore.
+     * In symbols, it will be not long true that: {@code C &sub; p(&forall; D)},
+     * where: {@code C} is the class, {@code p} the data property
+     * and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that
+     * a class is a sub-set of an universal property.
+     */
+    public OWLOntologyChange removeOnlyDataClassExpression(String className, String propertyName, Class type){
+        OWLClass cl = ontoRef.getOWLClass( className);
+        OWLDataProperty property = ontoRef.getOWLDataProperty( propertyName);
+        return removeOnlyDataClassExpression( cl, property, type);
+    }
+    /**
+     * Returns the changes to make a class not being a sub class of a data property expression,
+     * minimally identified by a given cardinality class restriction, anymore.
+     * In symbols, it will not true that: {@code C &sub; p(&lt;<sub>d</sub> D)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is sub-set of a minimum number of properties restricted to a data type.
+     */
+    public OWLOntologyChange removeMinDataClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, Class type){
+        return removeDataClassExpression( cl, property, cardinality, type, RESTRICTION_MIN);
+    }
+    /**
+     * Returns the changes to make a class not being a sub class of a data property expression,
+     * minimally identified by a given cardinality class restriction, anymore.
+     * In symbols, it will not true that: {@code C &sub; p(&lt;<sub>d</sub> D)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is sub-set of a minimum number of properties restricted to a data type.
+     */
+    public OWLOntologyChange removeMinDataClassExpression( String className, String propertyName, int cardinality, Class type){
+        OWLClass cl = ontoRef.getOWLClass( className);
+        OWLDataProperty property = ontoRef.getOWLDataProperty( propertyName);
+        return removeMinDataClassExpression( cl, property, cardinality, type);
+    }
+    /**
+     * Returns the changes to make a class not being a sub class of a data property expression,
+     * maximally identified by a given cardinality class restriction, anymore.
+     * In symbols, it will not true that: {@code C &sub; p(&gt;<sub>d</sub> D)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is sub-set of a maximum number of properties restricted to a data type.
+     */
+    public OWLOntologyChange removeMaxDataClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, Class type){
+        return removeDataClassExpression( cl, property, cardinality, type, RESTRICTION_MAX);
+    }
+    /**
+     * Returns the changes to make a class not being a sub class of a data property expression,
+     * maximally identified by a given cardinality class restriction, anymore.
+     * In symbols, it will not true that: {@code C &sub; p(&gt;<sub>d</sub> D)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is sub-set of a maximum number of properties restricted to a data type.
+     */
+    public OWLOntologyChange removeMaxDataClassExpression(String className, String propertyName, int cardinality, Class type){
+        OWLClass cl = ontoRef.getOWLClass( className);
+        OWLDataProperty property = ontoRef.getOWLDataProperty( propertyName);
+        return removeMaxDataClassExpression( cl, property, cardinality, type);
+    }
+    /**
+     * Returns the changes to make a class not being a sub class of a data property expression,
+     * exactly identified by a given cardinality class restriction, anymore.
+     * In symbols, it will not true that: {@code C &sub; p(=<sub>d</sub> D)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is sub-set of a exact number of properties restricted to a data type.
+     */
+    public OWLOntologyChange removeExactClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, Class type){
+        return removeDataClassExpression( cl, property, cardinality, type, RESTRICTION_EXACT);
+    }
+    /**
+     * Returns the changes to make a class not being a sub class of a data property expression,
+     * exactly identified by a given cardinality class restriction, anymore.
+     * In symbols, it will not true that: {@code C &sub; p(=<sub>d</sub> D)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is sub-set of a exact number of properties restricted to a data type.
+     */
+    public OWLOntologyChange removeExactDataClassExpression( String className, String propertyName, int cardinality, Class type){
+        OWLClass cl = ontoRef.getOWLClass( className);
+        OWLDataProperty property = ontoRef.getOWLDataProperty( propertyName);
+        return removeExactClassExpression( cl, property, cardinality, type);
+    }
+    private OWLOntologyChange removeDataClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, Class c, int directive){
+        try{
+            long initialTime = System.nanoTime();
+            if( cardinality < 0){
+                logger.addDebugString( "cannot assign a negative cardinality to " + ontoRef.getOWLObjectName( cl), true);
+                return null;
+            }
+            OWLDatatype value = getDataType( c);
+            if( value == null)
+                return null;
+            OWLDataRestriction cardinalityAxiom = getDataCardinalityAxioms(cardinality, property, value, directive);
+            OWLSubClassOfAxiom subClassAxiom = ontoRef.getOWLFactory().getOWLSubClassOfAxiom( cl, cardinalityAxiom);
+            OWLOntologyChange adding = getRemoveAxiom( subClassAxiom, manipulationBuffering);
+            if( !manipulationBuffering)
+                applyChanges( adding);
+            logger.addDebugString( "set minimal class expression on entity: " + ontoRef.getOWLObjectName( cl) + " " + ontoRef.getOWLObjectName( property)
+                    + " " + getCardinalityDebug( directive) + " " + cardinality + " of " + ontoRef.getOWLObjectName( value)  +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return( adding);
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
+
+    // ---------------------------   methods for replace entities to the ontology
 	/*
 	 * Atomically (with respect to reasoner update) replacing of a data property.
 	 * Indeed, it will remove all the possible data property with a given values
@@ -816,7 +1890,7 @@ public class OWLManipulator{
 	public List<OWLOntologyChange> renameEntity( OWLEntity entity, IRI newIRI){
 		long initialTime = System.nanoTime();
 		String oldName = ontoRef.getOWLObjectName( entity);
-		OWLEntityRenamer renamer = new OWLEntityRenamer( ontoRef.getManager(), ontoRef.getManager().getOntologies());
+		OWLEntityRenamer renamer = new OWLEntityRenamer( ontoRef.getOWLManager(), ontoRef.getOWLManager().getOntologies());
 		List<OWLOntologyChange> changes = renamer.changeIRI( entity, newIRI);
 		if( !manipulationBuffering)
 			applyChanges( changes);
@@ -835,7 +1909,7 @@ public class OWLManipulator{
 	public List<OWLOntologyChange> renameEntity( OWLEntity entity, String newName){
 		long initialTime = System.nanoTime();
 		String oldName = ontoRef.getOWLObjectName( entity);
-		OWLEntityRenamer renamer = new OWLEntityRenamer( ontoRef.getManager(), ontoRef.getManager().getOntologies());
+		OWLEntityRenamer renamer = new OWLEntityRenamer( ontoRef.getOWLManager(), ontoRef.getOWLManager().getOntologies());
 		IRI newIRI = IRI.create( ontoRef.getIriOntologyPath() + "#" + newName);
 		List<OWLOntologyChange> changes = renamer.changeIRI( entity, newIRI);
 		if( !manipulationBuffering)
@@ -870,7 +1944,7 @@ public class OWLManipulator{
 	public OWLOntologyChange setDisjointIndividuals(Set< OWLNamedIndividual> individuals){
 		try{
 			long initialTime = System.nanoTime();
-			OWLDifferentIndividualsAxiom differentIndAxiom = ontoRef.getFactory().getOWLDifferentIndividualsAxiom( individuals);
+			OWLDifferentIndividualsAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLDifferentIndividualsAxiom( individuals);
 			OWLOntologyChange adding = getAddAxiom( differentIndAxiom, manipulationBuffering);
 			
 			if( !manipulationBuffering)
@@ -906,7 +1980,7 @@ public class OWLManipulator{
 	public OWLOntologyChange removeDisjointIndividuals( Set< OWLNamedIndividual> individuals){
 		try{
 			long initialTime = System.nanoTime();
-			OWLDifferentIndividualsAxiom differentIndAxiom = ontoRef.getFactory().getOWLDifferentIndividualsAxiom( individuals);
+			OWLDifferentIndividualsAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLDifferentIndividualsAxiom( individuals);
 			OWLOntologyChange adding = getRemoveAxiom( differentIndAxiom, manipulationBuffering);
 			
 			if( !manipulationBuffering)
@@ -942,7 +2016,7 @@ public class OWLManipulator{
 	public OWLOntologyChange makeDisjointClasses( Set< OWLClass> classes){
 		try{
 			long initialTime = System.nanoTime();
-			OWLDisjointClassesAxiom differentIndAxiom = ontoRef.getFactory().getOWLDisjointClassesAxiom( classes);
+			OWLDisjointClassesAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLDisjointClassesAxiom( classes);
 			OWLOntologyChange adding = getAddAxiom( differentIndAxiom, manipulationBuffering);
 			
 			if( !manipulationBuffering)
@@ -978,7 +2052,7 @@ public class OWLManipulator{
 	public OWLOntologyChange removeDisjointClasses( Set< OWLClass> classes){
 		try{
 			long initialTime = System.nanoTime();
-			OWLDisjointClassesAxiom differentIndAxiom = ontoRef.getFactory().getOWLDisjointClassesAxiom( classes);
+			OWLDisjointClassesAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLDisjointClassesAxiom( classes);
 			OWLOntologyChange adding = getRemoveAxiom( differentIndAxiom, manipulationBuffering);
 			
 			if( !manipulationBuffering)
@@ -988,8 +2062,6 @@ public class OWLManipulator{
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
 			ontoRef.logInconsistency();
 		}
-		return( null);
+		return null;
 	}
-
-
 }

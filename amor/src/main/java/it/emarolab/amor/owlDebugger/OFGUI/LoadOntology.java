@@ -36,10 +36,10 @@ public class LoadOntology {
 		if( ontoRef != null){
 			//ClassExchange.setOntoName( ontoName);
 	    	/*ClassExchange.setReasoner( ontoRef.getReasoner());
-	    	ClassExchange.setFactory( ontoRef.getFactory());
+	    	ClassExchange.setFactory( ontoRef.getOWLFactory());
 	    	ClassExchange.setPm( ontoRef.getPm());
-	    	ClassExchange.setOntology( ontoRef.getOntology());
-	    	ClassExchange.setManager( ontoRef.getManager());*/
+	    	ClassExchange.setOntology( ontoRef.getOWLOntology());
+	    	ClassExchange.setManager( ontoRef.getOWLManager());*/
 			ClassExchange.setOntoRef( ontoRef);
 		} else {
 			// show a dialog box
@@ -142,10 +142,10 @@ public class LoadOntology {
 		
 		try {
 			ManchesterOWLSyntaxOntologyFormat manSyntaxFormat = new ManchesterOWLSyntaxOntologyFormat();
-			OWLOntologyFormat format =  ontoRef.getManager().getOntologyFormat(ontoRef.getOntology());
+			OWLOntologyFormat format =  ontoRef.getOWLManager().getOntologyFormat(ontoRef.getOWLOntology());
 			if (format.isPrefixOWLOntologyFormat())
 				manSyntaxFormat.copyPrefixesFrom(format.asPrefixOWLOntologyFormat());
-			ontoRef.getManager().saveOntology( ontoRef.getOntology(), manSyntaxFormat, print); 
+			ontoRef.getOWLManager().saveOntology( ontoRef.getOWLOntology(), manSyntaxFormat, print);
 		} catch (OWLOntologyStorageException e) {	
 			e.printStackTrace();
 		}

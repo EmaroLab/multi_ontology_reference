@@ -19,7 +19,7 @@ import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
 public class ReasonerMonitor implements ReasonerProgressMonitor{
 
 	/**
-	 * This object is used to log informations about the instances of this class.
+	 * This object is used to log information about the instances of this class.
 	 * The logs can be activated by setting the flag: {@link LoggerFlag#LOG_REASONER_MONITOR}
 	 */
 	private Logger logger = new Logger( this, LoggerFlag.LOG_REASONER_MONITOR);

@@ -28,7 +28,7 @@ public class ClassRootManager {
     public static ArrayList<String> settRootWiev(){
     	OWLReferences ontoRef = ClassExchange.getOntoRef();
     	// update root class combo box items
-        Set<OWLClass> allClass = ontoRef.getOntology().getClassesInSignature();
+        Set<OWLClass> allClass = ontoRef.getOWLOntology().getClassesInSignature();
         String tmp;
         ArrayList<String> allClbox = new ArrayList<String>();
         allClbox.add( ClassExchange.Things); // care about OWLThing
@@ -37,7 +37,7 @@ public class ClassRootManager {
         	//tmp = ClassExchange.getRenderer().render( cl);
         	tmp = OWLReferencesInterface.getOWLName( cl);
         	
-        	if( ! cl.equals( ontoRef.getFactory().getOWLThing())){
+        	if( ! cl.equals( ontoRef.getOWLFactory().getOWLThing())){
         		if( ClassExchange.getClassRootObj().getEditor().getItem() == null)
         			allClbox.add( tmp);
         		else if( tmp.toLowerCase().contains( ((String) ClassExchange.getClassRootObj().getEditor().getItem()).toLowerCase()))

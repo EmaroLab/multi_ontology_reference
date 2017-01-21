@@ -31,7 +31,6 @@ import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.semanticweb.owlapi.model.parameters.ChangeApplied;
 import org.semanticweb.owlapi.util.OWLEntityRemover;
 
@@ -175,19 +174,19 @@ class EditorRun extends JFrame implements Runnable{
 					if( buttonLabel.equals( CONFIRM)){
 						switch( replacing){
 						case 0 :
-							synchronized( ontoRef.getManager()){
-								ChangeApplied changes = ontoRef.getManager().removeAxiom(ontoRef.getOntology(), replacingAxiom);
-								//ontoRef.getManager().applyChanges(changes);
-								changes = ontoRef.getManager().addAxiom(ontoRef.getOntology(), getDataTypeAxiom());
-								//ontoRef.getManager().applyChanges(changes);
+							synchronized( ontoRef.getOWLManager()){
+								ChangeApplied changes = ontoRef.getOWLManager().removeAxiom(ontoRef.getOWLOntology(), replacingAxiom);
+								//ontoRef.getOWLManager().applyChanges(changes);
+								changes = ontoRef.getOWLManager().addAxiom(ontoRef.getOWLOntology(), getDataTypeAxiom());
+								//ontoRef.getOWLManager().applyChanges(changes);
 							}
 							break;
 						case 1 :
-							synchronized( ontoRef.getManager()){
-								ChangeApplied changes = ontoRef.getManager().removeAxiom( ontoRef.getOntology(), replacingAxiom);
-								//ontoRef.getManager().applyChanges(changes);
-								changes = ontoRef.getManager().addAxiom(ontoRef.getOntology(), getObjPropAxiom());
-								//ontoRef.getManager().applyChanges(changes);
+							synchronized( ontoRef.getOWLManager()){
+								ChangeApplied changes = ontoRef.getOWLManager().removeAxiom( ontoRef.getOWLOntology(), replacingAxiom);
+								//ontoRef.getOWLManager().applyChanges(changes);
+								changes = ontoRef.getOWLManager().addAxiom(ontoRef.getOWLOntology(), getObjPropAxiom());
+								//ontoRef.getOWLManager().applyChanges(changes);
 							}
 							break;
 						case 2 :
@@ -244,8 +243,8 @@ class EditorRun extends JFrame implements Runnable{
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				//if( doit_dataAdd){
-					ChangeApplied changes = ontoRef.getManager().addAxiom(ontoRef.getOntology(), getDataTypeAxiom() );
-					//ontoRef.getManager().applyChanges(changes);
+					ChangeApplied changes = ontoRef.getOWLManager().addAxiom(ontoRef.getOWLOntology(), getDataTypeAxiom() );
+					//ontoRef.getOWLManager().applyChanges(changes);
 					//doit_dataAdd = false;
 					JOptionPane a = new JOptionPane();
 					JOptionPane.showMessageDialog(a, " data Property added to Individual", "operation successful", JOptionPane.INFORMATION_MESSAGE);
@@ -260,8 +259,8 @@ class EditorRun extends JFrame implements Runnable{
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				//if( doit_dataRem){
-					ChangeApplied changes = ontoRef.getManager().removeAxiom(ontoRef.getOntology(), getDataTypeAxiom());
-					//ontoRef.getManager().applyChanges(changes);
+					ChangeApplied changes = ontoRef.getOWLManager().removeAxiom(ontoRef.getOWLOntology(), getDataTypeAxiom());
+					//ontoRef.getOWLManager().applyChanges(changes);
 					//ClassExchange.getReasoner().flush();
 					///doit_dataRem = false;
 					JOptionPane a = new JOptionPane();
@@ -352,8 +351,8 @@ class EditorRun extends JFrame implements Runnable{
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				//if( doit_objAdd){
-					ChangeApplied changes = ontoRef.getManager().addAxiom(ontoRef.getOntology(), getObjPropAxiom());
-					//ontoRef.getManager().applyChanges(changes);
+					ChangeApplied changes = ontoRef.getOWLManager().addAxiom(ontoRef.getOWLOntology(), getObjPropAxiom());
+					//ontoRef.getOWLManager().applyChanges(changes);
 					///doit_objAdd = false;
 					JOptionPane a = new JOptionPane();
 					JOptionPane.showMessageDialog(a, " object Property added to Individual", "operation successful", JOptionPane.INFORMATION_MESSAGE);
@@ -371,8 +370,8 @@ class EditorRun extends JFrame implements Runnable{
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				//if( doit_objRem){
-					ChangeApplied changes = ontoRef.getManager().removeAxiom( ontoRef.getOntology(), getObjPropAxiom());
-					//ontoRef.getManager().applyChanges(changes);
+					ChangeApplied changes = ontoRef.getOWLManager().removeAxiom( ontoRef.getOWLOntology(), getObjPropAxiom());
+					//ontoRef.getOWLManager().applyChanges(changes);
 					
 					//doit_objRem = false;
 					JOptionPane a = new JOptionPane();
@@ -520,10 +519,10 @@ class EditorRun extends JFrame implements Runnable{
 		String propertyName = obj_hasPropTxt.getText();
 		String propertyValue = obj_valueTxt.getText();
 		
-		OWLNamedIndividual individual = ontoRef.getFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
-		OWLNamedIndividual value = ontoRef.getFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( propertyValue));
-		OWLObjectProperty hasProperty = ontoRef.getFactory().getOWLObjectProperty( ontoRef.getPrefixFormat( propertyName));
-		OWLObjectPropertyAssertionAxiom propertyAssertion = ontoRef.getFactory().getOWLObjectPropertyAssertionAxiom( hasProperty, individual, value);
+		OWLNamedIndividual individual = ontoRef.getOWLFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
+		OWLNamedIndividual value = ontoRef.getOWLFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( propertyValue));
+		OWLObjectProperty hasProperty = ontoRef.getOWLFactory().getOWLObjectProperty( ontoRef.getPrefixFormat( propertyName));
+		OWLObjectPropertyAssertionAxiom propertyAssertion = ontoRef.getOWLFactory().getOWLObjectPropertyAssertionAxiom( hasProperty, individual, value);
 		
 		return( propertyAssertion);
 	}
@@ -531,29 +530,29 @@ class EditorRun extends JFrame implements Runnable{
 	private OWLAxiom getDataTypeAxiom(){
 		
 		String propertyName = data_hasPropTxt.getText();
-		OWLDataProperty isMappedBy = ontoRef.getFactory().getOWLDataProperty( ontoRef.getPrefixFormat( propertyName));
+		OWLDataProperty isMappedBy = ontoRef.getOWLFactory().getOWLDataProperty( ontoRef.getPrefixFormat( propertyName));
 		
 		String individualname = data_indTxt.getText(); 
-		OWLNamedIndividual individual = ontoRef.getFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
+		OWLNamedIndividual individual = ontoRef.getOWLFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
 		
 		String value = txtCc.getText();
 		OWLLiteral isMappedByDataTypeValue = null;
 		if( data_typeCmbox.getSelectedItem().equals( "integer"))
-			isMappedByDataTypeValue =  ontoRef.getFactory()
+			isMappedByDataTypeValue =  ontoRef.getOWLFactory()
 				.getOWLLiteral( Integer.valueOf( value.trim()));
 		else if( data_typeCmbox.getSelectedItem().equals( "string"))
-			isMappedByDataTypeValue =  ontoRef.getFactory()
+			isMappedByDataTypeValue =  ontoRef.getOWLFactory()
 			.getOWLLiteral( String.valueOf( value));//.trim());
 		else if( data_typeCmbox.getSelectedItem().equals( "double"))
-			isMappedByDataTypeValue =  ontoRef.getFactory()
+			isMappedByDataTypeValue =  ontoRef.getOWLFactory()
 			.getOWLLiteral( Double.valueOf( value.trim()));
 		else if( data_typeCmbox.getSelectedItem().equals( "boolean"))
-			isMappedByDataTypeValue =  ontoRef.getFactory()
+			isMappedByDataTypeValue =  ontoRef.getOWLFactory()
 				.getOWLLiteral( Boolean.valueOf( value.trim()));
 		else System.out.println( " Please select a type for the DataProperty");
 		
 		
-		OWLAxiom newAxiom = ontoRef.getFactory().getOWLDataPropertyAssertionAxiom(
+		OWLAxiom newAxiom = ontoRef.getOWLFactory().getOWLDataPropertyAssertionAxiom(
 				isMappedBy, individual, isMappedByDataTypeValue);
 		
 		return( newAxiom);
@@ -561,11 +560,11 @@ class EditorRun extends JFrame implements Runnable{
 	}
 	
 	private synchronized void removeIndividual(){
-		OWLNamedIndividual individual = ontoRef.getFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualName));
-		OWLEntityRemover remover = new OWLEntityRemover( Collections.singleton( ontoRef.getOntology()));
+		OWLNamedIndividual individual = ontoRef.getOWLFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualName));
+		OWLEntityRemover remover = new OWLEntityRemover( Collections.singleton( ontoRef.getOWLOntology()));
 		
 		individual.accept( remover); 
-		ontoRef.getManager().applyChanges(remover.getChanges());
+		ontoRef.getOWLManager().applyChanges(remover.getChanges());
 		remover.reset();
 	}
 	

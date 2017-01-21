@@ -27,14 +27,14 @@ import it.emarolab.amor.owlDebugger.ReasonerMonitor;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContainer;
 
 /**
- * Project: a Multi Ontology Reference - aMOR <br>
- * File: .../src/aMOR.owlInterface/OWLLibrary.java <br>
- *
- * @author Luca Buncompagni<br><br>
- * DIBRIS emaroLab,<br> 
- * University of Genoa. <br>
- * Feb 10, 2016 <br>
- * License: GPL v2 <br><br>
+ * <div style="text-align:center;"><small>
+ * <b>Project</b>:    aMOR <br>
+ * <b>File</b>:       it.emarolab.amor.owlInterface.OWLLibrary <br>
+ * <b>Licence</b>:    GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
+ * <b>Author</b>:     Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
+ * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
+ * <b>date</b>:       Feb 10, 2016 <br>
+ * </small></div>
  *
  * <p>
  * This class is the lowest interface level with the OWL API.
@@ -162,7 +162,7 @@ public class OWLLibrary {
 	// [[[[[[[[[[[[[[[[[[[[[[[[   FIELD SETTERS (CLASS INITIALIZERS)   ]]]]]]]]]]]]]]]]]]]]]]]]]]
 	// those methods use tha bove set fields to create and initialise References to an ontology.
 	/**
-	 * Creates a new OWL Ontology Manager and sets it to the relative field (see {@link #getManager()}).<br>
+	 * Creates a new OWL Ontology Manager and sets it to the relative field (see {@link #getOWLManager()}).<br>
 	 * This method requires that the following values are not {@code null}:
 	 * {@link #getIriFilePath()} and {@link #getIriOntologyPath()}.<br>
 	 */
@@ -186,14 +186,14 @@ public class OWLLibrary {
 	 * Creates and sets a new empty ontology in accordance with {@link OWLReferencesInterface#getIriOntologyPath()}.<br>
 	 * It sets the field to {@code null} if the ontology path associated to the parameter is not correct.
 	 * Also, This method requires that the values:
-	 * {@link #getIriOntologyPath()} and {@link #getManager()} are not {@code null} nor badly formatted.
+	 * {@link #getIriOntologyPath()} and {@link #getOWLManager()} are not {@code null} nor badly formatted.
 	 * If this happens, the ontology object associated to that class instance will be {@code null} too.
 	 */
 	protected synchronized void createOntology(){
 		try {
 			IRI iri = this.getIriOntologyPath();
 			if( iri != null){
-				OWLOntology out = this.getManager().createOntology( iri);
+				OWLOntology out = this.getOWLManager().createOntology( iri);
 				logger.addDebugString( "New ontology created for reference: " + this);
 				this.ontology = out;
 				return;
@@ -213,7 +213,7 @@ public class OWLLibrary {
 		try{
 			IRI iri = this.getIriOntologyPath();
 			if( iri != null){
-				OWLOntology out = this.getManager().loadOntology( iri);
+				OWLOntology out = this.getOWLManager().loadOntology( iri);
 				logger.addDebugString( "Ontology loaded from file  for References: " + this);
 				this.ontology = out;
 				return;
@@ -233,7 +233,7 @@ public class OWLLibrary {
 		try{
 			IRI iri = this.getIriFilePath();//.getIriOntologyPath();
 			if( iri != null){
-				OWLOntology out = this.getManager().loadOntologyFromOntologyDocument( iri);
+				OWLOntology out = this.getOWLManager().loadOntologyFromOntologyDocument( iri);
 				logger.addDebugString( "Ontology loaded from web for References: " + this);
 				this.ontology = out;
 				return;
@@ -246,21 +246,21 @@ public class OWLLibrary {
 	}
 	/**
 	 * Creates and sets the OWLDataFactory.<br>
-	 * It requires that the {@link OWLReferencesInterface#getManager()} is not {@code null}. 
+	 * It requires that the {@link OWLReferencesInterface#getOWLManager()} is not {@code null}.
 	 */
 	protected synchronized void setFactory(){
-		OWLDataFactory out = this.getManager().getOWLDataFactory();
+		OWLDataFactory out = this.getOWLManager().getOWLDataFactory();
 		logger.addDebugString( "Create a OWL Data Factory for References: " + this);
 		this.factory = out;
 	}
 	/**
 	 * Creates and sets a prefix manager to be attached to the given ontology references,
 	 * in order to simplify IRI definitions and usage.<br>
-	 * Fields: {@link #getManager()}, {@link #getOntology()}
+	 * Fields: {@link #getOWLManager()}, {@link #getOWLOntology()}
 	 * and {@link #getIriOntologyPath()}, must not be {@code null} nor badly formatted.
 	 */
 	protected synchronized void setPrefixFormat() {
-		/*PrefixOWLOntologyFormat pm = (PrefixOWLOntologyFormat) this.getManager().getOntologyFormat( this.getOntology());
+		/*PrefixOWLOntologyFormat pm = (PrefixOWLOntologyFormat) this.getOWLManager().getOntologyFormat( this.getOWLOntology());
 		pm.setDefaultPrefix( this.getIriOntologyPath() + "#");
 		logger.addDebugString( "Create a new prefix manager for References: " + this);
 		this.pm = pm;*/
@@ -280,7 +280,7 @@ public class OWLLibrary {
 	 * Otherwise, the reasoner will synchronise itself after every change in the ontology.
 	 * The system will return {@code null} if a java reflection error occurs while instancing the
 	 * class defined by the parameter {@code reasonerFactoryName}. 
-	 * Field {@link #getOntology()} has not to be {@code null}.
+	 * Field {@link #getOWLOntology()} has not to be {@code null}.
 	 * @param reasonerFactoryName full java qualifier of the reasoner factory class to be initialised.
 	 * @param buffering if {@code true} the reasoner buffers changes.
 	 * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
@@ -295,11 +295,11 @@ public class OWLLibrary {
 			//reasonerFactoryName.lastIndexOf(".") + 1 ).replace( "ReasonerFactory", ""));
 			OWLReasonerConfiguration config = new SimpleConfiguration( progressMonitor);
 			if( buffering){
-				reasoner = reasonerFactory.createReasoner( this.getOntology(), config);
+				reasoner = reasonerFactory.createReasoner( this.getOWLOntology(), config);
 			}else{
-				reasoner = reasonerFactory.createNonBufferingReasoner( this.getOntology(), config);
+				reasoner = reasonerFactory.createNonBufferingReasoner( this.getOWLOntology(), config);
 				try{
-					this.getManager().addOntologyChangeListener( (OWLOntologyChangeListener) reasoner );
+					this.getOWLManager().addOntologyChangeListener( (OWLOntologyChangeListener) reasoner );
 				} catch( Exception e){
 					e.printStackTrace();
 					logger.addDebugString( "Impossible add ontology change listener for non buffering reasoner", true);
@@ -364,19 +364,19 @@ public class OWLLibrary {
 	/**
 	 * @return the OWL Ontology Manager associated to this reference instance.
 	 */
-	public synchronized OWLOntologyManager getManager() {
+	public synchronized OWLOntologyManager getOWLManager() {
 		return manager;
 	}
 	/**
 	 * @return the OWL Data Factory associated to this reference instance.
 	 */
-	public synchronized OWLDataFactory getFactory() {
+	public synchronized OWLDataFactory getOWLFactory() {
 		return factory;
 	}
 	/**
 	 * @return the OWL Ontology associated to this reference instance.
 	 */
-	public synchronized OWLOntology getOntology() {
+	public synchronized OWLOntology getOWLOntology() {
 		return ontology;
 	}
 	//@return the OWL Ontology prefix which depends from the ontology IRI.
@@ -420,8 +420,8 @@ public class OWLLibrary {
 	public OWLClass getOWLClass( String className) {
 		long initialTime = System.nanoTime();
 		
-		//OWLClass classObj = this.getFactory().getOWLClass(className, this.pm);
-		OWLClass classObj = this.getFactory().getOWLClass( getPrefixFormat( className));
+		//OWLClass classObj = this.getOWLFactory().getOWLClass(className, this.pm);
+		OWLClass classObj = this.getOWLFactory().getOWLClass( getPrefixFormat( className));
 		
 		logger.addDebugString( "OWLClass given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return (classObj);
@@ -438,8 +438,8 @@ public class OWLLibrary {
 	public OWLNamedIndividual getOWLIndividual( String individualName){
 		long initialTime = System.nanoTime();
 		
-		//OWLNamedIndividual individualObj = this.getFactory().getOWLNamedIndividual( ":" + individualName, this.pm);
-		OWLNamedIndividual individualObj = this.getFactory().getOWLNamedIndividual( getPrefixFormat( individualName));
+		//OWLNamedIndividual individualObj = this.getOWLFactory().getOWLNamedIndividual( ":" + individualName, this.pm);
+		OWLNamedIndividual individualObj = this.getOWLFactory().getOWLNamedIndividual( getPrefixFormat( individualName));
 				
 		logger.addDebugString( "OWLNamedIndividual given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return (individualObj);
@@ -456,8 +456,8 @@ public class OWLLibrary {
 	public OWLDataProperty getOWLDataProperty(String dataPropertyName) {
 		long initialTime = System.nanoTime();
 		
-		//OWLDataProperty property = this.getFactory().getOWLDataProperty( ":" + dataPropertyName, this.pm);
-		OWLDataProperty property = this.getFactory().getOWLDataProperty(  getPrefixFormat( dataPropertyName));
+		//OWLDataProperty property = this.getOWLFactory().getOWLDataProperty( ":" + dataPropertyName, this.pm);
+		OWLDataProperty property = this.getOWLFactory().getOWLDataProperty(  getPrefixFormat( dataPropertyName));
 				
 		logger.addDebugString( "OWLDataProperty given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return (property);
@@ -474,8 +474,8 @@ public class OWLLibrary {
 	public OWLObjectProperty getOWLObjectProperty( String objPropertyName){
 		long initialTime = System.nanoTime();
 		
-		//OWLObjectProperty property = this.getFactory().getOWLObjectProperty( ":" + objPropertyName, this.pm());
-		OWLObjectProperty property = this.getFactory().getOWLObjectProperty(  getPrefixFormat( objPropertyName));
+		//OWLObjectProperty property = this.getOWLFactory().getOWLObjectProperty( ":" + objPropertyName, this.pm());
+		OWLObjectProperty property = this.getOWLFactory().getOWLObjectProperty(  getPrefixFormat( objPropertyName));
 		
 		logger.addDebugString( "OWLObjectProperty given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return (property);
@@ -503,22 +503,22 @@ public class OWLLibrary {
 		long initialTime = System.nanoTime();
 		OWLLiteral liter = null;
 		if( value instanceof String)
-			liter = getFactory().getOWLLiteral( (String) value);
+			liter = getOWLFactory().getOWLLiteral( (String) value);
 		else if( value instanceof Integer)
-			liter = getFactory().getOWLLiteral( (Integer) value);
+			liter = getOWLFactory().getOWLLiteral( (Integer) value);
 		else if( value instanceof Boolean)
-			liter = getFactory().getOWLLiteral( (Boolean) value);
+			liter = getOWLFactory().getOWLLiteral( (Boolean) value);
 		else if( value instanceof Float)
-			liter = getFactory().getOWLLiteral( (Float) value);
+			liter = getOWLFactory().getOWLLiteral( (Float) value);
 		else if( value instanceof Double){
 			Float tmp = ((Double) value).floatValue();
-			liter = getFactory().getOWLLiteral( (Float) tmp);
+			liter = getOWLFactory().getOWLLiteral( (Float) tmp);
 		}else if( value instanceof Long)
-			liter = getFactory().getOWLLiteral( String.valueOf( value), getFactory().getOWLDatatype( OWL2Datatype.XSD_LONG.getIRI()));
+			liter = getOWLFactory().getOWLLiteral( String.valueOf( value), getOWLFactory().getOWLDatatype( OWL2Datatype.XSD_LONG.getIRI()));
 		else if( value instanceof OWLLiteral)
 			liter = (OWLLiteral) value;
 		else if( type != null)
-			liter = getFactory().getOWLLiteral( String.valueOf( value), type);
+			liter = getOWLFactory().getOWLLiteral( String.valueOf( value), type);
 		else logger.addDebugString( "EXCEPTION: type for literal not known", true);
 		logger.addDebugString( "OWLLitteral given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return (liter);
@@ -531,7 +531,7 @@ public class OWLLibrary {
 	 * Performs reasoning on the Ontology when reasoner is set to buffering mode.
      * It does not have any effects on non-buffering reasoners.
 	 * WARNING: it does not consider pending changes on the manipulation buffer ({@link OWLManipulator}).
-	 * {@param initialTime_ns} is only used for logging purposes in case of reasoning pre-processing.
+	 * @param initialTime_ns is only used for logging purposes in case of reasoning pre-processing.
 	 * @param initialTime_ns represents the initial time used to compute the reasoning time[ns] to be logged.
 	 */
 	protected void callReasoning( Long initialTime_ns){
@@ -540,7 +540,7 @@ public class OWLLibrary {
 		this.reasoner.flush();
 		Long finalTime = System.nanoTime();
 		logger.addDebugString( "Synchronising... reasoner.flush() for ontology named: " +
-				". Reasoning Time: " + ( finalTime - initialTime_ns) + " [ns]" + " over ontology: " + this.getOntology());
+				". Reasoning Time: " + ( finalTime - initialTime_ns) + " [ns]" + " over ontology: " + this.getOWLOntology());
 	}
 	/**
 	 * Performs reasoning on the Ontology when reasoner is set to buffering mode.
@@ -554,8 +554,8 @@ public class OWLLibrary {
 
 	@Override
 	public String toString() {
-		return "OWLLibrary [getManager()=" + getManager() + ", getFactory()="
-				+ getFactory() + ", getOntology()=" + getOntology()
+		return "OWLLibrary [getOWLManager()=" + getOWLManager() + ", getOWLFactory()="
+				+ getOWLFactory() + ", getOWLOntology()=" + getOWLOntology()
 				+ ", getPrefix()=" + getPrefix()
 				+ ", getReasoner()=" + getReasoner() + ", getIriFilePath()="
 				+ getIriFilePath() + ", getIriOntologyPath()="

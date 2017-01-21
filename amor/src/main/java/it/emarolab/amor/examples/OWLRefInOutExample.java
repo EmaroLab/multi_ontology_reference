@@ -26,11 +26,7 @@ import it.emarolab.amor.owlInterface.ReasonerExplanator;
  * Last but not the least, it shows also how to interact with different Reasoner
  * (also with custom once).
  * </p>
- * 
- * @see 
  *
- * 
- * @version 2.0
  */
 public class OWLRefInOutExample {
 

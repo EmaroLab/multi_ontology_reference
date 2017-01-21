@@ -383,7 +383,7 @@ public class FileManager {
 		OWLReferencesInterface ontoRef = OWLReferencesContainer.getOWLReferences( ontoName);
 		//OntologyManager ontoM = InvokerManager.getOntologyManagerInstance( ontoName);
 		try {
-			ontoRef.getManager().saveOntology( ontoRef.getOntology(), IRI.create(file.toURI()));
+			ontoRef.getOWLManager().saveOntology( ontoRef.getOWLOntology(), IRI.create(file.toURI()));
 			return true;
 		} catch (OWLOntologyStorageException e) {
 			return false;

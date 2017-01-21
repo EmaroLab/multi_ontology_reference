@@ -16,7 +16,12 @@ import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContain
 import it.emarolab.amor.owlInterface.OWLEnquirer;
 import it.emarolab.amor.owlInterface.OWLManipulator;
 
-/**
+/*
+ *
+ * 
+ *   THE DOCUMENTATION IN THE owlDebugger PACKAGE ID OUT OF DATE !!!
+ * 
+ * 
  * This class is used to manage logging texts
  * organized in base at the class which 
  * are generated them. To do so,  
@@ -34,8 +39,8 @@ import it.emarolab.amor.owlInterface.OWLManipulator;
  * Please, refer to the documentation of this class for more
  * info about this features. Moreover, all the logs are attached to 
  * a boolean value to decide if notify or not particular logs.
- * This can be reflacted into the ontology using an individual,
- * belong to the ontological calss {@value ontologyFramework.OFErrorManagement.DebuggingClassFlagData#DEBUGGER_classFlags},
+ * This can be reflected into the ontology using an individual,
+ * belong to the ontological class {@value ontologyFramework.OFErrorManagement.DebuggingClassFlagData#DEBUGGER_classFlags},
  * to defined this boolean value. For example:
  * <pr>
  * {@code C_OWLLibraryDebugger logsDebuggingData C_trueFlag}
@@ -56,7 +61,7 @@ public class Logger {
 	private List< DebugItem> debugText;
 	private boolean tofollow = true;
 	
-	/**
+	/*
 	 * The format with time and date are represented. It will be used
 	 * as: {@code new SimpleDateFormat( DATAFORMAT).
 	 * format( Calendar.getInstance().getTime());}
@@ -75,14 +80,14 @@ public class Logger {
 	private static Integer orderPrintingRate = 1;
 	private static Boolean startGui = false;
 	private static int logCounter = 0;
-	/**
+	/*
 	 * Key word to used as a file path to define that actually this
 	 * class should not print on file. 
 	 */
 	public static final String NOFILEPRINTING_KeyWord = "none";
 	private static FileManager fm;
 	
-	/**
+	/*
 	 * Defines a new logger attached to a particular class.
 	 * As an example can be {@code new OFDebugLogger(this)}
 	 * or {@code new OFDebugLogger(StaticClass.class)} for
@@ -95,8 +100,8 @@ public class Logger {
 		initialize( toFollow);
 		setFlagToFollow( true);
 	}
-	/**
-	 * It does the same work as {@link #OFDebugLogger(Object)}
+	/*
+	 * It does the same work as OFDebugLogger(Object)
 	 * but it also calls {@link #addDebugString(String)} with
 	 * the imput parameter.
 	 * 
@@ -108,8 +113,8 @@ public class Logger {
 		addDebugString( txt);
 		setFlagToFollow( true);
 	}
-	/**
-	 * It does the same work as {@link #OFDebugLogger(Object, String)}
+	/*
+	 * It does the same work as #OFDebugLogger(Object, String)
 	 * but specify that all the logs given from this class must
 	 * be notified or not.
 	 * 
@@ -123,12 +128,12 @@ public class Logger {
 		setFlagToFollow( flagTofollow);
 		addDebugString( txt);
 	}
-	/**
+	/*
 	 * It does the same work as {@link #addDebugString(String)} and
 	 * also specify if the logs must be notified or not.
-	 * 
+	 *
 	 * @param toFollow the class which create logs.
-	 * @param flagTofollow if it is true than the log are notified, no 
+	 * @param flagTofollow if it is true than the log are notified, no
 	 * otherwise.
 	 */
 	public Logger( Object toFollow, boolean flagTofollow){
@@ -140,11 +145,11 @@ public class Logger {
 		cleanDebugText();
 		trackedClass();
 	}
-	
-	/**
+
+	/*
 	 * Add a log to this logger. Basically it will
 	 * call {@code addDebugString( text, false);}
-	 * 
+	 *
 	 * @param text a log
 	 */
 	public  synchronized void addDebugString(String text){
@@ -164,7 +169,7 @@ public class Logger {
 					if( printOnConsole)
 						printLogOnConsole( logs);
 					if( printOnFileFlag)
-						printLogOnFile( logs);	
+						printLogOnFile( logs);
 					logCounter = 0;
 				}
 			}
@@ -172,40 +177,40 @@ public class Logger {
 			e.printStackTrace();
 		}
 	}
-	
-	/**
+
+	/*
 	 * Set if the log created by this logger must be notified or
 	 * not.
-	 * 
+	 *
 	 * @param flag if it true than the log related to this logger
 	 * will be notified, no otherwise.
 	 */
 	public  void setFlagToFollow( boolean flag){
 		this.tofollow = flag;
 	}
-	
-	/**
-	 * @return Return true if the logs produced by this logger are notified 
+
+	/*
+	 * @return Return true if the logs produced by this logger are notified
 	 * by this class, otherwise it will return false.
 	 */
 	public  boolean getFlagToFollow(){
 		return( tofollow);
 	}
-	
-	/**
+
+	/*
 	 * @return The class that are producing this logs.
 	 */
 	public  Object getFollowedClass(){
 		return( classTofollow);
 	}
-	
-	/**
+
+	/*
 	 * It manipulate the returning value of {@link #getFollowedClass()}
-	 * to retrieve its name of the instance to print. 
+	 * to retrieve its name of the instance to print.
 	 * Basically if the name contains the symbol "@" than it will
 	 * return the chars the follow it otherwise it will return
 	 * all the name.
-	 * 
+	 *
 	 * @return the instance name from its class definition.
 	 */
 	public  String getNamedInstance(){
@@ -225,8 +230,8 @@ public class Logger {
 			return(null);
 		}
 	}
-	
-	/**
+
+	/*
 	 * @return the {@code getSimpleName()} applied to the class given
 	 * during class creation for this logger.
 	 */
@@ -236,56 +241,56 @@ public class Logger {
 			return( " null");
 		return( classTofollow.getClass().getSimpleName());
 	}
-	
-	/**
+
+	/*
 	 * @return all the logs for this logger.
 	 */
 	public  List< DebugItem> getDebugText(){
 		return( debugText);
 	}
-	
-	/**
+
+	/*
 	 * It will clean up all the logs of this logger.
 	 */
 	public  void cleanDebugText(){
-		debugText = Collections.synchronizedList(new ArrayList<DebugItem>());//new ArrayList< DebugItem>(); 
+		debugText = Collections.synchronizedList(new ArrayList<DebugItem>());//new ArrayList< DebugItem>();
 	}
-	
-	/**
+
+	/*
 	 * Calls {@code this.finalize()} to remove this logger from the
 	 * logging mechanism.
 	 */
 	public  void removeDebug(){
 		finalize();
 	}
-	
-	/**
+
+	/*
 	 * @return the actual time formatted by {@value #DATAFORMAT}.
 	 */
 	private static String getTime(){
 		Date date = Calendar.getInstance().getTime();
 		return( new SimpleDateFormat( DATAFORMAT).format(date));
 	}
-	
+
 	// store the instances of 'this' for retrieve it by name in another file by using invokerManager.getAllInstancesDebugInstance
-	private static Map<String, Logger> allInstances;  
-	static  {  
-		allInstances = new ConcurrentHashMap<String, Logger>(); 
-	}    
-	public synchronized void finalize()  {  
-		allInstances.values().remove( this);  
+	private static Map<String, Logger> allInstances;
+	static  {
+		allInstances = new ConcurrentHashMap<String, Logger>();
 	}
-	private synchronized void trackedClass()  { 
+	public synchronized void finalize()  {
+		allInstances.values().remove( this);
+	}
+	private synchronized void trackedClass()  {
 		allInstances.put( getNamedInstance(), this);
 	}
-	/**
+	/*
 	 * @return a map which contains all the created instances of this class
 	 * related to a key equal to the result of {@link #getNamedClass()}.
 	 */
-	public static synchronized  ConcurrentHashMap<String, Logger> getAllInstances(){  
-		return( ( ConcurrentHashMap<String, Logger> )allInstances );  
+	public static synchronized  ConcurrentHashMap<String, Logger> getAllInstances(){
+		return( ( ConcurrentHashMap<String, Logger> )allInstances );
 	}
-	/**
+	/*
 	 * print to console the map which is returning by {@link #getAllInstances()}.
 	 */
 	public static void printActiveIstances(){ // return the number of activated instances
@@ -294,21 +299,21 @@ public class Logger {
 			System.out.println( count++ + " : " + entry);
 	}
 
-	
-	/**
+
+	/*
 	 * It goes across all the instance of this class and return a table with
 	 * all the logs create by all the logger ordered by time. In particular,
 	 * the column of this table are: time stamp, class name and textual log.
-	 * 
-	 * @return a table with all the logs created by all the instances of 
+	 *
+	 * @return a table with all the logs created by all the instances of
 	 * this class.
 	 */
 	public  static List<List<Object>> getLogInfo(){
 		// buld all the logs
 		List< DebugItem> allLogs = new ArrayList< DebugItem>();
-		
+
 		try{
-			synchronized( allInstances){			
+			synchronized( allInstances){
 				for( String i : allInstances.keySet()){
 					if( allInstances.get(i).getFlagToFollow()){
 						allLogs.addAll( allInstances.get( i).getDebugText());
@@ -316,10 +321,10 @@ public class Logger {
 					}
 				}
 			}
-			
+
 			// sorth all logs
 			Collections.sort( allLogs);
-				
+
 			List< List< Object>> allLog = new ArrayList< List< Object>>();
 			for( DebugItem di : allLogs){
 				List< Object> tmp = new ArrayList<Object>();
@@ -334,8 +339,8 @@ public class Logger {
 			return( null);
 		}
 	}
-	
-	/**
+
+	/*
 	 * @return an object to be used as JTable manipolating the returning
 	 * value of {@link #getLogInfo()}.
 	 */
@@ -352,23 +357,23 @@ public class Logger {
 		}
 	}
 
-	/**
+	/*
 	 * Print on console all the logs info contained in the input parameter.
 	 * It uses a parsing mechanism in accord with the table returned by:
 	 * {@link #getLogInfo()}.
-	 * 
+	 *
 	 * @param logData all the long formatted as a table.
 	 */
 	public synchronized static void printLogOnConsole( List< List< Object>> logData){
 		for( List< Object> o : logData)
 			System.out.println( parseLog( o));
 	}
-	
-	/**
+
+	/*
 	 * Print on file all the logs info contained in the input parameter.
 	 * It uses a parsing mechanism in accord with the table returned by:
 	 * {@link #getLogInfo()}.
-	 * 
+	 *
 	 * @param logData all the long formatted as a table.
 	 */
 	public synchronized static void printLogOnFile( List< List< Object>> logData){
@@ -383,7 +388,7 @@ public class Logger {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	private static String parseLog( List< Object> o){
 		try{
 			return( " " + o.get( 0) + " -> " + o.get(1) + " : " + o.get(2));
@@ -391,16 +396,16 @@ public class Logger {
 			return( errorString + " exception on class OFDebugLogger");
 		}
 	}
-	
-	/**
+
+	/*
 	 * @return the directory path to the file if this class is printing
-	 * to file. If it is not printing this method will return: 
-	 * {@value #NOFILEPRINTING_KeyWord}. 
+	 * to file. If it is not printing this method will return:
+	 * {@value #NOFILEPRINTING_KeyWord}.
 	 */
 	public static String getPrintOnFile() {
 		return printOnFile;
 	}
-	/**
+	/*
 	 * Set to print longs on file. This will not be done if
 	 * the input parameter is equal to {@value #NOFILEPRINTING_KeyWord}.
 	 * Moreover it uses {@link FileManager} to use files and if the input
@@ -410,7 +415,7 @@ public class Logger {
 	 * Otherwise it is possible to give, as input parameter
 	 * a relative path to a file that should be augmented with
 	 * available logs.
-	 * 
+	 *
 	 * @param printOnFile the directory path to the file or the instruction
 	 * to do not print over file or the default file definition of {@link FileManager}.
 	 */
@@ -431,52 +436,52 @@ public class Logger {
 			printOnFileFlag = true;
 		}
 	}
-	/**
+	/*
 	 * @return true if the class is printing on console, false otherwise
 	 */
 	public static Boolean getPrintOnConsole() {
 		return printOnConsole;
 	}
-	/**
+	/*
 	 * @param printOnConsole the printOnConsole to set. If it is true
 	 * than all the logs will be printed on console, if it is false no.
 	 */
 	public static void setPrintOnConsole(Boolean printOnConsole) {
 		Logger.printOnConsole = printOnConsole;
 	}
-	/**
-	 * A parameter as been introduced to find 
+	/*
+	 * A parameter as been introduced to find
 	 * a correct trade off between ordering with respect to
 	 * time logs without having a big list to manage before to
-	 * print and than clean them. 
-	 * 
+	 * print and than clean them.
+	 *
 	 * @return the number which defines after how many longs this class
-	 * has to build the relate table, eventually notifing it and then 
+	 * has to build the relate table, eventually notifing it and then
 	 * clearing it.
 	 */
 	public static Integer getOrderPrintingRate() {
 		return orderPrintingRate;
 	}
-	/**
-	 * A parameter as been introduced to find 
+	/*
+	 * A parameter as been introduced to find
 	 * a correct trade off between ordering with respect to
 	 * time logs without having a big list to manage before to
-	 * print and than clean them. 
-	 * 
-	 * @param orderPrintingRate set the number of logs that are 
+	 * print and than clean them.
+	 *
+	 * @param orderPrintingRate set the number of logs that are
 	 * saved in the table before to notify logs and clear the resources.
 	 */
 	public  static void setOrderPrintingRate(Integer orderPrintingRate) {
 		Logger.orderPrintingRate = orderPrintingRate;
 	}
 
-	/**
+	/*
 	 * @return return true if the debugging GUI starts when the program starts.
 	 */
 	public  static Boolean getStartGui() {
 		return startGui;
 	}
-	/**
+	/*
 	 * @param startGui set to true if the debugging GUI should start when
 	 * the program start. No starting property otherwise.
 	 */
@@ -489,29 +494,29 @@ public class Logger {
 		if( printOnConsole)
 			printLogOnConsole( logs);
 		if( printOnFileFlag)
-			printLogOnFile( logs);	
+			printLogOnFile( logs);
 		logCounter = 0;
 	}
-	
-	/**
-	 * This class is used to defines logs that are 
+
+	/*
+	 * This class is used to defines logs that are
 	 * short by time. Those will be elments of the
-	 * log table builded by this implementation. 
-	 * 
+	 * log table builded by this implementation.
+	 *
 	 * @author Buoncomapgni Luca
 	 * @version 1.0
 	 *
 	 */
 	class DebugItem implements Comparable< DebugItem>{
-	
+
 		private final String text;
 		private final String time;
 		private final String className;
 		private final Boolean isError;
-	
-		/**
+
+		/*
 		 * Create a log instance.
-		 * 
+		 *
 		 * @param actualtime time where the log takes place.
 		 * @param actualtext the text attached to the log.
 		 * @param name the name of the class that are producing the log.
@@ -521,39 +526,39 @@ public class Logger {
 		public DebugItem( String actualtime, String actualtext, String name, boolean redPrinting){
 			text = actualtext;
 			time = actualtime;
-			className = name; 
+			className = name;
 			isError = redPrinting;
 		}
-		
-		/**
+
+		/*
 		 * @return the name of the class that are producing this log
 		 */
 		public  String getClassName() {
 			return className;
 		}
 
-		/**
+		/*
 		 * @return the text of the log.
 		 */
 		public  String getText() {
 			return text;
 		}
-		
-		/**
+
+		/*
 		 * @return the time when this log takes place,
 		 */
 		public  String getTime() {
 			return time;
 		}
-		
-		/**
+
+		/*
 		 * @return true if the log is considered to be an error,
 		 * false otherwise.
 		 */
 		protected  Boolean getIsError() {
 			return isError;
 		}
-		
+
 		@Override
 		public  int compareTo( DebugItem other) {
 			Date tOther = null;
@@ -564,69 +569,73 @@ public class Logger {
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-			
+
 			return( tThis.compareTo(tOther));
 		}
 	}
-	
-	
-	
+
+
+	/**
+	 * This class contains defualts methods for enabling and disabling logging.
+	 * Generically, each class of this architecture has a {@link Logger} attached to it.
+	 * Use this static implementation to manipulate their flags.
+	 */
 	public static class LoggerFlag{
 		/**
 		 * This flag enables or disables logs provided by {@link OWLReferencesContainer}.
-		 * Actual value: {@value #LOG_REFERENCES_CONTAINER}.
+		 * Actual value: {@link #LOG_REFERENCES_CONTAINER}.
 		 */
 		public static Boolean LOG_REFERENCES_CONTAINER = true;
-		
+
 		/**
 		 * This flag enables or disables logs provided by {@link OWLReferencesInterface}
-		 * Actual value: {@value #LOG_REFERENCES_INTERFACE}.
+		 * Actual value: {@link #LOG_REFERENCES_INTERFACE}.
 		 */
 		public static Boolean LOG_REFERENCES_INTERFACE = true;
-		
+
 		/**
 		 * This flag enables or disables logs provided by {@link OWLLibrary}
-		 * Actual value: {@value #LOG_REFERENCES_LIBRARY}.
+		 * Actual value: {@link #LOG_OWL_LIBRARY}.
 		 */
 		protected static Boolean LOG_OWL_LIBRARY = true;
-		
+
 		/**
 		 * This flag enables or disables logs provided by {@link ReasonerMonitor}
-		 * Actual value: {@value #LOG_REFERENCES_MONITOR}.
+		 * Actual value: {@link #LOG_REASONER_MONITOR}.
 		 */
 		protected static Boolean LOG_REASONER_MONITOR = true;
-				
+
 		/**
-		 * This flag enables or disables logs provided by {@link OWLLibrary.ReasonerExplanation}
-		 * Actual value: {@value #LOG_REASONER_EXPLANATION}.
+		 * This flag enables or disables logs provided by {@link it.emarolab.amor.owlInterface.ReasonerExplanator}
+		 * Actual value: {@link #LOG_REASONER_EXPLANATION}.
 		 */
 		protected static Boolean LOG_REASONER_EXPLANATION = true;
 
 		/**
 		 * This flag enables or disables logs provided by {@link OWLManipulator}
-		 * Actual value: {@value #LOG_OWL_MANIPULATOR}.
+		 * Actual value: {@link #LOG_OWL_MANIPULATOR}.
 		 */
 		protected static Boolean LOG_OWL_MANIPULATOR = true;
-		
+
 		/**
-		 * This flag enables or disables logs provided by {@link OWLReferences}
-		 * Actual value: {@value #LOG_ONTOLOGY_REFERENCE}.
+		 * This flag enables or disables logs provided by {@link it.emarolab.amor.owlInterface.OWLReferences}
+		 * Actual value: {@link #LOG_ONTOLOGY_REFERENCE}.
 		 */
 		protected static Boolean LOG_ONTOLOGY_REFERENCE = true;
-	
+
 		/**
 		 * This flag enables or disables logs provided by {@link OWLEnquirer}
-		 * Actual value: {@value #LOG_OWL_ENQUIRER}.
+		 * Actual value: {@link #LOG_OWL_ENQUIRER}.
 		 */
 		protected static Boolean LOG_OWL_ENQUIRER = true;
-	
+
 		/**
-		 * This flag enables or disables logs provided by {@link InferedAxiomExporter}
-		 * Actual value: {@value #LOG_ONTOLOGY_EXPORTER}.
+		 * This flag enables or disables logs provided by {@link it.emarolab.amor.owlInterface.InferredAxiomExporter}
+		 * Actual value: {@link #LOG_ONTOLOGY_EXPORTER}.
 		 */
 		protected static Boolean LOG_ONTOLOGY_EXPORTER = true;
 
-		
+
 		//  [[[[[[[[[[[[[[[[[[[[[[[[[[[[[    GETTERS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 		/**
 		 * @return the {@link #LOG_REFERENCES_CONTAINER}
@@ -635,7 +644,7 @@ public class Logger {
 			return LOG_REFERENCES_CONTAINER;
 		}
 		/**
-		 * @return the {@link #LOG_REFERENCES_INTERFACE}
+		 * @return the LOG_REFERENCES_INTERFACE
 		 */
 		public static synchronized Boolean getLogReferencesInterface() {
 			return LOG_REFERENCES_INTERFACE;
@@ -682,7 +691,7 @@ public class Logger {
 		public static synchronized Boolean getLogOntologyExporter() {
 			return LOG_ONTOLOGY_EXPORTER;
 		}
-		
+
 		//  [[[[[[[[[[[[[[[[[[[[[[[[[[[[[    SETTERS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 		/**
 		 * @param logReferencesContainer the {@link #LOG_REFERENCES_CONTAINER} to set
@@ -691,7 +700,7 @@ public class Logger {
 			LOG_REFERENCES_CONTAINER = logReferencesContainer;
 		}
 		/**
-		 * @param logReferencesInterface the {@link #LOG_REFERENCES_INTERFACE} to set
+		 * @param logReferencesInterface the LOG_REFERENCES_INTERFACE to set
 		 */
 		public static synchronized void setLogReferencesInterface( Boolean logReferencesInterface) {
 			LOG_REFERENCES_INTERFACE = logReferencesInterface;
@@ -737,8 +746,8 @@ public class Logger {
 		 */
 		public static synchronized void setLogOntologyExporter(	Boolean logOntologyExporter) {
 			LOG_ONTOLOGY_EXPORTER = logOntologyExporter;
-		}	
-		
+		}
+
 		/**
 		 * This methods sets all flags contained in this class to {@code true}.
 		 */

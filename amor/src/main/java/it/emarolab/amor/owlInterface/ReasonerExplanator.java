@@ -6,23 +6,20 @@ import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
 
 /**
-* Project: aMOR <br>
-* File: .../src/aMOR.owlInterface/OWLLibrary.java <br>
-*  
-* @author Buoncompagni Luca <br><br>
-* DIBRIS emaroLab,<br> 
-* University of Genoa. <br>
-* Feb 10, 2016 <br>
-* License: GPL v2 <br><br>
+ * <div style="text-align:center;"><small>
+ * <b>Project</b>:    aMOR <br>
+ * <b>File</b>:       it.emarolab.amor.owlInterface.ReasonerExplanator <br>
+ * <b>Licence</b>:    GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
+ * <b>Author</b>:     Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
+ * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
+ * <b>date</b>:       Feb 10, 2016 <br>
+ * </small></div>
 *  
 * <p>
 * This class implements the basic interface for reasoner inconsistencies and explanation.
 * </p>
-* 
-* @see 
 *
-* 
-* @version 2.0
+ * @version 1.0
 */
 abstract public class ReasonerExplanator{
 	/**

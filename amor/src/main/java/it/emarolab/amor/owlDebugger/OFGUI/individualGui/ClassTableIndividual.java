@@ -14,7 +14,6 @@ import javax.swing.table.AbstractTableModel;
 import it.emarolab.amor.owlDebugger.OFGUI.ClassExchange;
 
 import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLIndividual;
@@ -27,7 +26,6 @@ import org.semanticweb.owlapi.search.EntitySearcher;
 
 import com.google.common.collect.Multimap;
 
-import it.emarolab.amor.owlDebugger.OFGUI.LoadOntology;
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface;
 
@@ -38,8 +36,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -512,13 +508,13 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 		Set<OWLDataProperty> allDataProperty;
 		OWLNamedIndividual ind;
 		synchronized( ontoRef.getReasoner()){
-			ind = ontoRef.getFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
+			ind = ontoRef.getOWLFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
 			
-			//nonInf = ind.getDataPropertyValues( ontoRef.getOntology());
-			Multimap<OWLDataPropertyExpression, OWLLiteral> nonInfStream = EntitySearcher.getDataPropertyValues( ind, ontoRef.getOntology());
+			//nonInf = ind.getDataPropertyValues( ontoRef.getOWLOntology());
+			Multimap<OWLDataPropertyExpression, OWLLiteral> nonInfStream = EntitySearcher.getDataPropertyValues( ind, ontoRef.getOWLOntology());
 			nonInf = nonInfStream.asMap();	
         	
-			allDataProperty = ontoRef.getOntology().getDataPropertiesInSignature( true);
+			allDataProperty = ontoRef.getOWLOntology().getDataPropertiesInSignature( true);
 		}
 	
 		// get not asserted data property
@@ -582,13 +578,13 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 		Set<OWLObjectProperty> allDataProperty;
 		OWLNamedIndividual ind;
 		synchronized( ontoRef.getReasoner()){
-			ind = ontoRef.getFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
+			ind = ontoRef.getOWLFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
 			
-			//nonInf = ind.getObjectPropertyValues( ontoRef.getOntology());
-			Multimap<OWLObjectPropertyExpression, OWLIndividual> nonInfStream = EntitySearcher.getObjectPropertyValues( ind, ontoRef.getOntology());
+			//nonInf = ind.getObjectPropertyValues( ontoRef.getOWLOntology());
+			Multimap<OWLObjectPropertyExpression, OWLIndividual> nonInfStream = EntitySearcher.getObjectPropertyValues( ind, ontoRef.getOWLOntology());
 			nonInf = nonInfStream.asMap();	
         	
-			allDataProperty = ontoRef.getOntology().getObjectPropertiesInSignature( true);
+			allDataProperty = ontoRef.getOWLOntology().getObjectPropertiesInSignature( true);
 		}
 		
 		// get not asserted object property 
@@ -639,7 +635,7 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 		Set<OWLClass> nonInf;
 		Set<OWLClass> classes;
 		synchronized( ontoRef.getReasoner()){
-			OWLNamedIndividual ind = ontoRef.getFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
+			OWLNamedIndividual ind = ontoRef.getOWLFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
 			nonInf = ind.getClassesInSignature();
 			classes = ontoRef.getReasoner().getTypes( ind, false).getFlattened();
 		}
@@ -686,10 +682,10 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 		Set<OWLIndividual> nonInf;
 		Node<OWLNamedIndividual> individuals;
 		synchronized( ontoRef.getReasoner()){
-			OWLNamedIndividual ind = ontoRef.getFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
+			OWLNamedIndividual ind = ontoRef.getOWLFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
 			
-			//nonInf = ind.getSameIndividuals( ontoRef.getOntology());
-			Stream<OWLIndividual> nonInfStream = EntitySearcher.getSameIndividuals( ind, ontoRef.getOntology());
+			//nonInf = ind.getSameIndividuals( ontoRef.getOWLOntology());
+			Stream<OWLIndividual> nonInfStream = EntitySearcher.getSameIndividuals( ind, ontoRef.getOWLOntology());
 			nonInf = nonInfStream.collect(Collectors.toSet());	
         	
 			

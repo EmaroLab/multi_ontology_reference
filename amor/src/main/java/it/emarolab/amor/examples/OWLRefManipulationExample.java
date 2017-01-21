@@ -1,19 +1,17 @@
 package it.emarolab.amor.examples;
 
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
+import it.emarolab.amor.owlInterface.OWLEnquirer;
+import org.semanticweb.owlapi.model.*;
 
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContainer;
 
+import java.util.Set;
+
 public class OWLRefManipulationExample {
 
 	public static final String OWLREFERENCES_NAME = "refName";
-	public static final String ONTOLOGY_FILE_PATH = "amor/files/ontologies/ontology_manipulation.owl";
+	public static final String ONTOLOGY_FILE_PATH = "amor/files/ontologies/ontology_manipulation1.owl";
 	public static final String ONTOLOGY_IRI_PATH = "http://www.semanticweb.org/luca-buoncompagni/aMor/examples";
 	public static final Boolean BUFFERING_REASONER = true; // if true you must to update manually the reasoner. Otherwise it synchronises itself any time is needed
 	public static final Boolean BUFFERING_OWLMANIPULATOR = true; // if true you must to apply changes manually. Otherwise their are applied as soon as possible.
@@ -97,11 +95,11 @@ public class OWLRefManipulationExample {
 		ontoRef.applyOWLManipulatorChanges(); // the API may not work with buffering manipulator. So, synchronise it before to rename
 		ontoRef.renameEntity( indWithProp, IRI.create( ONTOLOGY_IRI_PATH + "#RENAMED_individual"));
 
-		// otherwise you may want to change the buffering behaviour. Remember to clear the buffer before to change the flag!
+        // otherwise you may want to change the buffering behaviour. Remember to clear the buffer before to change the flag!
 		ontoRef.applyOWLManipulatorChanges();
 		ontoRef.setOWLManipulatorBuffering( false);
 
-		// 19) [RENAME_CLASS] let rename a class (be careful of the buffering consideration above)
+        // 19) [RENAME_CLASS] let rename a class (be careful of the buffering consideration above)
 		OWLClass cl = ontoRef.getOWLClass( "ClassName");
 		ontoRef.renameEntity( cl, "ClassRenamed");
 
@@ -115,7 +113,7 @@ public class OWLRefManipulationExample {
 
 		// print the ontology and save for manipulation check
 		ontoRef.printOntologyOnConsole();
-		ontoRef.saveOntology();
+		ontoRef.saveOntology( "amor/files/ontologies/ontology_manipulation.owl");
 
 		System.out.println( "DONE !!");
 		

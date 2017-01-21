@@ -11,24 +11,38 @@ import org.apache.jena.rdf.model.InfModel;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.mindswap.pellet.KnowledgeBase;
 import org.mindswap.pellet.jena.PelletInfGraph;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
-import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
-import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
+import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 import org.semanticweb.owlapi.search.EntitySearcher;
 
 import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
 
+import static it.emarolab.amor.owlInterface.OWLManipulator.RESTRICTION_MIN;
+import static it.emarolab.amor.owlInterface.OWLManipulator.RESTRICTION_EXACT;
+import static it.emarolab.amor.owlInterface.OWLManipulator.RESTRICTION_MAX;
+import static it.emarolab.amor.owlInterface.OWLManipulator.RESTRICTION_ONLY;
+import static it.emarolab.amor.owlInterface.OWLManipulator.RESTRICTION_SOME;
+
 // TODO : bring up to OWLReferences getSubObjectPropertyOf getSubDataPropertyOf and all its case
 // TODO : make an abstract class interface to be implemented for all methods (all have the same shape)
+
+/**
+ * <div style="text-align:center;"><small>
+ * <b>Project</b>:    aMOR <br>
+ * <b>File</b>:       it.emarolab.amor.owlInterface.OWLEnquirer <br>
+ * <b>Licence</b>:    GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
+ * <b>Author</b>:     Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
+ * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
+ * <b>date</b>:       Feb 10, 2016 <br>
+ * </small></div>
+ *
+ * <p>
+ *     This class defines and implement the interface for querying the ontology.
+ * </p>
+ *
+ * @version 2.1
+ */
 public class OWLEnquirer {
 
 	/**
@@ -53,7 +67,7 @@ public class OWLEnquirer {
 
 	/**
 	 * Constructor which sets {@link #returnCompleteDescription} flag to
-	 * default value {@value #DEFAULT_RETURN_COMPLETE_DESCRIPTION}.
+	 * default value {@link #DEFAULT_RETURN_COMPLETE_DESCRIPTION}.
 	 * @param owlRef the ontology in which perform queries
 	 */
 	protected OWLEnquirer( OWLReferencesInterface owlRef){
@@ -99,7 +113,7 @@ public class OWLEnquirer {
 	 * @return individuals belonging to the root class of the ontology.
 	 */
 	public Set<OWLNamedIndividual> getIndividualB2Thing(){
-		return( getIndividualB2Class( ontoRef.getFactory().getOWLThing()));
+		return( getIndividualB2Class( ontoRef.getOWLFactory().getOWLThing()));
 	}
 	/**
 	 * Returns all individuals belonging to the specified class.
@@ -127,16 +141,18 @@ public class OWLEnquirer {
 		long initialTime = System.nanoTime();
 		Set< OWLNamedIndividual> out = new HashSet< OWLNamedIndividual>();
 		
-		//Set<OWLIndividual> set = ontoClass.getIndividuals( ontoRef.getOntology());
-		Stream<OWLIndividual> stream = EntitySearcher.getIndividuals( ontoClass, ontoRef.getOntology());
+		//Set<OWLIndividual> set = ontoClass.getIndividuals( ontoRef.getOWLOntology());
+		Stream<OWLIndividual> stream = EntitySearcher.getIndividuals( ontoClass, ontoRef.getOWLOntology());
 		Set<OWLIndividual> set = stream.collect(Collectors.toSet());
 		
-		if( set != null){
-			for( OWLIndividual s : set)
-				out.add( s.asOWLNamedIndividual());
-		}
+		if( set != null)
+			out.addAll( set.stream().map( AsOWLNamedIndividual::asOWLNamedIndividual).collect( Collectors.toList()));
+
 		try{
-			out.addAll( ontoRef.getReasoner().getInstances( ontoClass, !returnCompleteDescription).getFlattened());
+			Stream<OWLNamedIndividual> streamReasoned = ontoRef.getReasoner().getInstances(ontoClass, !returnCompleteDescription).entities();
+			Set< OWLIndividual> reasoned = streamReasoned.collect(Collectors.toSet());
+			if( reasoned != null)
+				out.addAll(reasoned.stream().map( AsOWLNamedIndividual::asOWLNamedIndividual).collect( Collectors.toList()));
 		} catch( InconsistentOntologyException e){
 			ontoRef.logInconsistency();
 		}
@@ -151,7 +167,7 @@ public class OWLEnquirer {
 	 * @return an individual belonging to the root class of the ontology.
 	 */
 	public OWLNamedIndividual getOnlyIndividualB2Thing(){
-		return( getOnlyIndividualB2Class( ontoRef.getFactory().getOWLThing()));
+		return( getOnlyIndividualB2Class( ontoRef.getOWLFactory().getOWLThing()));
 	}
 	/**
 	 * Returns one individual belonging to the specified class. 
@@ -186,27 +202,29 @@ public class OWLEnquirer {
 	 * Returns the set of classes in which an individual has been classified (except for OWLREA).
 	 * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
 	 * 
-	 * @param individual
+	 * @param individual the instance belonging to the returning classes.
 	 * @return set of all classes the individual belongs to.
 	 */
-	public Set< OWLClass> getIndividualClasses( OWLNamedIndividual individual){
+	public Set<OWLClass> getIndividualClasses( OWLNamedIndividual individual){
 		long initialTime = System.nanoTime();
-		Set< OWLClass> out = new HashSet< OWLClass>();
+		Set< OWLClass> out = new HashSet<>();
 		
-		//Set< OWLClassExpression> set = individual.getTypes( ontoRef.getOntology());
-		Stream<OWLClassExpression> stream = EntitySearcher.getTypes( individual, ontoRef.getOntology());
+		//Set< OWLClassExpression> set = individual.getTypes( ontoRef.getOWLOntology());
+		Stream<OWLClassExpression> stream = EntitySearcher.getTypes( individual, ontoRef.getOWLOntology());
 		Set< OWLClassExpression> set = stream.collect(Collectors.toSet());
 		
-		if( set != null){
-			for( OWLClassExpression s : set)
-				out.add( s.asOWLClass());
-		}
+		if( set != null)
+			out.addAll(set.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
+
 		try{
-			out.addAll( ontoRef.getReasoner().getTypes( individual, !returnCompleteDescription).getFlattened());
+			Stream<OWLClass> streamReasoned = ontoRef.getReasoner().getTypes( individual, !returnCompleteDescription).entities();
+			Set<OWLClass> reasoned = streamReasoned.collect(Collectors.toSet());
+			if( reasoned != null)
+				out.addAll( reasoned.stream().map( AsOWLClass::asOWLClass).collect( Collectors.toList()));
 		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
 			ontoRef.logInconsistency();
 		}
-		out.remove( ontoRef.getFactory().getOWLThing());
+		out.remove( ontoRef.getOWLFactory().getOWLThing());
 		logger.addDebugString( "Types of individual given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return out;
 	}
@@ -217,7 +235,7 @@ public class OWLEnquirer {
 	 * @param individualName name of the individual.
 	 * @return a set of all classes the individual belongs to.
 	 */
-	public Set< OWLClass> getIndividualClasses( String individualName){
+	public Set<OWLClass> getIndividualClasses( String individualName){
 		OWLNamedIndividual ind = ontoRef.getOWLIndividual( individualName);
 		return getIndividualClasses( ind);
 	}
@@ -273,8 +291,8 @@ public class OWLEnquirer {
 	public Set<OWLLiteral> getDataPropertyB2Individual( OWLNamedIndividual individual, OWLDataProperty property){
 		long initialTime = System.nanoTime();
 		
-		//Set<OWLLiteral>  value = individual.getDataPropertyValues(property, ontoRef.getOntology());
-		Stream<OWLLiteral> stream = EntitySearcher.getDataPropertyValues(individual, property, ontoRef.getOntology());
+		//Set<OWLLiteral>  value = individual.getDataPropertyValues(property, ontoRef.getOWLOntology());
+		Stream<OWLLiteral> stream = EntitySearcher.getDataPropertyValues(individual, property, ontoRef.getOWLOntology());
 		Set< OWLLiteral> value = stream.collect( Collectors.toSet());
 		
 		try{
@@ -334,25 +352,25 @@ public class OWLEnquirer {
      * assigned to an individual. Returns {@code null}
 	 * if the object property or individual do not exist.
 	 * 
-	 * @param individual
-	 * @param property
+	 * @param individual from which the object property is retrieved.
+	 * @param property the object property to lock for.
 	 * @return non-ordered set of the property value entities ({@link OWLNamedIndividual}).
 	 */
 	public Set<OWLNamedIndividual> getObjectPropertyB2Individual( OWLNamedIndividual individual, OWLObjectProperty property){
 		long initialTime = System.nanoTime();
-		Set< OWLNamedIndividual> out = new HashSet< OWLNamedIndividual>();
+		Set< OWLNamedIndividual> out = new HashSet<>();
 		
-		//Set< OWLIndividual> set = individual.getObjectPropertyValues(property, ontoRef.getOntology());
-		Stream< OWLIndividual> stream = EntitySearcher.getObjectPropertyValues(individual, property, ontoRef.getOntology());
+		Stream< OWLIndividual> stream = EntitySearcher.getObjectPropertyValues(individual, property, ontoRef.getOWLOntology());
 		Set< OWLIndividual> set = stream.collect( Collectors.toSet());
 		
 		if( set != null){
-			for( OWLIndividual i : set)
-				out.add( i.asOWLNamedIndividual());
+			out.addAll(set.stream().map(AsOWLNamedIndividual::asOWLNamedIndividual).collect(Collectors.toList()));
 		}
 		try{
-			Set<OWLNamedIndividual> reasoned = ontoRef.getReasoner().getObjectPropertyValues( individual, property).getFlattened();
-			out.addAll( reasoned);
+			Stream<OWLNamedIndividual> streamReasoned = ontoRef.getReasoner().getObjectPropertyValues(individual, property).entities();
+			Set<OWLIndividual> reasoned = streamReasoned.collect(Collectors.toSet());
+			if( reasoned != null)
+				out.addAll( reasoned.stream().map( AsOWLNamedIndividual::asOWLNamedIndividual).collect( Collectors.toList()));
 		} catch( InconsistentOntologyException e){
 			ontoRef.logInconsistency();
 		}
@@ -380,8 +398,8 @@ public class OWLEnquirer {
      * Returns {@code null} if the object property or individual do not exist,
      * or {@link OWLReferencesInterface#getOnlyElement(Set)} returns {@code null}.
 	 * 
-	 * @param individual
-	 * @param property
+	 * @param individual from which the object property is retrieved.
+	 * @param property the object property to lock for.
 	 * @return property value entity ({@link OWLNamedIndividual}).
 	 */
 	public OWLNamedIndividual getOnlyObjectPropertyB2Individual( OWLNamedIndividual individual, OWLObjectProperty property){
@@ -394,13 +412,13 @@ public class OWLEnquirer {
 	 * Note: this implementation may be not efficient since it iterate over all
 	 * the object property of the ontology.
 	 * 
-	 * @param individual
+	 * @param individual the instance from which retrieve its objects properties.
 	 * @return all the object properties and value entities of the given individual.
 	 */
 	public Set<ObjectPropertyRelations> getObjectPropertyB2Individual(OWLNamedIndividual individual){
 		Set<ObjectPropertyRelations> out = new HashSet<ObjectPropertyRelations>();
 		// get all object prop in the ontology
-		OWLObjectProperty topObjProp = ontoRef.getFactory().getOWLTopObjectProperty();
+		OWLObjectProperty topObjProp = ontoRef.getOWLFactory().getOWLTopObjectProperty();
 		Set<OWLObjectProperty> allProp = getSubObjectPropertyOf(topObjProp);
 		for( OWLObjectProperty p : allProp){ // check if a property belongs to this individual
 			Set<OWLNamedIndividual> values = getObjectPropertyB2Individual(individual, p);
@@ -471,13 +489,13 @@ public class OWLEnquirer {
 	 * Note that this implementation may be not efficient since it iterate over all 
 	 * the object property of the ontology.
 	 * 
-	 * @param individual
+	 * @param individual the instance from which retrieve its objects properties.
 	 * @return all the object properties and value entities of the given individual.
 	 */
 	public Set< DataPropertyRelations> getDataPropertyB2Individual( OWLNamedIndividual individual){
 		Set< DataPropertyRelations> out = new HashSet< DataPropertyRelations>();
 		// get all object prop in the ontology
-		OWLDataProperty topObjProp = ontoRef.getFactory().getOWLTopDataProperty();
+		OWLDataProperty topObjProp = ontoRef.getOWLFactory().getOWLTopDataProperty();
 		Set<OWLDataProperty> allProp = getSubDataPropertyOf(topObjProp);
 		for( OWLDataProperty p : allProp){ // check if a property belongs to this individual
 			Set<OWLLiteral> values = getDataPropertyB2Individual(individual, p);
@@ -557,19 +575,19 @@ public class OWLEnquirer {
 	public Set<OWLObjectProperty> getSubObjectPropertyOf( OWLObjectProperty prop){
 		long initialTime = System.nanoTime();
 		
-		//Set<OWLObjectPropertyExpression> set = prop.getSubProperties( ontoRef.getOntology());//cl.getSubClasses( ontoRef.getOntology());
-		Stream<OWLObjectPropertyExpression> stream = EntitySearcher.getSubProperties( prop, ontoRef.getOntology());
+		//Set<OWLObjectPropertyExpression> set = prop.getSubProperties( ontoRef.getOWLOntology());//cl.getSubClasses( ontoRef.getOWLOntology());
+		Stream<OWLObjectPropertyExpression> stream = EntitySearcher.getSubProperties( prop, ontoRef.getOWLOntology());
 		Set<OWLObjectPropertyExpression> set = stream.collect( Collectors.toSet());
 		
-		Set<OWLObjectProperty> out = new HashSet< OWLObjectProperty>();
-		if( set != null){
-			for( OWLObjectPropertyExpression s : set)
-				out.add( s.asOWLObjectProperty());
-		}
+		Set<OWLObjectProperty> out = new HashSet<>();
+		if( set != null)
+			out.addAll(set.stream().map(AsOWLObjectProperty::asOWLObjectProperty).collect(Collectors.toList()));
+
 		try{
-			Set<OWLObjectPropertyExpression> inferred = ontoRef.getReasoner().getSubObjectProperties(prop, !returnCompleteDescription).getFlattened();
-			for( OWLObjectPropertyExpression e : inferred)
-				out.add( e.asOWLObjectProperty());
+			Stream<OWLObjectPropertyExpression> streamReasoned = ontoRef.getReasoner().getSubObjectProperties(prop, !returnCompleteDescription).entities();
+			Set< OWLObjectPropertyExpression> reasoned = streamReasoned.collect(Collectors.toSet());
+			if( reasoned != null)
+				out.addAll(reasoned.stream().map( AsOWLObjectProperty::asOWLObjectProperty).collect( Collectors.toList()));
 		} catch( InconsistentOntologyException e){
 			ontoRef.logInconsistency();
 		}
@@ -597,19 +615,20 @@ public class OWLEnquirer {
 	public Set<OWLObjectProperty> getSuperObjectPropertyOf( OWLObjectProperty prop){
 		long initialTime = System.nanoTime();
 		
-		//Set<OWLObjectPropertyExpression> set = prop.getSuperProperties( ontoRef.getOntology());
-		Stream<OWLObjectPropertyExpression> stream = EntitySearcher.getSuperProperties( prop, ontoRef.getOntology());
+		//Set<OWLObjectPropertyExpression> set = prop.getSuperProperties( ontoRef.getOWLOntology());
+		Stream<OWLObjectPropertyExpression> stream = EntitySearcher.getSuperProperties( prop, ontoRef.getOWLOntology());
 		Set<OWLObjectPropertyExpression> set = stream.collect( Collectors.toSet());
 		
-		Set<OWLObjectProperty> out = new HashSet< OWLObjectProperty>();
-		if( set != null){
-			for( OWLObjectPropertyExpression s : set)
-				out.add( s.asOWLObjectProperty());
-		}
+		Set<OWLObjectProperty> out = new HashSet<>();
+		if( set != null)
+			out.addAll(set.stream().map(AsOWLObjectProperty::asOWLObjectProperty).collect(Collectors.toList()));
+
 		try{
-			Set<OWLObjectPropertyExpression> inferred = ontoRef.getReasoner().getSuperObjectProperties(prop, !returnCompleteDescription).getFlattened();
-			for( OWLObjectPropertyExpression e : inferred)
-				out.add( e.asOWLObjectProperty());
+			Stream<OWLObjectPropertyExpression> streamReasoned = ontoRef.getReasoner().getSuperObjectProperties(prop, !returnCompleteDescription).entities();
+			Set< OWLObjectPropertyExpression> reasoned = streamReasoned.collect(Collectors.toSet());
+			if( reasoned != null)
+				out.addAll(reasoned.stream().map( AsOWLObjectProperty::asOWLObjectProperty).collect( Collectors.toList()));
+
 		} catch( InconsistentOntologyException e){
 			ontoRef.logInconsistency();
 		}
@@ -638,18 +657,19 @@ public class OWLEnquirer {
 	public Set<OWLDataProperty> getSubDataPropertyOf( OWLDataProperty prop){ 
 		long initialTime = System.nanoTime();
 		
-		//Set<OWLDataPropertyExpression> set = prop.getSubProperties( ontoRef.getOntology());
-		Stream<OWLDataPropertyExpression> stream = EntitySearcher.getSubProperties( prop, ontoRef.getOntology());
+		//Set<OWLDataPropertyExpression> set = prop.getSubProperties( ontoRef.getOWLOntology());
+		Stream<OWLDataPropertyExpression> stream = EntitySearcher.getSubProperties( prop, ontoRef.getOWLOntology());
 		Set<OWLDataPropertyExpression> set = stream.collect( Collectors.toSet());
 		
-		Set<OWLDataProperty> out = new HashSet< OWLDataProperty>();
-		if( set != null){
-			for( OWLDataPropertyExpression s : set)
-				out.add( s.asOWLDataProperty());
-		}
+		Set<OWLDataProperty> out = new HashSet<>();
+		if( set != null)
+			out.addAll(set.stream().map(AsOWLDataProperty::asOWLDataProperty).collect(Collectors.toList()));
+
 		try{
-			Set<OWLDataProperty> inferred = ontoRef.getReasoner().getSubDataProperties(prop, !returnCompleteDescription).getFlattened();
-			out.addAll( inferred);
+			Stream<OWLDataProperty> streamReasoned = ontoRef.getReasoner().getSubDataProperties(prop, !returnCompleteDescription).entities();
+			Set<OWLDataProperty> reasoned = streamReasoned.collect(Collectors.toSet());
+			if( reasoned != null)
+				out.addAll(reasoned.stream().map( AsOWLDataProperty::asOWLDataProperty).collect( Collectors.toList()));
 		} catch( InconsistentOntologyException e){
 			ontoRef.logInconsistency();
 		}
@@ -678,18 +698,19 @@ public class OWLEnquirer {
 	public Set<OWLDataProperty> getSuperDataPropertyOf( OWLDataProperty prop){ 
 		long initialTime = System.nanoTime();
 		
-		//Set<OWLDataPropertyExpression> set = prop.getSuperProperties( ontoRef.getOntology());
-		Stream<OWLDataPropertyExpression> stream = EntitySearcher.getSuperProperties( prop, ontoRef.getOntology());
+		//Set<OWLDataPropertyExpression> set = prop.getSuperProperties( ontoRef.getOWLOntology());
+		Stream<OWLDataPropertyExpression> stream = EntitySearcher.getSuperProperties( prop, ontoRef.getOWLOntology());
 		Set<OWLDataPropertyExpression> set = stream.collect( Collectors.toSet());
 		
-		Set<OWLDataProperty> out = new HashSet< OWLDataProperty>();
+		Set<OWLDataProperty> out = new HashSet<>();
 		if( set != null){
-			for( OWLDataPropertyExpression s : set)
-				out.add( s.asOWLDataProperty());
+			out.addAll(set.stream().map(AsOWLDataProperty::asOWLDataProperty).collect(Collectors.toList()));
 		}
 		try{
-			Set<OWLDataProperty> infered = ontoRef.getReasoner().getSuperDataProperties(prop, !returnCompleteDescription).getFlattened();
-			out.addAll( infered);
+			Stream<OWLDataProperty> streamReasoned = ontoRef.getReasoner().getSuperDataProperties(prop, !returnCompleteDescription).entities();
+			Set<OWLDataProperty> reasoned = streamReasoned.collect(Collectors.toSet());
+			if( reasoned != null)
+				out.addAll(reasoned.stream().map( AsOWLDataProperty::asOWLDataProperty).collect( Collectors.toList()));
 		} catch( InconsistentOntologyException e){
 			ontoRef.logInconsistency();
 		}
@@ -730,21 +751,22 @@ public class OWLEnquirer {
 	public Set<OWLClass> getSubClassOf( OWLClass cl){
 		long initialTime = System.nanoTime();
 		
-		//Set<OWLClassExpression> set = cl.getSubClasses( ontoRef.getOntology());
-		Stream<OWLClassExpression> stream = EntitySearcher.getSubClasses( cl, ontoRef.getOntology());
+		Stream<OWLClassExpression> stream = EntitySearcher.getSubClasses( cl, ontoRef.getOWLOntology());
 		Set<OWLClassExpression> set = stream.collect( Collectors.toSet());
 		
-		Set<OWLClass> out = new HashSet< OWLClass>();
-		if( set != null){
-			for( OWLClassExpression s : set)
-				out.add( s.asOWLClass());
-		}
+		Set<OWLClass> out = new HashSet<>();
+		if( set != null)
+			out.addAll( set.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
+
 		try{
-			out.addAll( ontoRef.getReasoner().getSubClasses( cl, !returnCompleteDescription).getFlattened());
+			Stream<OWLClass> streamReasoned = ontoRef.getReasoner().getSubClasses( cl, !returnCompleteDescription).entities();
+			Set<OWLClass> reasoned = streamReasoned.collect(Collectors.toSet());
+			if( reasoned != null)
+				out.addAll( reasoned.stream().map( AsOWLClass::asOWLClass).collect( Collectors.toList()));
 		} catch( InconsistentOntologyException e){
 			ontoRef.logInconsistency();
 		}
-		out.remove( ontoRef.getFactory().getOWLThing());
+		out.remove( ontoRef.getOWLFactory().getOWLThing());
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
@@ -771,24 +793,529 @@ public class OWLEnquirer {
 		long initialTime = System.nanoTime();
 		Set<OWLClass> classes = new HashSet< OWLClass>();
 		
-		//Set< OWLClassExpression> set = cl.getSuperClasses( ontoRef.getOntology());
-		Stream<OWLClassExpression> stream = EntitySearcher.getSuperClasses( cl, ontoRef.getOntology());
+		//Set< OWLClassExpression> set = cl.getSuperClasses( ontoRef.getOWLOntology());
+		Stream<OWLClassExpression> stream = EntitySearcher.getSuperClasses( cl, ontoRef.getOWLOntology());
 		Set<OWLClassExpression> set = stream.collect( Collectors.toSet());
 		
-		if( set != null){ 
-			for( OWLClassExpression j : set)
-				classes.add( j.asOWLClass());
-		}
+		if( set != null)
+			classes.addAll(set.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
+
 		try{
-			classes.addAll( ontoRef.getReasoner().getSuperClasses( cl, !returnCompleteDescription).getFlattened());
+			Stream<OWLClass> streamReasoned = ontoRef.getReasoner().getSuperClasses( cl, !returnCompleteDescription).entities();
+			Set<OWLClass> reasoned = streamReasoned.collect(Collectors.toSet());
+			if( reasoned != null)
+				classes.addAll( reasoned.stream().map( AsOWLClass::asOWLClass).collect( Collectors.toList()));
 		} catch( InconsistentOntologyException e){
 			ontoRef.logInconsistency();
 		}
-		classes.remove( ontoRef.getFactory().getOWLThing());
+		classes.remove( ontoRef.getOWLFactory().getOWLThing());
 		logger.addDebugString( "get super classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( classes);
 	}
 
+    /**
+     * Returns the set of restrictions of the given class it terms
+     * of: &forall; and &exist; quantifier, as well as: minimal, exact and maximal cardinality;
+     * with respect to data and object properties.
+     * @param cl the class from which get the restriction and cardinality limits.
+     * @return the container of all the class restrictions and cardinality, for
+     * the given class.
+     */
+	public Set<ClassRestriction> getClassRestrictions(OWLClass cl){
+		Set<ClassRestriction> out = new HashSet();
+		Stream<OWLClassAxiom> axiomStream = ontoRef.getOWLOntology().axioms( cl);
+		for (OWLClassAxiom ax :  (Iterable<OWLClassAxiom>) () -> axiomStream.iterator()) {
+			Stream<OWLClassExpression> nestedClassStream = ax.nestedClassExpressions();
+			for( OWLClassExpression e : (Iterable<OWLClassExpression>) () ->  nestedClassStream.iterator()) {
+				if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_MIN_CARDINALITY) {
+					OWLObjectMinCardinality r = (OWLObjectMinCardinality) e;
+                    ClassRestriction cr = new ClassRestriction( cl, (OWLObjectProperty) r.getProperty());
+                    cr.setObjectMinRestriction( r.getCardinality(), (OWLClass) r.getFiller());
+					out.add( cr);
+					logger.addDebugString( "getting class definition: " + cr);
+				}
+				if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_MAX_CARDINALITY) {
+                    OWLObjectMaxCardinality r = (OWLObjectMaxCardinality) e;
+                    ClassRestriction cr = new ClassRestriction( cl, (OWLObjectProperty) r.getProperty());
+                    cr.setObjectMaxRestriction( r.getCardinality(), (OWLClass) r.getFiller());
+                    out.add( cr);
+                    logger.addDebugString( "getting class definition: " + cr);
+				}
+				if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_EXACT_CARDINALITY) {
+                    OWLObjectExactCardinality r = (OWLObjectExactCardinality) e;
+                    ClassRestriction cr = new ClassRestriction( cl, (OWLObjectProperty) r.getProperty());
+                    cr.setObjectExactRestriction( r.getCardinality(), (OWLClass) r.getFiller());
+                    out.add( cr);
+                    logger.addDebugString( "getting class definition: " + cr);
+				}
+				if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_ALL_VALUES_FROM) {
+                    OWLObjectAllValuesFrom r = (OWLObjectAllValuesFrom) e;
+                    ClassRestriction cr = new ClassRestriction( cl, (OWLObjectProperty) r.getProperty());
+                    cr.setObjectOnlyRestriction( (OWLClass) r.getFiller());
+                    out.add( cr);
+                    logger.addDebugString( "getting class definition: " + cr);
+				}
+				if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_SOME_VALUES_FROM) {
+                    OWLObjectSomeValuesFrom r = (OWLObjectSomeValuesFrom) e;
+                    ClassRestriction cr = new ClassRestriction( cl, (OWLObjectProperty) r.getProperty());
+                    cr.setObjectSomeRestriction( (OWLClass) r.getFiller());
+                    out.add( cr);
+                    logger.addDebugString( "getting class definition: " + cr);
+				}
+
+				if ( e.getClassExpressionType() == ClassExpressionType.DATA_MIN_CARDINALITY) {
+                    OWLDataMinCardinality r = (OWLDataMinCardinality) e;
+                    ClassRestriction cr = new ClassRestriction( cl, (OWLDataProperty) r.getProperty());
+                     cr.setDataMinRestriction( r.getCardinality(), r.getFiller());
+                    out.add( cr);
+                    logger.addDebugString( "getting class definition: " + cr);
+				}
+				if ( e.getClassExpressionType() == ClassExpressionType.DATA_MAX_CARDINALITY) {
+                    OWLDataMaxCardinality r = (OWLDataMaxCardinality) e;
+                    ClassRestriction cr = new ClassRestriction( cl, (OWLDataProperty) r.getProperty());
+                    cr.setDataMaxRestriction( r.getCardinality(), r.getFiller());
+                    out.add( cr);
+                    logger.addDebugString( "getting class definition: " + cr);
+				}
+				if ( e.getClassExpressionType() == ClassExpressionType.DATA_EXACT_CARDINALITY) {
+                    OWLDataExactCardinality r = (OWLDataExactCardinality) e;
+                    ClassRestriction cr = new ClassRestriction( cl, (OWLDataProperty) r.getProperty());
+                    cr.setDataExactRestriction( r.getCardinality(), r.getFiller());
+                    out.add( cr);
+                    logger.addDebugString( "getting class definition: " + cr);
+				}
+				if ( e.getClassExpressionType() == ClassExpressionType.DATA_ALL_VALUES_FROM) {
+                    OWLDataAllValuesFrom r = (OWLDataAllValuesFrom) e;
+                    ClassRestriction cr = new ClassRestriction( cl, (OWLDataProperty) r.getProperty());
+                    cr.setDataOnlyRestriction( r.getFiller());
+                    out.add( cr);
+                    logger.addDebugString( "getting class definition: " + cr);
+				}
+				if ( e.getClassExpressionType() == ClassExpressionType.DATA_SOME_VALUES_FROM) {
+                    OWLDataSomeValuesFrom r = (OWLDataSomeValuesFrom) e;
+                    ClassRestriction cr = new ClassRestriction( cl, (OWLDataProperty) r.getProperty());
+                    cr.setDataSomeRestriction( r.getFiller());
+                    out.add( cr);
+                    logger.addDebugString( "getting class definition: " + cr);
+				}
+
+			}
+		}
+		return out;
+	}
+    /**
+     * Returns the set of restrictions of the given class it terms
+     * of: &forall; and &exist; quantifier, as well as: minimal, exact and maximal cardinality;
+     * with respect to data and object properties.
+     * @param className the name of the class from which get the restriction and cardinality limits.
+     * @return the container of all the class restrictions and cardinality, for
+     * the given class.
+     */
+	public Set<ClassRestriction> getClassRestrictions(String className){
+        return getClassRestrictions( ontoRef.getOWLClass( className));
+    }
+    /**
+     * This is a container for quantify class restrictions.
+     * It is produced fom {@link #getClassRestrictions(OWLClass)} and
+     * describes {@link OWLClassExpression} of the given class, if its type is one of:
+     * {@link ClassExpressionType#OBJECT_SOME_VALUES_FROM},  {@link ClassExpressionType#DATA_SOME_VALUES_FROM} (&exist;),
+     * {@link ClassExpressionType#OBJECT_ALL_VALUES_FROM}, {@link ClassExpressionType#DATA_ALL_VALUES_FROM} (&forall;),
+     * {@link ClassExpressionType#OBJECT_MIN_CARDINALITY}, {@link ClassExpressionType#DATA_MIN_CARDINALITY},
+     * {@link ClassExpressionType#OBJECT_MAX_CARDINALITY}, {@link ClassExpressionType#DATA_MAX_CARDINALITY},
+     * {@link ClassExpressionType#OBJECT_EXACT_CARDINALITY}, {@link ClassExpressionType#DATA_EXACT_CARDINALITY}.
+     * Where the getters of this containers depends from one of those types, assigned through setters.
+     */
+    public class ClassRestriction{
+		private OWLClass definitionOf;
+		private OWLProperty property;
+		private Boolean isDataProperty;
+		private int expressioneType, cardinality;
+		private OWLClass object;
+		private OWLDataRange data;
+
+        /**
+         * Create a class restriction for a data property and set its
+         * domain to be an {@link OWLDataRange} (see {@link #getDataTypeRestriction()}).
+         * @param subject the class restricted by this axiom.
+         * @param property the data property that restricts the class
+         */
+		public ClassRestriction(OWLClass subject, OWLDataProperty property) {
+			this.definitionOf = subject;
+			this.property = property;
+			this.isDataProperty = true;
+		}
+        /**
+         * Create a class restriction for an object property and set its
+         * domain to be an {@link OWLClass} (see {@link #getObjectRestriction()}).
+         * @param subject the class restricted by this axiom.
+         * @param property the object property that restricts the class
+         */
+		public ClassRestriction(OWLClass subject, OWLObjectProperty property) {
+			this.definitionOf = subject;
+			this.property = property;
+			this.isDataProperty = false;
+		}
+
+        /**
+         * Initialise to describe universal data property restriction over 
+         * a data type (supported: {@link String}, {@link Double}, {@link Float}, {@link Integer} and {@link Long}).
+         * In symbols: {@code class &forall; hasDataProperty dataType}.
+         * @param dataType the range of data of the universal restriction.
+         */
+		protected void setDataOnlyRestriction( OWLDataRange dataType){
+			if( isDataProperty) {
+				this.expressioneType = RESTRICTION_ONLY;
+				this.data = dataType;
+			} else logger.addDebugString( "Cannot set a 'only' data restriction over an object property", true);
+		}
+        /**
+         * Initialise to describe existential data property restriction over 
+         * a data type (supported: {@link String}, {@link Double}, {@link Float}, {@link Integer} and {@link Long}).
+         * In symbols: {@code class &exists; hasDataProperty dataType}.
+         * @param dataType the range of data of the existential restriction.
+         */
+		protected void setDataSomeRestriction( OWLDataRange dataType){
+			if( isDataProperty) {
+				this.expressioneType = RESTRICTION_SOME;
+				this.data = dataType;
+			} else logger.addDebugString( "Cannot set a 'some' data restriction over an object property", true);
+		}
+        /**
+         * Initialise to describe a data property with a minimal cardinality restriction over 
+         * a data type (supported: {@link String}, {@link Double}, {@link Float}, {@link Integer} and {@link Long}).
+         * In symbols: {@code class &lt;<sub>d</sub> hasDataProperty dataType}.
+         * @param cardinality the cardinality of the restriction {@code d}.
+         * @param dataType the range of data of the minimal cardinality restriction.
+         */
+		protected void setDataMinRestriction( int cardinality, OWLDataRange dataType){
+			if( isDataProperty) {
+				this.expressioneType = RESTRICTION_MIN;
+				this.cardinality = cardinality;
+				this.data = dataType;
+			} else logger.addDebugString( "Cannot set a 'min' data restriction over an object property", true);
+		}
+        /**
+         * Initialise to describe a data property with a maximal cardinality restriction over 
+         * a data type (supported: {@link String}, {@link Double}, {@link Float}, {@link Integer} and {@link Long}).
+         * In symbols: {@code class &gt;<sub>d</sub> hasDataProperty dataType}.
+         * @param cardinality the cardinality of the restriction {@code d}.
+         * @param dataType the range of data of the maximal cardinality restriction.
+         */
+		protected void setDataMaxRestriction(int cardinality, OWLDataRange dataType){
+			if( isDataProperty) {
+				this.expressioneType = RESTRICTION_MAX;
+				this.cardinality = cardinality;
+				this.data = dataType;
+			} else logger.addDebugString( "Cannot set a 'max' data restriction over an object property", true);
+		}
+        /**
+         * Initialise to describe a data property with an exact cardinality restriction over 
+         * a data type (supported: {@link String}, {@link Double}, {@link Float}, {@link Integer} and {@link Long}).
+         * In symbols: {@code class =<sub>d</sub> hasDataProperty dataType}.
+         * @param cardinality the cardinality of the restriction {@code d}.
+         * @param dataType the range of data of the exact cardinality restriction.
+         */
+		protected void setDataExactRestriction( int cardinality, OWLDataRange dataType){
+			if( isDataProperty) {
+				this.expressioneType = RESTRICTION_EXACT;
+				this.cardinality = cardinality;
+				this.data = dataType;
+			} else logger.addDebugString( "Cannot set a 'exact' data restriction over an object property", true);
+		}
+
+        /**
+         * Initialise to describe universal object property restriction over 
+         * a {@link OWLClass}.
+         * In symbols: {@code classSubject &forall; hasObjectProperty classObject}.
+         * @param object the class domain of the universal property restriction.
+         */
+        protected void setObjectOnlyRestriction( OWLClass object){
+			if( ! isDataProperty) {
+				this.expressioneType = RESTRICTION_ONLY;
+				this.object = object;
+			} else logger.addDebugString( "Cannot set a 'only' object restriction over a data property", true);
+		}
+        /**
+         * Initialise to describe existential object property restriction over 
+         * a {@link OWLClass}.
+         * In symbols: {@code classSubject &exists; hasObjectProperty classObject}.
+         * @param object the class domain of the existential property restriction.
+         */
+		protected void setObjectSomeRestriction( OWLClass object){
+			if( ! isDataProperty) {
+				this.expressioneType = RESTRICTION_SOME;
+				this.object = object;
+			} else logger.addDebugString( "Cannot set a 'some' object restriction over a data property", true);
+		}
+        /**
+         * Initialise to describe an object property with a minimal cardinality restriction over
+         * a {@link OWLClass}.
+         * In symbols: {@code classSubject &lt;<sub>d</sub> hasObjectProperty objectClass}.
+         * @param cardinality the cardinality of the restriction {@code d}.
+         * @param object the class domain of the minimal cardinality restriction over the property.
+         */
+		protected void setObjectMinRestriction(int cardinality, OWLClass object){
+			if( ! isDataProperty) {
+				this.expressioneType = RESTRICTION_MIN;
+				this.cardinality = cardinality;
+				this.object = object;
+			} else logger.addDebugString( "Cannot set an 'min' object restriction over a data property", true);
+		}
+        /**
+         * Initialise to describe an object property with a maximal cardinality restriction over
+         * a {@link OWLClass}.
+         * In symbols: {@code classSubject &gt;<sub>d</sub> hasObjectProperty objectClass}.
+         * @param cardinality the cardinality of the restriction {@code d}.
+         * @param object the class domain of the maximal cardinality restriction over the property.
+         */
+		protected void setObjectMaxRestriction(int cardinality, OWLClass object){
+			if( ! isDataProperty) {
+				this.expressioneType = RESTRICTION_MAX;
+				this.cardinality = cardinality;
+				this.object = object;
+			} else logger.addDebugString( "Cannot set an 'max' object restriction over a data property", true);
+		}
+        /**
+         * Initialise to describe an object property with a exact cardinality restriction over
+         * a {@link OWLClass}.
+         * In symbols: {@code classSubject =<sub>d</sub> hasObjectProperty objectClass}.
+         * @param cardinality the cardinality of the restriction {@code d}.
+         * @param object the class domain of the exact cardinality restriction over the property.
+         */
+        protected void setObjectExactRestriction(int cardinality, OWLClass object){
+			if( ! isDataProperty) {
+				this.expressioneType = RESTRICTION_EXACT;
+				this.cardinality = cardinality;
+				this.object = object;
+			} else logger.addDebugString( "Cannot set an 'exact' object restriction over a data property", true);
+		}
+
+        /**
+         * It returns {@code null} if {@code ( ! {@link #isDataProperty} )}.
+         * Otherwise, it returns the data type of the data property restriction.
+         * @return the data type of the data property restriction.
+         */
+		public OWLDataRange getDataTypeRestriction(){
+			if( isDataProperty)
+				return data;
+			logger.addDebugString( "a class restriction based on an object property does not have data restrictions.");
+			return null;
+		}
+
+        /**
+         * It returns {@code null} if {@code ( {@link #isDataProperty} )}.
+         * Otherwise, it returns the OWL class of the data property restriction.
+         * @return the class of the data property restriction.
+         */
+		public OWLClass getObjectRestriction(){
+			if( ! isDataProperty)
+				return object;
+			logger.addDebugString( "a class restriction based on a data property does not have object restrictions.");
+			return null;
+		}
+
+        /**
+         * Returns {@code null} if the expression type is RESTRICTION_ONLY or RESTRICTION_SOME.
+         * Otherwise, it return the cardinality of the data property restriction.
+         * @return the cardinality of the data propriety restriction.
+         */
+		public Integer getCardinality(){
+			if( expressioneType >= RESTRICTION_MIN)
+				return cardinality;
+			logger.addDebugString( getExpressionTypeName() + " does not have a cardinality.", true);
+			return null;
+		}
+
+        /**
+         * @return the property of this restriction, defining the
+         * given class (see {@link #isDefinitionOf()}).
+         */
+		public OWLProperty getProperty() {
+			return property;
+		}
+
+        /**
+         * @return {@link #getProperty()}, casted as {@link OWLDataProperty},
+         * if {@code this} {@link #isDataProperty} is true.
+         * {@code Null} otherwise.
+         */
+		public OWLDataProperty getDataProperty() {
+			if( isDataProperty)
+				return (OWLDataProperty) property;
+			logger.addDebugString( "cannot assign data to object property over: " + ontoRef.getOWLObjectName( property), true);
+			return null;
+		}
+        /**
+         * @return {@link #getProperty()}, casted as {@link OWLObjectProperty},
+         * if {@code this} {@link #isDataProperty} is false.
+         * {@code Null} otherwise.
+         */
+		public OWLObjectProperty getObjectProperty() {
+			if( ! isDataProperty)
+				return (OWLObjectProperty) property;
+			logger.addDebugString( "cannot assign data to object property over: " + ontoRef.getOWLObjectName( property), true);
+			return null;
+		}
+
+        /**
+         * Return the subject of the class restriction.
+         * It is the same class given as input to {@link OWLEnquirer#getClassRestrictions(OWLClass)}
+         * and produce this container. In the basic set given by {@link OWLEnquirer#getClassRestrictions(OWLClass)}
+         * this field is always the same.
+         * @return the class that is defined also by this property restriction.
+         */
+		public OWLClass isDefinitionOf() {
+			return definitionOf;
+		}
+
+        /**
+         * It is used to discriminate this instance for being:
+         * {@link OWLManipulator#RESTRICTION_SOME}, {@link OWLManipulator#RESTRICTION_ONLY},
+         * {@link OWLManipulator#RESTRICTION_MIN}, {@link OWLManipulator#RESTRICTION_EXACT}
+         * or {@link OWLManipulator#RESTRICTION_MAX}.
+         * @return the identifier of the expression type.
+         */
+		public int getExpressiontType() {
+			return expressioneType;
+		}
+
+        /**
+         * @return a string identifying the actual {@link #getExpressiontType()}.
+         */
+		public String getExpressionTypeName(){
+			if( isSomeRestriction())
+				return "<some>";
+			if( isOnlyRestriction())
+				return "<only>";
+			if( isMinRestriction())
+				return "<min>";
+			if( isExactRestriction())
+				return "<exact>";
+			if( isMaxRestriction())
+				return "<max>";
+			return "<null>"; // should not happen
+		}
+
+        /**
+         * @return {@code true} if the {@link #getExpressiontType()} is {@link OWLManipulator#RESTRICTION_SOME}
+         */
+		public boolean isSomeRestriction(){
+			return expressioneType == RESTRICTION_SOME;
+		}
+        /**
+         * @return {@code true} if the {@link #getExpressiontType()} is {@link OWLManipulator#RESTRICTION_ONLY}
+         */
+		public boolean isOnlyRestriction(){
+			return expressioneType == RESTRICTION_ONLY;
+		}
+        /**
+         * @return {@code true} if the {@link #getExpressiontType()} is {@link OWLManipulator#RESTRICTION_MIN}
+         */
+		public boolean isMinRestriction(){
+			return expressioneType == RESTRICTION_MIN;
+		}
+        /**
+         * @return {@code true} if the {@link #getExpressiontType()} is {@link OWLManipulator#RESTRICTION_EXACT}
+         */
+		public boolean isExactRestriction(){
+			return expressioneType == RESTRICTION_EXACT;
+		}
+        /**
+         * @return {@code true} if the {@link #getExpressiontType()} is {@link OWLManipulator#RESTRICTION_MAX}
+         */
+		public boolean isMaxRestriction(){
+			return expressioneType == RESTRICTION_MAX;
+		}
+
+        /**
+         * @return {@code true} if this object has been instantiated
+         * with {@link #ClassRestriction(OWLClass, OWLDataProperty)}.
+         * {@code False} otherwise.
+         */
+		public boolean restrictsOverDataProperty(){
+			return isDataProperty;
+		}
+        /**
+         * @return {@code true} if this object has been instantiated
+         * with {@link #ClassRestriction(OWLClass, OWLObjectProperty)}.
+         * {@code False} otherwise.
+         */
+		public boolean restrictsOverObjectProperty(){
+			return ! isDataProperty;
+		}
+
+        /**
+         * @return a short name for {@link #isDefinitionOf()}.
+         */
+		public String getDefinitionOfName(){
+			return ontoRef.getOWLObjectName( definitionOf);
+		}
+
+        /**
+         * @return a short name for {@link #getProperty()}.
+         */
+		public String getPropertyName(){
+			return ontoRef.getOWLObjectName( property);
+		}
+
+        /**
+         * @return a short name for {@link #getDataTypeRestriction()}
+         * if .{@link #isDataProperty}. Otherwise, a short name for
+         * {@link #getObjectRestriction()}.
+         */
+		public String getObjectName(){
+			if( isDataProperty) {
+			    try{
+			        return data.toString().substring( data.toString().lastIndexOf('#') + 1, data.toString().length());
+                } catch (Exception e) {
+                    return data + "";
+                }
+            }
+			return ontoRef.getOWLObjectName( object);
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (!(o instanceof ClassRestriction)) return false;
+
+            ClassRestriction that = (ClassRestriction) o;
+
+			if (expressioneType != that.expressioneType) return false;
+			if (cardinality != that.cardinality) return false;
+			if (definitionOf != null ? !definitionOf.equals(that.definitionOf) : that.definitionOf != null)
+				return false;
+			if (property != null ? !property.equals(that.property) : that.property != null) return false;
+			if (isDataProperty != null ? !isDataProperty.equals(that.isDataProperty) : that.isDataProperty != null)
+				return false;
+			if (object != null ? !object.equals(that.object) : that.object != null) return false;
+			return data != null ? data.equals(that.data) : that.data == null;
+		}
+		@Override
+		public int hashCode() {
+			int result = definitionOf != null ? definitionOf.hashCode() : 0;
+			result = 31 * result + (property != null ? property.hashCode() : 0);
+			result = 31 * result + (isDataProperty != null ? isDataProperty.hashCode() : 0);
+			result = 31 * result + expressioneType;
+			result = 31 * result + cardinality;
+			result = 31 * result + (object != null ? object.hashCode() : 0);
+			result = 31 * result + (data != null ? data.hashCode() : 0);
+			return result;
+		}
+
+		@Override
+		public String toString() {
+			String out = "Class definition: " + getDefinitionOfName() + " " + getPropertyName();
+			if( isDataProperty)
+			    out += " data::";
+			else out += " object::";
+			out += " " + getExpressionTypeName();
+            if( expressioneType >= RESTRICTION_MIN)
+				out += " " + getCardinality();
+			out += " " + getObjectName();
+			return out;
+		}
+	}
 
 	// works only for pellet
 	// set time out to null or < 0 to do not apply any timing out
@@ -796,7 +1323,7 @@ public class OWLEnquirer {
     /**
      * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
      * Works only with the Pellet reasoner. {@code timeOut} parameter sets the query timeout, no timeout is set if
-     * {@code timeOut} <= 0. Once timeout is reached, all solutions found up to that point are returned.
+     * {@code timeOut &lt;=0}. Once timeout is reached, all solutions found up to that point are returned.
      * @param query a string defining the query in SPARQL query syntax.
      * @param timeOut timeout for the query.
      * @return list of solutions.
@@ -842,7 +1369,7 @@ public class OWLEnquirer {
     /**
      * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
      * Works only with the Pellet reasoner. {@code timeOut} parameter sets the query timeout, no timeout is set if
-     * {@code timeOut} <= 0. Once timeout is reached, all solutions found up to that point are returned.
+     * {@code timeOut &lt;= 0}. Once timeout is reached, all solutions found up to that point are returned.
      * @param prefix a string defining the query prefix field in SPARQL query syntax.
      * @param select a string defining the query select field in SPARQL query syntax.
      * @param where a string defining the query where field in SPARQL query syntax.
@@ -866,7 +1393,7 @@ public class OWLEnquirer {
     /**
      * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
      * Used to share the results with other code and processes. {@code timeOut} parameter sets the query timeout,
-     * no timeout is set if {@code timeOut} <= 0. Once timeout is reached, all solutions found up to that point are returned.
+     * no timeout is set if {@code timeOut &lt;= 0}. Once timeout is reached, all solutions found up to that point are returned.
      * @param query a string defining the query in SPARQL query syntax.
      * @param timeOut timeout for the query.
      * @return formatted list of solutions.
@@ -886,7 +1413,7 @@ public class OWLEnquirer {
     /**
      * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
      * Used to share the results with other code and processes. {@code timeOut} parameter sets the query timeout,
-     * no timeout is set if {@code timeOut} <= 0. Once timeout is reached, all solutions found up to that point are returned.
+     * no timeout is set if {@code timeOut &lt;= 0}. Once timeout is reached, all solutions found up to that point are returned.
      * @param prefix a string defining the query prefix field in SPARQL query syntax.
      * @param select a string defining the query select field in SPARQL query syntax.
      * @param where a string defining the query where field in SPARQL query syntax.

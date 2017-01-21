@@ -13,6 +13,15 @@ import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
 
 /**
+ * <div style="text-align:center;"><small>
+ * <b>Project</b>:    aMOR <br>
+ * <b>File</b>:       it.emarolab.amor.owlInterface.InferredAxiomExporter <br>
+ * <b>Licence</b>:    GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
+ * <b>Author</b>:     Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
+ * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
+ * <b>date</b>:       Feb 10, 2016 <br>
+ * </small></div>
+ *
  * Static class used to export an ontology.
  * Reasoner generated asserted property will be exported as fixed.
  * 
@@ -44,9 +53,9 @@ public class InferredAxiomExporter {
 	 */
 	public synchronized static OWLReferences exportOntology( OWLReferences ontoRef){
 		long initialTime = System.nanoTime();
-		Set< OWLNamedIndividual> allIndividuals = ontoRef.getIndividualB2Class( ontoRef.getFactory().getOWLThing());
-		Set<OWLObjectProperty> allObjProp = ontoRef.getOntology().getObjectPropertiesInSignature( importingClosure);
-		Set<OWLDataProperty> allDataProp = ontoRef.getOntology().getDataPropertiesInSignature( importingClosure);
+		Set< OWLNamedIndividual> allIndividuals = ontoRef.getIndividualB2Class( ontoRef.getOWLFactory().getOWLThing());
+		Set<OWLObjectProperty> allObjProp = ontoRef.getOWLOntology().getObjectPropertiesInSignature( importingClosure);
+		Set<OWLDataProperty> allDataProp = ontoRef.getOWLOntology().getDataPropertiesInSignature( importingClosure);
 		for( OWLNamedIndividual i : allIndividuals){ //for all individuals belong to the ontology
 			exportObjectProperties( allObjProp, i, ontoRef);
 			exportDataProperties( allDataProp, i, ontoRef);
@@ -91,7 +100,7 @@ public class InferredAxiomExporter {
 		synchronized( ontoRef.getReasoner()){
 			OWLReasoner reasoner = ontoRef.getReasoner();
 			Set<OWLClass> allClass = reasoner.getTypes( ind, false).getFlattened();
-			for( OWLClass c : allClass){ 
+			for( OWLClass c : allClass){
 				ontoRef.addIndividualB2Class( ind, c); // ad an axiom in the applied change list of ontoRef
 			}
 		}

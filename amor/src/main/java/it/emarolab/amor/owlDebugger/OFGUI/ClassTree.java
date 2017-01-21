@@ -109,23 +109,23 @@ public class ClassTree implements TreeSelectionListener {
 	        Set<OWLClassExpression> notInferedCl;
 	        // manage not string for owl:Thing
 	        if( superClass.equals( ClassExchange.Things)){
-	        	topClass = ontoRef.getFactory().getOWLThing().asOWLClass();
+	        	topClass = ontoRef.getOWLFactory().getOWLThing().asOWLClass();
 	        	Set<OWLClass> tmpInf = ontoRef.getReasoner().getSubClasses( topClass, false).getFlattened();
 	        	
-	        	//notInferedCl = topClass.getSubClasses( ontoRef.getOntology());
-	        	Stream<OWLClassExpression> notInferedClStream = EntitySearcher.getSubClasses( topClass, ontoRef.getOntology());
+	        	//notInferedCl = topClass.getSubClasses( ontoRef.getOWLOntology());
+	        	Stream<OWLClassExpression> notInferedClStream = EntitySearcher.getSubClasses( topClass, ontoRef.getOWLOntology());
 	        	notInferedCl = notInferedClStream.collect(Collectors.toSet());	
 	        	
 	        	for( OWLClass n :tmpInf)
 	        		notInferedCl.add( n);
 	        	
 	        } else {
-	        	//topClass = ontoRef.getFactory().getOWLClass( superClass, ontoRef.getPrefixFormat());
-	        	topClass = ontoRef.getFactory().getOWLClass( ontoRef.getPrefixFormat( superClass));
+	        	//topClass = ontoRef.getOWLFactory().getOWLClass( superClass, ontoRef.getPrefixFormat());
+	        	topClass = ontoRef.getOWLFactory().getOWLClass( ontoRef.getPrefixFormat( superClass));
 	        	inferedCl = ontoRef.getReasoner().getSubClasses( topClass, false).getFlattened();
 	        	
-	        	//notInferedCl = topClass.getSubClasses(ontoRef.getOntology());
-	        	Stream<OWLClassExpression> notInferedClStream = EntitySearcher.getSubClasses( topClass, ontoRef.getOntology());
+	        	//notInferedCl = topClass.getSubClasses(ontoRef.getOWLOntology());
+	        	Stream<OWLClassExpression> notInferedClStream = EntitySearcher.getSubClasses( topClass, ontoRef.getOWLOntology());
 	        	notInferedCl = notInferedClStream.collect(Collectors.toSet());
 	        }
 			
@@ -133,7 +133,7 @@ public class ClassTree implements TreeSelectionListener {
 	        if( ! notInferedCl.isEmpty()){
 	        	// for all the non asserted class
 		        for( OWLClassExpression infNo : notInferedCl){ 
-		        	if( ! infNo.equals( ontoRef.getFactory().getOWLNothing())){
+		        	if( ! infNo.equals( ontoRef.getOWLFactory().getOWLNothing())){
 		        		//add a new class
 		        		//tmpUpdateNode = new EntryInfo( ClassExchange.getRenderer().render( infNo), ClassExchange.classIcon);
 		        		tmpUpdateNode = new EntryInfo( OWLReferencesInterface.getOWLName( infNo), ClassExchange.classIcon);
@@ -142,8 +142,8 @@ public class ClassTree implements TreeSelectionListener {
 		        		top.add( category);
 			        	
 			    		// add not inferred individual
-			    		//Set<OWLIndividual> notInferedIn = infNo.asOWLClass().getIndividuals(ontoRef.getOntology());
-		        		Stream<OWLIndividual> notInferedInStream = EntitySearcher.getIndividuals( infNo.asOWLClass(), ontoRef.getOntology());
+			    		//Set<OWLIndividual> notInferedIn = infNo.asOWLClass().getIndividuals(ontoRef.getOWLOntology());
+		        		Stream<OWLIndividual> notInferedInStream = EntitySearcher.getIndividuals( infNo.asOWLClass(), ontoRef.getOWLOntology());
 		        		Set<OWLIndividual> notInferedIn = notInferedInStream.collect(Collectors.toSet());
 		        		
 			    		for( OWLIndividual noInfInd : notInferedIn){
@@ -160,7 +160,7 @@ public class ClassTree implements TreeSelectionListener {
 						Set<OWLNamedIndividual> inferedIndividual = ontoRef.getReasoner().getInstances( infNo, false).getFlattened();
 						if( ! inferedIndividual .isEmpty())
 			        	for(OWLIndividual infInd : inferedIndividual){
-			    			if( ! infInd.equals( ontoRef.getFactory().getOWLAnonymousIndividual())){
+			    			if( ! infInd.equals( ontoRef.getOWLFactory().getOWLAnonymousIndividual())){
 				    			if( ! notInferedIn.contains( infInd)){ 
 				    				// if assert add notify [ ICON classInfIconn]
 				    				if( init){
@@ -193,7 +193,7 @@ public class ClassTree implements TreeSelectionListener {
 	        boolean init = true;		
     		if( inferedCl != null)
 				for(OWLClass inf : inferedCl){
-	    			if( ! inf.equals( ontoRef.getFactory().getOWLNothing())){
+	    			if( ! inf.equals( ontoRef.getOWLFactory().getOWLNothing())){
 		    			if( ! notInferedCl.contains( inf)){ 
 		    				// if assert add notify [ ICON classInfIconn]
 		    				if( init){

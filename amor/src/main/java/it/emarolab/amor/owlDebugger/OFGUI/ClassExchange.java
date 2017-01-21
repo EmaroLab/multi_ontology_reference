@@ -339,13 +339,13 @@ public class ClassExchange {
 	}
 	
 	// ############### ONTOLOGY VARIABLE ###############
-	/**
+	/*
 	 * @return the ontoRef
 	 */
 	public static synchronized OWLReferences getOntoRef() {
 		return ontoRef;
 	}
-	/**
+	/*
 	 * @param ontoRef the ontoRef to set
 	 */
 	public static synchronized void setOntoRef(OWLReferences ontoRef) {
@@ -358,15 +358,15 @@ public class ClassExchange {
 //		ClassExchange.reasoner = reasoner;
 //	}
 	
-	public synchronized static OWLOntologyManager getManager() {
-		return ontoRef.getManager();//manager;
+	public synchronized static OWLOntologyManager getOWLManager() {
+		return ontoRef.getOWLManager();//manager;
 	}
 //	public synchronized static void setManager(OWLOntologyManager owlOntologyManager) {
 //		ClassExchange.manager = owlOntologyManager;
 //	}
 	
-	public synchronized static OWLDataFactory getFactory() {
-		return ontoRef.getFactory();//factory;
+	public synchronized static OWLDataFactory getOWLFactory() {
+		return ontoRef.getOWLFactory();//factory;
 	}
 //	public synchronized static void setFactory(OWLDataFactory factory) {
 //		ClassExchange.factory = factory;
@@ -379,8 +379,8 @@ public class ClassExchange {
 //		ClassExchange.pm = pm;
 //	}
 
-	public synchronized static OWLOntology getOntology() {
-		return ontoRef.getOntology();//ontology;
+	public synchronized static OWLOntology getOWLOntology() {
+		return ontoRef.getOWLOntology();//ontology;
 	}
 //	public synchronized static void setOntology(OWLOntology ontology) {
 //		ClassExchange.ontology = ontology;
@@ -573,38 +573,38 @@ public class ClassExchange {
 		return( out);
 	}
 	
-	/**
+	/*
 	 * @return the runScheduler_flag
 	 */
 	public static synchronized Boolean getRunSchedulerFlag() {
 		return runScheduler_flag;
 	}
-	/**
+	/*
 	 * @param runScheduler_flag the runScheduler_flag to set
 	 */
 	public static synchronized void setRunSchedulerFlag(Boolean runScheduler_flag) {
 		ClassExchange.runScheduler_flag = runScheduler_flag;
 	}
 	
-	/**
+	/*
 	 * @return the exportAssertion_flag
 	 */
 	public static synchronized Boolean getExportAssertionFlag() {
 		return exportAssertion_flag;
 	}
-	/**
+	/*
 	 * @return the saveState_btn
 	 */
 	public static synchronized JButton getSaveState_btn() {
 		return saveState_btn;
 	}
-	/**
+	/*
 	 * @param saveState_btn the saveState_btn to set
 	 */
 	public static synchronized void setSaveState_btn(JButton saveState_btn) {
 		ClassExchange.saveState_btn = saveState_btn;
 	}
-	/**
+	/*
 	 * @param exportAssertion_flag the exportAssertion_flag to set
 	 */
 	public static synchronized void setExportAssertionFlag(Boolean exportAssertion_flag) {
@@ -612,98 +612,98 @@ public class ClassExchange {
 	}
 	
 	
-	/**
+	/*
 	 * @return the brosware_Frame
 	 */
 	public static synchronized JFrame getBroswareFrame() {
 		return brosware_Frame;
 	}
-	/**
+	/*
 	 * @param brosware_Frame the brosware_Frame to set
 	 */
 	public static synchronized void setBroswareFrame(JFrame brosware_Frame) {
 		ClassExchange.brosware_Frame = brosware_Frame;
 	}
-	/** 
+	/* 
 	 * @return the broswarePath_textField
 	 */
 	public static synchronized JTextField getBroswarePathtextField() {
 		return broswarePath_textField;
 	}
-	/**
+	/*
 	 * @return the chosenLoadingPaths
 	 */
 	public static Set<String> getChosenLoadingPaths() {
 		return chosenLoadingPaths;
 	}
-	/**
+	/*
 	 * @param paths
 	 */
 	public static synchronized void setChosenLoadingPaths( Set<String> paths) {
 		chosenLoadingPaths = paths;
 	}
 	
-	/**
+	/*
 	 * @param broswarePathtextField the broswarePath_textField to set
 	 */
 	public static synchronized void setBroswarePathtextField(JTextField broswarePathtextField) {
 		broswarePath_textField = broswarePathtextField;
 	}
-	/**
+	/*
 	 * @return the fileChooser
 	 */
 	public static synchronized JFileChooser getFileChooser() {
 		return fileChooser;
 	}
-	/**
+	/*
 	 * @param fileChooser the fileChooser to set
 	 */
 	public static synchronized void setFileChooser(JFileChooser fileChooser) {
 		ClassExchange.fileChooser = fileChooser;
 	}
-	/**
+	/*
 	 * @return the individualFramPeriod
 	 */
 	public static synchronized long getIndividualFramPeriod() {
 		return individualFramPeriod;
 	}
-	/**
+	/*
 	 * @param individualFramPeriod the individualFramPeriod to set
 	 */
 	public static synchronized void setIndividualFramPeriod(long individualFramPeriod) {
 		ClassExchange.individualFramPeriod = individualFramPeriod;
 	}
-	/**
+	/*
 	 * @return the allInstancesPeriod
 	 */
 	public static synchronized long getAllInstancesPeriod() {
 		return allInstancesPeriod;
 	}
-	/**
+	/*
 	 * @param allInstancesPeriod the allInstancesPeriod to set
 	 */
 	public static synchronized void setAllInstancesPeriod(long allInstancesPeriod) {
 		ClassExchange.allInstancesPeriod = allInstancesPeriod;
 	}
-	/**
+	/*
 	 * @return the treePeriod
 	 */
 	public static synchronized long getTreePeriod() {
 		return treePeriod;
 	}
-	/**
+	/*
 	 * @param treePeriod the treePeriod to set
 	 */
 	public static synchronized void setTreePeriod(long treePeriod) {
 		ClassExchange.treePeriod = treePeriod;
 	}
-	/**
+	/*
 	 * @return the sAVINGPERIOD
 	 */
 	public static synchronized long getSAVINGPERIOD() {
 		return SAVINGPERIOD;
 	}
-	/**
+	/*
 	 * @param sAVINGPERIOD the sAVINGPERIOD to set
 	 */
 	public static synchronized void setSAVINGPERIOD(long sAVINGPERIOD) {

@@ -8,30 +8,37 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.jena.query.QuerySolution;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
-import org.semanticweb.owlapi.model.OWLOntologyChange;
-import org.semanticweb.owlapi.model.RemoveAxiom;
+import org.semanticweb.owlapi.model.*;
 
 import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
 import it.emarolab.amor.owlInterface.OWLEnquirer.DataPropertyRelations;
 import it.emarolab.amor.owlInterface.OWLEnquirer.ObjectPropertyRelations;
 
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLLiteral;
-
-// TODO : how it is possible to serialise other things
-// TODO : how to add more reasoners
-// TODO : add super class manipulator interface
+// TODO : serialisation
+// TODO : add more reasoners
 // TODO : better logging
-// TODO : make an abstract class interface to be implemented for all methods (all have the same shape)
-// TODO : replace with string as input parameter
+// TODO : make an abstract class interface to be implemented
 
+/**
+ * <div style="text-align:center;"><small>
+ * <b>Project</b>:    aMOR <br>
+ * <b>File</b>:       it.emarolab.amor.owlInterface.OWLReferences <br>
+ * <b>Licence</b>:    GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
+ * <b>Author</b>:     Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
+ * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
+ * <b>date</b>:       Feb 10, 2016 <br>
+ * </small></div>
+ *
+ * <p>
+ *     This class is the top layer, multi thread safe, interface for:
+ *     loading, opening or create and initialise an ontology (see {@link OWLLibrary} and {@link OWLReferencesInterface}).
+ *     As well as mainpulating the structure (see {@link OWLManipulator}) and quering the resoner.
+ *     (see {@link OWLManipulator}).
+ * </p>
+ *
+ * @version 2.1
+ */
 public class OWLReferences extends OWLReferencesInterface{
 
 	/**
@@ -40,7 +47,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 */
 	private Logger logger = new Logger( this, LoggerFlag.getLogOntologyReference());
 
-	//  [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ SUPER CLASS CONSTRUCORS ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+	//  [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ SUPER CLASS CONSTRUCTORS ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 	/**
 	 * This constructor just calls the super class constructor: {@link OWLReferencesInterface#OWLReferencesInterface(String, String, String, Boolean, Integer)}
 	 * @param referenceName the unique identifier of this ontology references. This is the key with which this instance
@@ -94,6 +101,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	private Lock mutexSuperDataProp = new ReentrantLock();
 	private Lock mutexSuperObjProp = new ReentrantLock();
 	private Lock mutexSPARQL = new ReentrantLock();
+    private Lock mutexClassDefinition = new ReentrantLock();
 	
 	/**
 	 * This method searches for all the individuals in the root class {@link OWLDataFactory#getOWLThing()}. 
@@ -106,8 +114,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
 		return new OWLReferencesCaller< Set< OWLNamedIndividual>>(  mutexes, this) {
 			@Override
-			protected Set< OWLNamedIndividual> perfromSynchronisedCall() {
-				return getOWLEnquirer().getIndividualB2Thing();
+			protected Set< OWLNamedIndividual> performSynchronisedCall() {
+				return getEnquirer().getIndividualB2Thing();
 			}
 		}.call();
 	}
@@ -122,8 +130,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
 		return new OWLReferencesCaller< OWLNamedIndividual>(  mutexes, this) {
 			@Override
-			protected OWLNamedIndividual perfromSynchronisedCall() {
-				return getOWLEnquirer().getOnlyIndividualB2Thing();
+			protected OWLNamedIndividual performSynchronisedCall() {
+				return getEnquirer().getOnlyIndividualB2Thing();
 			}
 		}.call();
 	}
@@ -140,8 +148,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
 		return new OWLReferencesCaller< Set< OWLNamedIndividual>>(  mutexes, this) {
 			@Override
-			protected Set< OWLNamedIndividual> perfromSynchronisedCall() {
-				return getOWLEnquirer().getIndividualB2Class( className);
+			protected Set< OWLNamedIndividual> performSynchronisedCall() {
+				return getEnquirer().getIndividualB2Class( className);
 			}
 		}.call();
 	}
@@ -157,8 +165,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
 		return new OWLReferencesCaller< Set< OWLNamedIndividual>>(  mutexes, this) {
 			@Override
-			protected Set< OWLNamedIndividual> perfromSynchronisedCall() {
-				return getOWLEnquirer().getIndividualB2Class( ontoClass);
+			protected Set< OWLNamedIndividual> performSynchronisedCall() {
+				return getEnquirer().getIndividualB2Class( ontoClass);
 			}
 		}.call();
 	}
@@ -174,8 +182,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
 		return new OWLReferencesCaller< OWLNamedIndividual>(  mutexes, this) {
 			@Override
-			protected OWLNamedIndividual perfromSynchronisedCall() {
-				return getOWLEnquirer().getOnlyIndividualB2Class( className);
+			protected OWLNamedIndividual performSynchronisedCall() {
+				return getEnquirer().getOnlyIndividualB2Class( className);
 			}
 		}.call();
 	}
@@ -191,8 +199,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
 		return new OWLReferencesCaller< OWLNamedIndividual>(  mutexes, this) {
 			@Override
-			protected OWLNamedIndividual perfromSynchronisedCall() {
-				return getOWLEnquirer().getOnlyIndividualB2Class(ontoClass);
+			protected OWLNamedIndividual performSynchronisedCall() {
+				return getEnquirer().getOnlyIndividualB2Class(ontoClass);
 			}
 		}.call();
 	}
@@ -209,8 +217,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndivClasses);
 		return new OWLReferencesCaller< Set< OWLClass>>(  mutexes, this) {
 			@Override
-			protected Set< OWLClass> perfromSynchronisedCall() {
-				return getOWLEnquirer().getIndividualClasses( individual);
+			protected Set< OWLClass> performSynchronisedCall() {
+				return getEnquirer().getIndividualClasses( individual);
 			}
 		}.call();
 	}
@@ -226,8 +234,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndivClasses);
 		return new OWLReferencesCaller< Set< OWLClass>>(  mutexes, this) {
 			@Override
-			protected Set< OWLClass> perfromSynchronisedCall() {
-				return getOWLEnquirer().getIndividualClasses( individual);
+			protected Set< OWLClass> performSynchronisedCall() {
+				return getEnquirer().getIndividualClasses( individual);
 			}
 		}.call();
 	}
@@ -243,8 +251,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndivClasses);
 		return new OWLReferencesCaller< OWLClass>(  mutexes, this) {
 			@Override
-			protected OWLClass perfromSynchronisedCall() {
-				return getOWLEnquirer().getOnlyIndividualClasses( individual);
+			protected OWLClass performSynchronisedCall() {
+				return getEnquirer().getOnlyIndividualClasses( individual);
 			}
 		}.call();
 	}
@@ -260,8 +268,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndivClasses);
 		return new OWLReferencesCaller< OWLClass>(  mutexes, this) {
 			@Override
-			protected OWLClass perfromSynchronisedCall() {
-				return getOWLEnquirer().getOnlyIndividualClasses( individual);
+			protected OWLClass performSynchronisedCall() {
+				return getEnquirer().getOnlyIndividualClasses( individual);
 			}
 		}.call();
 	}
@@ -280,8 +288,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexDataPropB2Ind);
 		return new OWLReferencesCaller< Set< OWLLiteral>>(  mutexes, this) {
 			@Override
-			protected Set< OWLLiteral> perfromSynchronisedCall() {
-				return getOWLEnquirer().getDataPropertyB2Individual( individualName, propertyName);
+			protected Set< OWLLiteral> performSynchronisedCall() {
+				return getEnquirer().getDataPropertyB2Individual( individualName, propertyName);
 			}
 		}.call();
 	}
@@ -298,8 +306,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexDataPropB2Ind);
 		return new OWLReferencesCaller< Set< OWLLiteral>>(  mutexes, this) {
 			@Override
-			protected Set< OWLLiteral> perfromSynchronisedCall() {
-				return getOWLEnquirer().getDataPropertyB2Individual( individual, property);
+			protected Set< OWLLiteral> performSynchronisedCall() {
+				return getEnquirer().getDataPropertyB2Individual( individual, property);
 			}
 		}.call();
 	}
@@ -316,8 +324,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexDataPropB2Ind);
 		return new OWLReferencesCaller< OWLLiteral>(  mutexes, this) {
 			@Override
-			protected OWLLiteral perfromSynchronisedCall() {
-				return getOWLEnquirer().getOnlyDataPropertyB2Individual( individualName, propertyName);
+			protected OWLLiteral performSynchronisedCall() {
+				return getEnquirer().getOnlyDataPropertyB2Individual( individualName, propertyName);
 			}
 		}.call();
 	}
@@ -334,8 +342,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexDataPropB2Ind);
 		return new OWLReferencesCaller< OWLLiteral>(  mutexes, this) {
 			@Override
-			protected OWLLiteral perfromSynchronisedCall() {
-				return getOWLEnquirer().getOnlyDataPropertyB2Individual( individual, property);
+			protected OWLLiteral performSynchronisedCall() {
+				return getEnquirer().getOnlyDataPropertyB2Individual( individual, property);
 			}
 		}.call();
 	}
@@ -352,8 +360,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAllDataPropB2Ind);
 		return new OWLReferencesCaller< Set<DataPropertyRelations>>(  mutexes, this) {
 			@Override
-			protected Set<DataPropertyRelations> perfromSynchronisedCall() {
-				return getOWLEnquirer().getDataPropertyB2Individual( individual);
+			protected Set<DataPropertyRelations> performSynchronisedCall() {
+				return getEnquirer().getDataPropertyB2Individual( individual);
 			}
 		}.call();
 	}
@@ -369,8 +377,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAllObjPropB2Ind);
 		return new OWLReferencesCaller< Set<DataPropertyRelations>>(  mutexes, this) {
 			@Override
-			protected Set<DataPropertyRelations> perfromSynchronisedCall() {
-				return getOWLEnquirer().getDataPropertyB2Individual( individualName);
+			protected Set<DataPropertyRelations> performSynchronisedCall() {
+				return getEnquirer().getDataPropertyB2Individual( individualName);
 			}
 		}.call();
 	}
@@ -388,8 +396,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexObjPropB2Ind);
 		return new OWLReferencesCaller<  Set<OWLNamedIndividual>>(  mutexes, this) {
 			@Override
-			protected  Set<OWLNamedIndividual> perfromSynchronisedCall() {
-				return getOWLEnquirer().getObjectPropertyB2Individual( individualName, propertyName);
+			protected  Set<OWLNamedIndividual> performSynchronisedCall() {
+				return getEnquirer().getObjectPropertyB2Individual( individualName, propertyName);
 			}
 		}.call();
 	}
@@ -406,8 +414,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexObjPropB2Ind);
 		return new OWLReferencesCaller<  Set<OWLNamedIndividual>>(  mutexes, this) {
 			@Override
-			protected  Set<OWLNamedIndividual> perfromSynchronisedCall() {
-				return getOWLEnquirer().getObjectPropertyB2Individual( individual, property);
+			protected  Set<OWLNamedIndividual> performSynchronisedCall() {
+				return getEnquirer().getObjectPropertyB2Individual( individual, property);
 			}
 		}.call();
 	}
@@ -424,8 +432,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexObjPropB2Ind);
 		return new OWLReferencesCaller< OWLNamedIndividual>(  mutexes, this) {
 			@Override
-			protected OWLNamedIndividual perfromSynchronisedCall() {
-				return getOWLEnquirer().getOnlyObjectPropertyB2Individual( individualName, propertyName);
+			protected OWLNamedIndividual performSynchronisedCall() {
+				return getEnquirer().getOnlyObjectPropertyB2Individual( individualName, propertyName);
 			}
 		}.call();
 	}
@@ -442,8 +450,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexObjPropB2Ind);
 		return new OWLReferencesCaller< OWLNamedIndividual>(  mutexes, this) {
 			@Override
-			protected OWLNamedIndividual perfromSynchronisedCall() {
-				return getOWLEnquirer().getOnlyObjectPropertyB2Individual( individual, property);
+			protected OWLNamedIndividual performSynchronisedCall() {
+				return getEnquirer().getOnlyObjectPropertyB2Individual( individual, property);
 			}
 		}.call();
 	}
@@ -460,8 +468,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAllObjPropB2Ind);
 		return new OWLReferencesCaller< Set<ObjectPropertyRelations>>(  mutexes, this) {
 			@Override
-			protected Set<ObjectPropertyRelations> perfromSynchronisedCall() {
-				return getOWLEnquirer().getObjectPropertyB2Individual( individual);
+			protected Set<ObjectPropertyRelations> performSynchronisedCall() {
+				return getEnquirer().getObjectPropertyB2Individual( individual);
 			}
 		}.call();
 	}
@@ -477,8 +485,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAllObjPropB2Ind);
 		return new OWLReferencesCaller< Set<ObjectPropertyRelations>>(  mutexes, this) {
 			@Override
-			protected Set<ObjectPropertyRelations> perfromSynchronisedCall() {
-				return getOWLEnquirer().getObjectPropertyB2Individual( individualName);
+			protected Set<ObjectPropertyRelations> performSynchronisedCall() {
+				return getEnquirer().getObjectPropertyB2Individual( individualName);
 			}
 		}.call();
 	}
@@ -495,8 +503,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubDataProp);
 		return new OWLReferencesCaller< Set<OWLDataProperty>>(  mutexes, this) {
 			@Override
-			protected Set<OWLDataProperty> perfromSynchronisedCall() {
-				return getOWLEnquirer().getSubDataPropertyOf( propName);
+			protected Set<OWLDataProperty> performSynchronisedCall() {
+				return getEnquirer().getSubDataPropertyOf( propName);
 			}
 		}.call();
 	}
@@ -512,8 +520,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubDataProp);
 		return new OWLReferencesCaller< Set<OWLDataProperty>>(  mutexes, this) {
 			@Override
-			protected Set<OWLDataProperty> perfromSynchronisedCall() {
-				return getOWLEnquirer().getSubDataPropertyOf( prop);
+			protected Set<OWLDataProperty> performSynchronisedCall() {
+				return getEnquirer().getSubDataPropertyOf( prop);
 			}
 		}.call();
 	}
@@ -529,8 +537,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperDataProp);
 		return new OWLReferencesCaller< Set<OWLDataProperty>>(  mutexes, this) {
 			@Override
-			protected Set<OWLDataProperty> perfromSynchronisedCall() {
-				return getOWLEnquirer().getSuperDataPropertyOf( propName);
+			protected Set<OWLDataProperty> performSynchronisedCall() {
+				return getEnquirer().getSuperDataPropertyOf( propName);
 			}
 		}.call();
 	}
@@ -546,8 +554,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperDataProp);
 		return new OWLReferencesCaller< Set<OWLDataProperty>>(  mutexes, this) {
 			@Override
-			protected Set<OWLDataProperty> perfromSynchronisedCall() {
-				return getOWLEnquirer().getSuperDataPropertyOf( prop);
+			protected Set<OWLDataProperty> performSynchronisedCall() {
+				return getEnquirer().getSuperDataPropertyOf( prop);
 			}
 		}.call();
 	}
@@ -564,8 +572,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubObjProp);
 		return new OWLReferencesCaller< Set<OWLObjectProperty>>(  mutexes, this) {
 			@Override
-			protected Set<OWLObjectProperty> perfromSynchronisedCall() {
-				return getOWLEnquirer().getSubObjectPropertyOf( propName);
+			protected Set<OWLObjectProperty> performSynchronisedCall() {
+				return getEnquirer().getSubObjectPropertyOf( propName);
 			}
 		}.call();
 	}
@@ -581,8 +589,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubObjProp);
 		return new OWLReferencesCaller< Set<OWLObjectProperty>>(  mutexes, this) {
 			@Override
-			protected Set<OWLObjectProperty> perfromSynchronisedCall() {
-				return getOWLEnquirer().getSubObjectPropertyOf( prop);
+			protected Set<OWLObjectProperty> performSynchronisedCall() {
+				return getEnquirer().getSubObjectPropertyOf( prop);
 			}
 		}.call();
 	}	
@@ -598,8 +606,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperObjProp);
 		return new OWLReferencesCaller< Set<OWLObjectProperty>>(  mutexes, this) {
 			@Override
-			protected Set<OWLObjectProperty> perfromSynchronisedCall() {
-				return getOWLEnquirer().getSuperObjectPropertyOf( propName);
+			protected Set<OWLObjectProperty> performSynchronisedCall() {
+				return getEnquirer().getSuperObjectPropertyOf( propName);
 			}
 		}.call();
 	}
@@ -615,8 +623,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperObjProp);
 		return new OWLReferencesCaller< Set<OWLObjectProperty>>(  mutexes, this) {
 			@Override
-			protected Set<OWLObjectProperty> perfromSynchronisedCall() {
-				return getOWLEnquirer().getSuperObjectPropertyOf( prop);
+			protected Set<OWLObjectProperty> performSynchronisedCall() {
+				return getEnquirer().getSuperObjectPropertyOf( prop);
 			}
 		}.call();
 	}	
@@ -633,8 +641,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubClass);
 		return new OWLReferencesCaller< Set<OWLClass>>(  mutexes, this) {
 			@Override
-			protected Set<OWLClass> perfromSynchronisedCall() {
-				return getOWLEnquirer().getSubClassOf( className);
+			protected Set<OWLClass> performSynchronisedCall() {
+				return getEnquirer().getSubClassOf( className);
 			}
 		}.call();
 	}
@@ -650,8 +658,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSubClass);
 		return new OWLReferencesCaller< Set<OWLClass>>(  mutexes, this) {
 			@Override
-			protected Set<OWLClass> perfromSynchronisedCall() {
-				return getOWLEnquirer().getSubClassOf( cl);
+			protected Set<OWLClass> performSynchronisedCall() {
+				return getEnquirer().getSubClassOf( cl);
 			}
 		}.call();
 	}
@@ -668,8 +676,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperClass);
 		return new OWLReferencesCaller< Set<OWLClass>>(  mutexes, this) {
 			@Override
-			protected Set<OWLClass> perfromSynchronisedCall() {
-				return getOWLEnquirer().getSuperClassOf( className);
+			protected Set<OWLClass> performSynchronisedCall() {
+				return getEnquirer().getSuperClassOf( className);
 			}
 		}.call();
 	}
@@ -685,84 +693,181 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSuperClass);
 		return new OWLReferencesCaller< Set<OWLClass>>(  mutexes, this) {
 			@Override
-			protected Set<OWLClass> perfromSynchronisedCall() {
-				return getOWLEnquirer().getSuperClassOf( cl);
+			protected Set<OWLClass> performSynchronisedCall() {
+				return getEnquirer().getSuperClassOf( cl);
 			}
 		}.call();
 	}
 
+    /**
+     * Returns the set of restrictions of the given class it terms
+     * of: &forall; and &exist; quantifier, as well as: minimal, exact and maximal cardinality;
+     * with respect to data and object properties.
+     * @param cl the class from which get the restriction and cardinality limits.
+     * @return the container of all the class restrictions and cardinality, for
+     * the given class.
+     */
+    public Set<OWLEnquirer.ClassRestriction> getClassRestrictions(OWLClass cl){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexClassDefinition);
+        return new OWLReferencesCaller< Set<OWLEnquirer.ClassRestriction>>(  mutexes, this) {
+            @Override
+            protected Set<OWLEnquirer.ClassRestriction> performSynchronisedCall() {
+                return getEnquirer().getClassRestrictions( cl);
+            }
+        }.call();
+    }
+    /**
+     * Returns the set of restrictions of the given class it terms
+     * of: &forall; and &exist; quantifier, as well as: minimal, exact and maximal cardinality;
+     * with respect to data and object properties.
+     * @param className the name of the class from which get the restriction and cardinality limits.
+     * @return the container of all the class restrictions and cardinality, for
+     * the given class.
+     */
+    public Set<OWLEnquirer.ClassRestriction> getClassRestrictions(String className){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexClassDefinition);
+        return new OWLReferencesCaller<Set<OWLEnquirer.ClassRestriction>>(  mutexes, this) {
+            @Override
+            protected Set<OWLEnquirer.ClassRestriction> performSynchronisedCall() {
+                return getEnquirer().getClassRestrictions( className);
+            }
+        }.call();
+    }
 
-
+    /**
+     * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
+     * Works only with the Pellet reasoner. {@code timeOut} parameter sets the query timeout, no timeout is set if
+     * {@code timeOut &lt;=0}. Once timeout is reached, all solutions found up to that point are returned.
+     * @param query a string defining the query in SPARQL query syntax.
+     * @param timeOut timeout for the query.
+     * @return list of solutions.
+     */
 	public List< QuerySolution> sparql(String query, Long timeOut){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
 		return new OWLReferencesCaller< List< QuerySolution>>(  mutexes, this) {
 			@Override
-			protected List< QuerySolution>  perfromSynchronisedCall() {
-				return getOWLEnquirer().sparql( query, timeOut);
+			protected List< QuerySolution> performSynchronisedCall() {
+				return getEnquirer().sparql( query, timeOut);
 			}
 		}.call();
 	}
+    /**
+     * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
+     * Works only with the Pellet reasoner.
+     * @param query a string defining the query in SPARQL query syntax.
+     * @return list of solutions.
+     */
 	public List< QuerySolution> sparql(String query){ // no time out
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
 		return new OWLReferencesCaller< List< QuerySolution>>(  mutexes, this) {
 			@Override
-			protected List< QuerySolution>  perfromSynchronisedCall() {
-				return getOWLEnquirer().sparql( query);
+			protected List< QuerySolution> performSynchronisedCall() {
+				return getEnquirer().sparql( query);
 			}
 		}.call();
 	}
+    /**
+     * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
+     * Works only with the Pellet reasoner. {@code timeOut} parameter sets the query timeout, no timeout is set if
+     * {@code timeOut &lt;= 0}. Once timeout is reached, all solutions found up to that point are returned.
+     * @param prefix a string defining the query prefix field in SPARQL query syntax.
+     * @param select a string defining the query select field in SPARQL query syntax.
+     * @param where a string defining the query where field in SPARQL query syntax.
+     * @param timeOut timeout for the query.
+     * @return list of solutions.
+     */
 	public List< QuerySolution> sparql( String prefix, String select, String where, Long timeOut){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
 		return new OWLReferencesCaller< List< QuerySolution>>(  mutexes, this) {
 			@Override
-			protected List< QuerySolution>  perfromSynchronisedCall() {
-				return getOWLEnquirer().sparql( prefix, select, where, timeOut);
+			protected List< QuerySolution> performSynchronisedCall() {
+				return getEnquirer().sparql( prefix, select, where, timeOut);
 			}
 		}.call();
 	}
+    /**
+     * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
+     * Works only with the Pellet reasoner.
+     * @param prefix a string defining the query prefix field in SPARQL query syntax.
+     * @param select a string defining the query select field in SPARQL query syntax.
+     * @param where a string defining the query where field in SPARQL query syntax.
+     * @return list of solutions.
+     */
 	public List< QuerySolution> sparql( String prefix, String select, String where){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
 		return new OWLReferencesCaller< List< QuerySolution>>(  mutexes, this) {
 			@Override
-			protected List< QuerySolution>  perfromSynchronisedCall() {
-				return getOWLEnquirer().sparql( prefix, select, where);
+			protected List< QuerySolution> performSynchronisedCall() {
+				return getEnquirer().sparql( prefix, select, where);
 			}
 		}.call();
 	}
 
+    /**
+     * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
+     * Used to share the results with other code and processes. {@code timeOut} parameter sets the query timeout,
+     * no timeout is set if {@code timeOut &lt;= 0}. Once timeout is reached, all solutions found up to that point are returned.
+     * @param query a string defining the query in SPARQL query syntax.
+     * @param timeOut timeout for the query.
+     * @return formatted list of solutions.
+     */
 	public List< Map< String, String>> sparql2Msg(String query, Long timeOut){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
 		return new OWLReferencesCaller< List< Map< String, String>>>(  mutexes, this) {
 			@Override
-			protected List< Map< String, String>>  perfromSynchronisedCall() {
-				return getOWLEnquirer().sparqlMsg( query, timeOut);
+			protected List< Map< String, String>> performSynchronisedCall() {
+				return getEnquirer().sparqlMsg( query, timeOut);
 			}
 		}.call();
 	}
+    /**
+     * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
+     * Used to share the results with other code and processes.
+     * @param query a string defining the query in SPARQL query syntax.
+     * @return formatted list of solutions.
+     */
 	public List< Map< String, String>> sparql2Msg( String query){ // no time out
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
 		return new OWLReferencesCaller< List< Map< String, String>>>(  mutexes, this) {
 			@Override
-			protected List< Map< String, String>>  perfromSynchronisedCall() {
-				return getOWLEnquirer().sparqlMsg( query);
+			protected List< Map< String, String>> performSynchronisedCall() {
+				return getEnquirer().sparqlMsg( query);
 			}
 		}.call();
 	}
+    /**
+     * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
+     * Used to share the results with other code and processes. {@code timeOut} parameter sets the query timeout,
+     * no timeout is set if {@code timeOut &lt;= 0}. Once timeout is reached, all solutions found up to that point are returned.
+     * @param prefix a string defining the query prefix field in SPARQL query syntax.
+     * @param select a string defining the query select field in SPARQL query syntax.
+     * @param where a string defining the query where field in SPARQL query syntax.
+     * @param timeOut timeout for the query.
+     * @return list of solutions.
+     */
 	public List< Map< String, String>> sparql2Msg( String prefix, String select, String where, Long timeOut){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
 		return new OWLReferencesCaller< List< Map< String, String>>>(  mutexes, this) {
 			@Override
-			protected List< Map< String, String>>  perfromSynchronisedCall() {
-				return getOWLEnquirer().sparqlMsg( prefix, select, where, timeOut);
+			protected List< Map< String, String>> performSynchronisedCall() {
+				return getEnquirer().sparqlMsg( prefix, select, where, timeOut);
 			}
 		}.call();
 	}
+    /**
+     * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
+     * Used to share the results with other code and processes.
+     * @param prefix a string defining the query prefix field in SPARQL query syntax.
+     * @param select a string defining the query select field in SPARQL query syntax.
+     * @param where a string defining the query where field in SPARQL query syntax.
+     * @return list of solutions.
+     */
 	public List< Map< String, String>> sparql2Msg(String prefix, String select, String where){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexSPARQL);
 		return new OWLReferencesCaller< List< Map< String, String>>>(  mutexes, this) {
 			@Override
-			protected List< Map< String, String>>  perfromSynchronisedCall() {
-				return getOWLEnquirer().sparqlMsg( prefix, select, where);
+			protected List< Map< String, String>> performSynchronisedCall() {
+				return getEnquirer().sparqlMsg( prefix, select, where);
 			}
 		}.call();
 	}
@@ -783,18 +888,25 @@ public class OWLReferences extends OWLReferencesInterface{
 	private Lock mutexAddInd = new ReentrantLock();
 	private Lock mutexAddClass = new ReentrantLock();
 	private Lock mutexAddSubClass = new ReentrantLock();
+	private Lock mutexAddSubDataProperty = new ReentrantLock();
+	private Lock mutexAddSubObjectProperty = new ReentrantLock();
+	private Lock mutexAddRemovingClassDefinition = new ReentrantLock();
+	private Lock mutexAddCardinalityData = new ReentrantLock();
+    private Lock mutexConvertEquivalentClass = new ReentrantLock();
 	private Lock mutexRemoveClass = new ReentrantLock();
 	private Lock mutexRemoveSubClass = new ReentrantLock();
+	private Lock mutexRemoveSubDataProperty = new ReentrantLock();
+	private Lock mutexRemoveSubObjectProperty = new ReentrantLock();
 	private Lock mutexRemoveObjPropB2Ind = new ReentrantLock();
 	private Lock mutexRemoveDataPropB2Ind = new ReentrantLock();
 	private Lock mutexRemoveIndB2Class = new ReentrantLock();
 	private Lock mutexRemoveInd = new ReentrantLock();
 	private Lock mutexReplaceDataProp = new ReentrantLock();
 	private Lock mutexRename = new ReentrantLock();
-	private Lock mutexAddDisjoinedInd = new ReentrantLock();
-	private Lock mutexRemoveDisjoinedInd = new ReentrantLock();
-	private Lock mutexAddDisjoinedCls = new ReentrantLock();
-	private Lock mutexRemoveDisjoinedCls = new ReentrantLock();
+	private Lock mutexAddDisjointedInd = new ReentrantLock();
+	private Lock mutexRemoveDisjointedInd = new ReentrantLock();
+	private Lock mutexAddDisjointedCls = new ReentrantLock();
+	private Lock mutexRemoveDisjointedCls = new ReentrantLock();
 
 	// ------------------------------------------------------------   methods for ADDING entities
 	/**
@@ -809,8 +921,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddObjPropB2Ind);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().addObjectPropertyB2Individual( ind, prop, value);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addObjectPropertyB2Individual( ind, prop, value);
 			}
 		}.call();
 	}
@@ -826,8 +938,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddObjPropB2Ind);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().addObjectPropertyB2Individual( individualName, propName, valueName);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addObjectPropertyB2Individual( individualName, propName, valueName);
 			}
 		}.call();
 	}
@@ -845,8 +957,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDataPropB2Ind);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().addDataPropertyB2Individual(ind, prop, value);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addDataPropertyB2Individual(ind, prop, value);
 			}
 		}.call();
 	}
@@ -862,8 +974,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDataPropB2Ind);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().addDataPropertyB2Individual( individualName, propertyName, value);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addDataPropertyB2Individual( individualName, propertyName, value);
 			}
 		}.call();
 	}
@@ -878,8 +990,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddInd);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().addIndividual(ind);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addIndividual(ind);
 			}
 		}.call();
 	}
@@ -893,8 +1005,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddInd);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().addIndividual( individualName);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addIndividual( individualName);
 			}
 		}.call();
 	}
@@ -910,8 +1022,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddIndB2Class);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().addIndividualB2Class(ind, cls);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addIndividualB2Class(ind, cls);
 			}
 		}.call();
 	}
@@ -926,8 +1038,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddIndB2Class);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().addIndividualB2Class(individualName, className);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addIndividualB2Class(individualName, className);
 			}
 		}.call();
 	}
@@ -942,8 +1054,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddClass);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().addClass( className);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addClass( className);
 			}
 		}.call();
 	}
@@ -957,8 +1069,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddClass);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().addClass( cls);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addClass( cls);
 			}
 		}.call();
 	}
@@ -974,8 +1086,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddSubClass);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().addSubClassOf( superClassName, subClassName);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addSubClassOf( superClassName, subClassName);
 			}
 		}.call();
 	}
@@ -990,12 +1102,548 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddSubClass);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().addSubClassOf( superClass, subClass);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addSubClassOf( superClass, subClass);
 			}
 		}.call();
 	}
-	
+
+	/**
+	 * This method calls {@link OWLManipulator#addSubDataPropertyOf(String, String)}
+	 * in order to add a data property into the ontology as a sub property of a specified entity.
+	 * @param superPropertyName the name of the super data property.
+	 * @param subPropertyName the name of the sub data property.
+	 * @return the changes to be done in order to add a data property by specifying its super property. (see {@link OWLManipulator} for more info)
+	 */
+	public OWLOntologyChange addSubDataPropertyOf( String superPropertyName, String subPropertyName){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddSubDataProperty);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addSubDataPropertyOf( superPropertyName, subPropertyName);
+			}
+		}.call();
+	}
+	/**
+	 * This method calls {@link OWLManipulator#addSubDataPropertyOf(OWLDataProperty, OWLDataProperty)}
+	 * in order to add a data property into the ontology as a sub property of a specified entity.
+	 * @param superProperty the super data property.
+	 * @param subProperty the sub data property.
+	 * @return the changes to be done in order to add a data property by specifying its super property. (see {@link OWLManipulator} for more info)
+	 */
+	public OWLOntologyChange addSubDataPropertyOf( OWLDataProperty superProperty, OWLDataProperty subProperty){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddSubDataProperty);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addSubDataPropertyOf( superProperty, subProperty);
+			}
+		}.call();
+	}
+
+	/**
+	 * This method calls {@link OWLManipulator#addSubObjectPropertyOf(String, String)}
+	 * in order to add an object property into the ontology as a sub property of a specified entity.
+	 * @param superPropertyName the name of the super object property.
+	 * @param subPropertyName the name of the sub object property.
+	 * @return the changes to be done in order to add a data property by specifying its super property. (see {@link OWLManipulator} for more info)
+	 */
+	public OWLOntologyChange addSubObjectPropertyOf( String superPropertyName, String subPropertyName){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddSubObjectProperty);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addSubObjectPropertyOf( superPropertyName, subPropertyName);
+			}
+		}.call();
+	}
+	/**
+	 * This method calls {@link OWLManipulator#addSubObjectPropertyOf(OWLObjectProperty, OWLObjectProperty)}
+	 * in order to add an object property into the ontology as a sub property of a specified entity.
+	 * @param superProperty the super object property.
+	 * @param subProperty the sub object property.
+	 * @return the changes to be done in order to add an object property by specifying its super property. (see {@link OWLManipulator} for more info)
+	 */
+	public OWLOntologyChange addSubObjectPropertyOf( OWLObjectProperty superProperty, OWLObjectProperty subProperty){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddSubObjectProperty);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addSubObjectPropertyOf( superProperty, subProperty);
+			}
+		}.call();
+	}
+
+    /**
+     * Returns the changes to make a class be a sub class of an object property in existence with a class value.
+     * In symbols: {@code C &sub; p(&exist; V)}, where: {@code C} is the class, {@code p} the object property
+     * and {@code V}, the class value.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of an existential property.
+     */
+	public OWLOntologyChange addSomeObjectClassExpression(OWLClass cl, OWLObjectProperty property, OWLClass value){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addSomeObjectClassExpression( cl, property, value);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class be a sub class of an object property in existence with a class value.
+     * In symbols: {@code C &sub; p(&exist; V)}, where: {@code C} is the class, {@code p} the object property
+     * and {@code V}, the class value.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param valueName the name the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of an existential property.
+     */
+	public OWLOntologyChange addSomeObjectClassExpression(String className, String propertyName, String valueName){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addSomeObjectClassExpression( className, propertyName, valueName);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class be a sub class of an object property universally identifying a class value.
+     * In symbols: {@code C &sub; p(&forall; V)}, where: {@code C} is the class, {@code p} the object property
+     * and {@code V}, the class value.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of an universal property.
+     */
+	public OWLOntologyChange addOnlyObjectClassExpression(OWLClass cl, OWLObjectProperty property, OWLClass value){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addOnlyObjectClassExpression( cl, property, value);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class be a sub class of an object property universally identifying a class value.
+     * In symbols: {@code C &sub; p(&forall; V)}, where: {@code C} is the class, {@code p} the object property
+     * and {@code V}, the class value.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param valueName the name the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of an universal property.
+     */
+	public OWLOntologyChange addOnlyObjectClassExpression(String className, String propertyName, String valueName){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addOnlyObjectClassExpression( className, propertyName, valueName);
+			}
+		}.call();
+	}
+
+    /**
+     * Returns the changes to make a class be a sub class of a data property in existence with a data type value.
+     * In symbols: {@code C &sub; p(&exist; D)}, where: {@code C} is the class, {@code p} the data property
+     * and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of an existential property.
+     */
+	public OWLOntologyChange addSomeDataClassExpression(OWLClass cl, OWLDataProperty property, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addSomeDataClassExpression( cl, property, type);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class be a sub class of a data property in existence with a data type value.
+     * In symbols: {@code C &sub; p(&exist; D)}, where: {@code C} is the class, {@code p} the data property
+     * and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of an existential property.
+     */
+	public OWLOntologyChange addSomeDataClassExpression(String className, String propertyName, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addSomeDataClassExpression( className, propertyName, type);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class be a sub class of a data property universally identified by a data type value.
+     * In symbols: {@code C &sub; p(&forall; D)}, where: {@code C} is the class, {@code p} the data property
+     * and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of an universal property.
+     */
+	public OWLOntologyChange addOnlyDataClassExpression(OWLClass cl, OWLDataProperty property, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addOnlyDataClassExpression( cl, property, type);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class be a sub class of a data property universally identified by a data type value.
+     * In symbols: {@code C &sub; p(&forall; D)}, where: {@code C} is the class, {@code p} the data property
+     * and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of an universal property.
+     */
+	public OWLOntologyChange addOnlyDataClassExpression(String className, String propertyName, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addOnlyDataClassExpression( className, propertyName, type);
+			}
+		}.call();
+	}
+
+    /**
+     * Returns the changes to make a class be a sub class of an object property expression
+     * minimally identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(&lt;<sub>d</sub> V)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of a minimum number of properties
+     * restricted to a class.
+     */	
+	public OWLOntologyChange addMinObjectClassExpression(OWLClass cl, OWLObjectProperty property, int cardinality, OWLClass value){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addMinObjectClassExpression( cl, property, cardinality, value);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class be a sub class of an object property  expression
+     * minimally identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(&lt;<sub>d</sub> V)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param valueName the name of the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of a minimum number of properties
+     * restricted to a class.
+     */
+	public OWLOntologyChange addMinObjectClassExpression(String className, String propertyName, int cardinality, String valueName){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addMinObjectClassExpression( className, propertyName, cardinality, valueName);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class be a sub class of an object property  expression
+     * maximally identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(&gt;<sub>d</sub> V)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of a maximum number of properties
+     * restricted to a class.
+     */
+	public OWLOntologyChange addMaxObjectClassExpression(OWLClass cl, OWLObjectProperty property, int cardinality, OWLClass value){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addMaxObjectClassExpression( cl, property, cardinality, value);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class be a sub class of an object property expression
+     * maximally identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(&gt;<sub>d</sub> V)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param valueName the name of the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of a maximum number of properties
+     * restricted to a class.
+     */
+	public OWLOntologyChange addMaxObjectClassExpression( String className, String propertyName, int cardinality, String valueName){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addMaxObjectClassExpression( className, propertyName, cardinality, valueName);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class be a sub class of an object property expression
+     * exactly identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(=<sub>d</sub> V)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of a exact number of properties
+     * restricted to a class.
+     */
+	public OWLOntologyChange addExactObjectClassExpression(OWLClass cl, OWLObjectProperty property, int cardinality, OWLClass value){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addExactObjectClassExpression( cl, property, cardinality, value);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class be a sub class of an object property expression
+     * exactly identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(=<sub>d</sub> V)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param valueName the name of the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to make a class being a sub-set of a exact number of properties
+     * restricted to a class.
+     */
+	public OWLOntologyChange addExactObjectClassExpression( String className, String propertyName, int cardinality, String valueName){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addExactObjectClassExpression( className, propertyName, cardinality, valueName);
+			}
+		}.call();
+	}
+
+    /**
+     * Returns the changes to make a class be a sub class of a data property expression
+     * minimally identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(&lt;<sub>d</sub> D)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of a minimum number of
+     * properties restricted to a data type.
+     */
+	public OWLOntologyChange addMinDataClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddCardinalityData);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addMinDataClassExpression( cl, property, cardinality, type);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class be a sub class of a data property expression
+     * minimally identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(&lt;<sub>d</sub> D)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of a minimum number of
+     * properties restricted to a data type.
+     */
+	public OWLOntologyChange addMinDataClassExpression( String className, String propertyName, int cardinality, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddCardinalityData);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addMinDataClassExpression( className, propertyName, cardinality, type);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class be a sub class of a data property expression
+     * maximally identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(&gt;<sub>d</sub> D)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of a maximum number of
+     * properties restricted to a data type.
+     */
+	public OWLOntologyChange addMaxDataClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddCardinalityData);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addMaxDataClassExpression( cl, property, cardinality, type);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class be a sub class of a data property expression
+     * maximally identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(&gt;<sub>d</sub> D)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of a maximum number of
+     * properties restricted to a data type.
+     */
+	public OWLOntologyChange addMaximalDataClassExpression( String className, String propertyName, int cardinality, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddCardinalityData);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addMaxDataClassExpression( className, propertyName, cardinality, type);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class be a sub class of a data property expression
+     * exactly identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(=<sub>d</sub> D)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of an exact number of
+     * properties restricted to a data type.
+     */
+	public OWLOntologyChange addExactDataClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddCardinalityData);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addExactDataClassExpression( cl, property, cardinality, type);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class be a sub class of a data property expression
+     * exactly identified by a given cardinality class restriction.
+     * In symbols: {@code C &sub; p(=<sub>d</sub> D)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to make a class being a sub-set of an exact number of
+     * properties restricted to a data type.
+     */
+	public OWLOntologyChange addExactDataClassExpression( String className, String propertyName, int cardinality, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddCardinalityData);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().addExactDataClassExpression( className, propertyName, cardinality, type);
+			}
+		}.call();
+	}
+
+    /**
+     * Given a class {@code C}, it uses {@link org.semanticweb.owlapi.change.ConvertEquivalentClassesToSuperClasses}
+     * to convert all the sub class axioms of {@code C} into a conjunctions of expressions
+     * in the definition of the class itself.
+     * <b>REMARK:</b> remember to apply all changes to be sure that this method
+     * behaves correctly.
+     * @param cl the class to be converted from sub classing to equivalent expression.
+     * @return the changes to be applied in order to make all the sub axioms of a class being
+     * the conjunction of its equivalent expression.
+     */
+    public List<OWLOntologyChange> convertSuperClassesToEquivalentClass(OWLClass cl){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexConvertEquivalentClass);
+        return new OWLReferencesCaller< List< OWLOntologyChange>>(  mutexes, this) {
+            @Override
+            protected List< OWLOntologyChange> performSynchronisedCall() {
+                return getManipulator().convertSuperClassesToEquivalentClass( cl);
+            }
+        }.call();
+    }
+    /**
+     * Given a class {@code C}, it uses {@link org.semanticweb.owlapi.change.ConvertEquivalentClassesToSuperClasses}
+     * to convert all the sub class axioms of {@code C} into a conjunctions of expressions
+     * in the definition of the class itself.
+     * <b>REMARK:</b> remember to apply all changes to be sure that this method
+     * behaves correctly.
+     * @param className the name of the class to be converted from sub classing to equivalent expression.
+     * @return the changes to be applied in order to make all the sub axioms of a class being
+     * the conjunction of its equivalent expression.
+     */
+    public List<OWLOntologyChange> convertSuperClassesToEquivalentClass( String className){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexConvertEquivalentClass);
+        return new OWLReferencesCaller< List< OWLOntologyChange>>(  mutexes, this) {
+            @Override
+            protected List< OWLOntologyChange> performSynchronisedCall() {
+                return getManipulator().convertSuperClassesToEquivalentClass( className);
+            }
+        }.call();
+    }
+
+
 	// ------------------------------------------------------------   methods for REMOVING entities
 	/**
 	 * This method calls {@link OWLManipulator#removeObjectPropertyB2Individual(OWLNamedIndividual, OWLObjectProperty, OWLNamedIndividual)}
@@ -1009,8 +1657,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveObjPropB2Ind);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().removeObjectPropertyB2Individual( ind, prop,value);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeObjectPropertyB2Individual( ind, prop,value);
 			}
 		}.call();
 	}
@@ -1026,8 +1674,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveObjPropB2Ind);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().removeObjectPropertyB2Individual( individualName, propName,valueName);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeObjectPropertyB2Individual( individualName, propName,valueName);
 			}
 		}.call();
 	}
@@ -1044,8 +1692,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDataPropB2Ind);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().removeDataPropertyB2Individual( ind, prop, value);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeDataPropertyB2Individual( ind, prop, value);
 			}
 		}.call();
 	}
@@ -1061,8 +1709,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDataPropB2Ind);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().removeDataPropertyB2Individual( individualName, propertyName, value);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeDataPropertyB2Individual( individualName, propertyName, value);
 			}
 		}.call();
 	}
@@ -1079,8 +1727,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveIndB2Class);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().removeIndividualB2Class(ind, cls);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeIndividualB2Class(ind, cls);
 			}
 		}.call();
 	}
@@ -1095,8 +1743,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveIndB2Class);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().removeIndividualB2Class( individualName, className);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeIndividualB2Class( individualName, className);
 			}
 		}.call();
 	}
@@ -1111,8 +1759,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveInd);
 		return new OWLReferencesCaller< List< RemoveAxiom>>(  mutexes, this) {
 			@Override
-			protected List<RemoveAxiom> perfromSynchronisedCall() {
-				return getOWLManipulator().removeIndividual(individual);
+			protected List<RemoveAxiom> performSynchronisedCall() {
+				return getManipulator().removeIndividual(individual);
 			}
 		}.call();
 	}
@@ -1126,8 +1774,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveInd);
 		return new OWLReferencesCaller< List< RemoveAxiom>>(  mutexes, this) {
 			@Override
-			protected List< RemoveAxiom> perfromSynchronisedCall() {
-				return getOWLManipulator().removeIndividual( indName);
+			protected List< RemoveAxiom> performSynchronisedCall() {
+				return getManipulator().removeIndividual( indName);
 			}
 		}.call();
 	}
@@ -1141,8 +1789,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveInd);
 		return new OWLReferencesCaller< List< OWLOntologyChange>>(  mutexes, this) {
 			@Override
-			protected List< OWLOntologyChange> perfromSynchronisedCall() {
-				return getOWLManipulator().removeIndividual(individuals);
+			protected List< OWLOntologyChange> performSynchronisedCall() {
+				return getManipulator().removeIndividual(individuals);
 			}
 		}.call();
 	}
@@ -1156,8 +1804,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveClass);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().removeClass( className);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeClass( className);
 			}
 		}.call();
 	}
@@ -1171,8 +1819,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveClass);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().removeClass( cls);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeClass( cls);
 			}
 		}.call();
 	}
@@ -1188,8 +1836,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveSubClass);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().removeSubClassOf( superClassName, subClassName);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeSubClassOf( superClassName, subClassName);
 			}
 		}.call();
 	}
@@ -1204,12 +1852,555 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveSubClass);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().removeSubClassOf( superClass, subClass);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeSubClassOf( superClass, subClass);
 			}
 		}.call();
 	}
-	
+
+
+	/**
+	 * This method calls {@link OWLManipulator#removeSubDataPropertyOf(String, String)}
+	 * in order to remove a data property assertion to be a sub-property of a specified entity.
+	 * @param superPropertyName the name of the data property in which remove the sub property.
+	 * @param subPropertyName the name of the data property to remove as sub property of the specified class.
+	 * @return the changes to be done in order to remove a sub data property assertion by specifying its super property. (see {@link OWLManipulator} for more info)
+	 */
+	public OWLOntologyChange removeSubDataPropertyOf( String superPropertyName, String subPropertyName){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveSubDataProperty);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeSubDataPropertyOf( superPropertyName, subPropertyName);
+			}
+		}.call();
+	}
+	/**
+	 * This method calls {@link OWLManipulator#removeSubDataPropertyOf(OWLDataProperty, OWLDataProperty)}
+	 * in order to remove a data property assertion to be a sub property of a specified entity.
+	 * @param superProperty the data property in which remove the sub property.
+	 * @param subProperty the data property to remove as sub property of the specified class.
+	 * @return the changes to be done in order to remove a sub data property assertion by specifying its super property. (see {@link OWLManipulator} for more info)
+	 */
+	public OWLOntologyChange removeSubDataPropertyOf( OWLDataProperty superProperty, OWLDataProperty subProperty){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveSubDataProperty);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeSubDataPropertyOf( superProperty, subProperty);
+			}
+		}.call();
+	}
+
+	/**
+	 * This method calls {@link OWLManipulator#removeSubObjectPropertyOf(String, String)}
+	 * in order to remove an object property assertion to be a sub property of a specified entity.
+	 * @param superPropertyName the name of the object property in which remove the sub property.
+	 * @param subPropertyName the name of the object property to remove as sub property of the specified property.
+	 * @return the changes to be done in order to remove a sub object property assertion by specifying its super property. (see {@link OWLManipulator} for more info)
+	 */
+	public OWLOntologyChange removeSubObjectPropertyOf( String superPropertyName, String subPropertyName){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveSubObjectProperty);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeSubObjectPropertyOf( superPropertyName, subPropertyName);
+			}
+		}.call();
+	}
+	/**
+	 * This method calls {@link OWLManipulator#removeSubObjectPropertyOf(OWLObjectProperty, OWLObjectProperty)}
+	 * in order to remove a object property assertion to be a sub property of a specified entity.
+	 * @param superProperty the object property in which remove the sub property.
+	 * @param subProperty the class to remove as sub object property of the specified property.
+	 * @return the changes to be done in order to remove a sub object property assertion by specifying its super property. (see {@link OWLManipulator} for more info)
+	 */
+	public OWLOntologyChange removeSubObjectPropertyOf( OWLObjectProperty superProperty, OWLObjectProperty subProperty){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveSubObjectProperty);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeSubObjectPropertyOf( superProperty, subProperty);
+			}
+		}.call();
+	}
+
+    // depending on the same mutex as adding min/max object class expression
+    /**
+     * Returns the changes to make a class no more being a sub class of an
+     * object property in existence with a class value.
+     * In symbols, it will be no more true that: {@code C &sub; p(&exist; V)},
+     * where: {@code C} is the class, {@code p} the object property
+     * and {@code V}, the class value.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is a sub-set of an existential property.
+     */
+	public OWLOntologyChange removeSomeObjectClassExpression(OWLClass cl, OWLObjectProperty property, OWLClass value){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeSomeObjectClassExpression( cl, property, value);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class no more being a sub class of an
+     * object property in existence with a class value.
+     * In symbols, it will be no more true that: {@code C &sub; p(&exist; V)},
+     * where: {@code C} is the class, {@code p} the object property
+     * and {@code V}, the class value.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param valueName the name of the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is a sub-set of an existential property.
+     */
+	public OWLOntologyChange removeSomeObjectClassExpression(String className, String propertyName, String valueName){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeSomeObjectClassExpression( className, propertyName, valueName);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class no more being a sub class of an
+     * object property universally identified with a class value.
+     * In symbols, it will be no more true that: {@code C &sub; p(&forall; V)},
+     * where: {@code C} is the class, {@code p} the object property
+     * and {@code V}, the class value.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is a sub-set of an universal property.
+     */
+	public OWLOntologyChange removeOnlyObjectClassExpression(OWLClass cl, OWLObjectProperty property, OWLClass value){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeOnlyObjectClassExpression( cl, property, value);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class no more being a sub class of an
+     * object property universally identified with a class value.
+     * In symbols, it will be no more true that: {@code C &sub; p(&forall; V)},
+     * where: {@code C} is the class, {@code p} the object property
+     * and {@code V}, the class value.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param valueName the name of the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is a sub-set of an universal property.
+     */
+	public OWLOntologyChange removeOnlyObjectClassExpression(String className, String propertyName, String valueName){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeOnlyObjectClassExpression( className, propertyName, valueName);
+			}
+		}.call();
+	}
+
+	// depending on the same mutex as adding min/max object class expression
+    /**
+     * Returns the changes to make a class not being a sub class of a data property,
+     * in existence with a data type value, anymore.
+     * In symbols, it will be not long true that: {@code C &sub; p(&exist; D)},
+     * where: {@code C} is the class, {@code p} the data property
+     * and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that
+     * a class is a sub-set of an existential property.
+     */
+    public OWLOntologyChange removeSomeDataClassExpression(OWLClass cl, OWLDataProperty property, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeSomeDataClassExpression( cl, property, type);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class not being a sub class of a data property,
+     * in existence with a data type value, anymore.
+     * In symbols, it will be not long true that: {@code C &sub; p(&exist; D)},
+     * where: {@code C} is the class, {@code p} the data property
+     * and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that
+     * a class is a sub-set of an existential property.
+     */
+	public OWLOntologyChange removeSomeDataClassExpression(String className, String propertyName, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeSomeDataClassExpression( className, propertyName, type);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class not being a sub class of a data property,
+     * universally qualified by a data type value, anymore.
+     * In symbols, it will be not long true that: {@code C &sub; p(&forall; D)},
+     * where: {@code C} is the class, {@code p} the data property
+     * and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that
+     * a class is a sub-set of an universal property.
+     */
+	public OWLOntologyChange removeOnlyDataClassExpression(OWLClass cl, OWLDataProperty property, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeOnlyDataClassExpression( cl, property, type);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class not being a sub class of a data property,
+     * universally qualified by a data type value, anymore.
+     * In symbols, it will be not long true that: {@code C &sub; p(&forall; D)},
+     * where: {@code C} is the class, {@code p} the data property
+     * and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that
+     * a class is a sub-set of an universal property.
+     */
+	public OWLOntologyChange removeOnlyDataClassExpression(String className, String propertyName, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeOnlyDataClassExpression( className, propertyName, type);
+			}
+		}.call();
+	}
+
+	// depending on the same mutex as adding min/max object class expression
+    /**
+     * Returns the changes to make a class not being a sub class of an object property expression,
+     * minimally identified by a given cardinality class restriction, anymore.
+     * In symbols, it will be no more true that:: {@code C &sub; p(&lt;<sub>d</sub> V)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove tha fact that
+     * a class is a sub-set of a minimum number of properties
+     * restricted to a class.
+     */
+	public OWLOntologyChange removeMinObjectClassExpression(OWLClass cl, OWLObjectProperty property, int cardinality, OWLClass value){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeMinObjectClassExpression( cl, property, cardinality, value);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class not being a sub class of an object property expression,
+     * minimally identified by a given cardinality class restriction, anymore.
+     * In symbols, it will be no more true that:: {@code C &sub; p(&lt;<sub>d</sub> V)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param valueName the name of the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove tha fact that
+     * a class is a sub-set of a minimum number of properties
+     * restricted to a class.
+     */
+	public OWLOntologyChange removeMinObjectClassExpression(String className, String propertyName, int cardinality, String valueName){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeMinObjectClassExpression( className, propertyName, cardinality, valueName);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class not being a sub class of an object property expression,
+     * maximally identified by a given cardinality class restriction, anymore.
+     * In symbols, it will be no more true that:: {@code C &sub; p(&gt;<sub>d</sub> V)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove tha fact that
+     * a class is a sub-set of a maximum number of properties
+     * restricted to a class.
+     */
+	public OWLOntologyChange removeMaxObjectClassExpression(OWLClass cl, OWLObjectProperty property, int cardinality, OWLClass value){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeMaxObjectClassExpression( cl, property, cardinality, value);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class not being a sub class of an object property expression,
+     * maximally identified by a given cardinality class restriction, anymore.
+     * In symbols, it will be no more true that:: {@code C &sub; p(&gt;<sub>d</sub> V)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param valueName the name of the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove tha fact that
+     * a class is a sub-set of a maximum number of properties
+     * restricted to a class.
+     */
+	public OWLOntologyChange removeMaxObjectClassExpression( String className, String propertyName, int cardinality, String valueName){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeMaxObjectClassExpression( className, propertyName, cardinality, valueName);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class not being a sub class of an object property expression,
+     * exactly identified by a given cardinality class restriction, anymore.
+     * In symbols, it will be no more true that:: {@code C &sub; p(=<sub>d</sub> V)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param value the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove tha fact that
+     * a class is a sub-set of a exact number of properties
+     * restricted to a class.
+     */
+	public OWLOntologyChange removeExactObjectClassExpression(OWLClass cl, OWLObjectProperty property, int cardinality, OWLClass value){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeExactObjectClassExpression( cl, property, cardinality, value);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class not being a sub class of an object property expression,
+     * exactly identified by a given cardinality class restriction, anymore.
+     * In symbols, it will be no more true that:: {@code C &sub; p(=<sub>d</sub> V)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value and {@code d}, the cardinality.
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the nme of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param valueName the name of the value of the sub-setting relation ({@code V}).
+     * @return the changes to be applied in order to remove tha fact that
+     * a class is a sub-set of a exact number of properties
+     * restricted to a class.
+     */
+	public OWLOntologyChange removeExactObjectClassExpression( String className, String propertyName, int cardinality, String valueName){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRemovingClassDefinition);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeExactObjectClassExpression( className, propertyName, cardinality, valueName);
+			}
+		}.call();
+	}
+
+	// depending on the same mutex as adding min/max data class expression
+    /**
+     * Returns the changes to make a class not being a sub class of a data property expression,
+     * minimally identified by a given cardinality class restriction, anymore.
+     * In symbols, it will not true that: {@code C &sub; p(&lt;<sub>d</sub> D)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is sub-set of a minimum number of properties restricted to a data type.
+     */
+	public OWLOntologyChange removeMinDataClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddCardinalityData);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeMinDataClassExpression( cl, property, cardinality, type);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class not being a sub class of a data property expression,
+     * minimally identified by a given cardinality class restriction, anymore.
+     * In symbols, it will not true that: {@code C &sub; p(&lt;<sub>d</sub> D)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is sub-set of a minimum number of properties restricted to a data type.
+     */
+	public OWLOntologyChange removeMinDataClassExpression( String className, String propertyName, int cardinality, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddCardinalityData);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeMinDataClassExpression( className, propertyName, cardinality, type);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class not being a sub class of a data property expression,
+     * maximally identified by a given cardinality class restriction, anymore.
+     * In symbols, it will not true that: {@code C &sub; p(&gt;<sub>d</sub> D)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is sub-set of a maximum number of properties restricted to a data type.
+     */
+	public OWLOntologyChange removeMaxDataClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddCardinalityData);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeMaxDataClassExpression( cl, property, cardinality, type);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class not being a sub class of a data property expression,
+     * maximally identified by a given cardinality class restriction, anymore.
+     * In symbols, it will not true that: {@code C &sub; p(&gt;<sub>d</sub> D)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is sub-set of a maximum number of properties restricted to a data type.
+     */
+	public OWLOntologyChange removeMaximalDataClassExpression( String className, String propertyName, int cardinality, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddCardinalityData);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeMaxDataClassExpression( className, propertyName, cardinality, type);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class not being a sub class of a data property expression,
+     * exactly identified by a given cardinality class restriction, anymore.
+     * In symbols, it will not true that: {@code C &sub; p(=<sub>d</sub> D)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param cl the class object of the sub-setting relation ({@code C}).
+     * @param property the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is sub-set of a exact number of properties restricted to a data type.
+     */
+	public OWLOntologyChange removeExactClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddCardinalityData);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeExactClassExpression( cl, property, cardinality, type);
+			}
+		}.call();
+	}
+    /**
+     * Returns the changes to make a class not being a sub class of a data property expression,
+     * exactly identified by a given cardinality class restriction, anymore.
+     * In symbols, it will not true that: {@code C &sub; p(=<sub>d</sub> D)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param className the name of the class object of the sub-setting relation ({@code C}).
+     * @param propertyName the name of the property of the sub-setting relation ({@code p}).
+     * @param cardinality the cardinality of the minimal relation ({@code d}).
+     * @param type the Class representing a supported data type for the sub-setting relation ({@code D}).
+     * @return the changes to be applied in order to remove the fact that a class
+     * is sub-set of a exact number of properties restricted to a data type.
+     */
+	public OWLOntologyChange removeExactDataClassExpression( String className, String propertyName, int cardinality, Class type){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddCardinalityData);
+		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+			@Override
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeExactDataClassExpression( className, propertyName, cardinality, type);
+			}
+		}.call();
+	}
+
 
 	// ------------------------------------------------------------   methods for REPLACE entities
 	/*
@@ -1227,7 +2418,7 @@ public class OWLReferences extends OWLReferencesInterface{
 		mutexReplaceDataProp.lock();
 		try{
 			long t1 = System.nanoTime();
-			List<OWLOntologyChange> out = getOWLManipulator().replaceDataPropertyB2Individual( ind, prop, oldValue, newValue);
+			List<OWLOntologyChange> out = getManipulator().replaceDataPropertyB2Individual( ind, prop, oldValue, newValue);
 			loggLockTime( t, t1);
 			return out;
 		} finally{
@@ -1248,8 +2439,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexReplaceDataProp);
 		return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
 			@Override
-			protected List<OWLOntologyChange> perfromSynchronisedCall() {
-				return getOWLManipulator().replaceDataPropertyB2Individual( ind, prop, oldValue, newValue);
+			protected List<OWLOntologyChange> performSynchronisedCall() {
+				return getManipulator().replaceDataPropertyB2Individual( ind, prop, oldValue, newValue);
 			}
 		}.call();
 	}
@@ -1266,8 +2457,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner);
 		return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
 			@Override
-			protected List<OWLOntologyChange> perfromSynchronisedCall() {
-				return getOWLManipulator().replaceObjectProperty(ind, prop, oldValue, newValue);
+			protected List<OWLOntologyChange> performSynchronisedCall() {
+				return getManipulator().replaceObjectProperty(ind, prop, oldValue, newValue);
 			}
 		}.call();
 	}
@@ -1283,8 +2474,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner);
 		return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
 			@Override
-			protected List<OWLOntologyChange> perfromSynchronisedCall() {
-				return getOWLManipulator().replaceIndividualClass(ind, oldValue, newValue);
+			protected List<OWLOntologyChange> performSynchronisedCall() {
+				return getManipulator().replaceIndividualClass(ind, oldValue, newValue);
 			}
 		}.call();
 	}
@@ -1301,8 +2492,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRename);
 		return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
 			@Override
-			protected List<OWLOntologyChange> perfromSynchronisedCall() {
-				return getOWLManipulator().renameEntity(entity, newIRI);
+			protected List<OWLOntologyChange> performSynchronisedCall() {
+				return getManipulator().renameEntity(entity, newIRI);
 			}
 		}.call();
 	}
@@ -1317,8 +2508,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRename);
 		return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
 			@Override
-			protected List<OWLOntologyChange> perfromSynchronisedCall() {
-				return getOWLManipulator().renameEntity(entity, newName);
+			protected List<OWLOntologyChange> performSynchronisedCall() {
+				return getManipulator().renameEntity(entity, newName);
 			}
 		}.call();
 	}
@@ -1332,11 +2523,11 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add the disjoint individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange makeDisjointIndividualName( Set< String> individualNames){
-		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjoinedInd);
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjointedInd);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().setDisjointIndividualName( individualNames);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().setDisjointIndividualName( individualNames);
 			}
 		}.call();
 	}
@@ -1348,11 +2539,11 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add the disjoint individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange makeDisjointIndividuals( Set< OWLNamedIndividual> individuals){
-		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjoinedInd);
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjointedInd);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().setDisjointIndividuals( individuals);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().setDisjointIndividuals( individuals);
 			}
 		}.call();
 	}
@@ -1365,11 +2556,11 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove the disjoint individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange removeDisjointIndividualName( Set< String> individualNames){
-		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjoinedInd);
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjointedInd);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return  getOWLManipulator().removeDisjointIndividualName( individualNames);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return  getManipulator().removeDisjointIndividualName( individualNames);
 			}
 		}.call();
 	}
@@ -1381,11 +2572,11 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove the disjoint individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange removeDisjointIndividuals( Set< OWLNamedIndividual> individuals){
-		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjoinedInd);
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjointedInd);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return  getOWLManipulator().removeDisjointIndividuals( individuals);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return  getManipulator().removeDisjointIndividuals( individuals);
 			}
 		}.call();
 	}
@@ -1398,11 +2589,11 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add the disjoint classes axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange makeDisjointClassName( Set< String> classesName){
-		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjoinedCls);
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjointedCls);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().makeDisjointClassName( classesName);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().makeDisjointClassName( classesName);
 			}
 		}.call();		
 	}
@@ -1414,11 +2605,11 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to add the disjoint classes axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange makeDisjointClasses( Set< OWLClass> classes){
-		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjoinedCls);
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjointedCls);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().makeDisjointClasses( classes);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().makeDisjointClasses( classes);
 			}
 		}.call();
 	}
@@ -1431,11 +2622,11 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove the disjoint class axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
 	public OWLOntologyChange removeDisjointClassName( Set< String> classesName){
-		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjoinedCls);
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjointedCls);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().removeDisjointClassName( classesName);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeDisjointClassName( classesName);
 			}
 		}.call();
 	}
@@ -1447,15 +2638,17 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @return the changes to be done in order to remove the disjoint class axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */	
 	public OWLOntologyChange removeDisjointClasses( Set< OWLClass> classes){
-		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjoinedCls);
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjointedCls);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
-			protected OWLOntologyChange perfromSynchronisedCall() {
-				return getOWLManipulator().removeDisjointClasses( classes);
+			protected OWLOntologyChange performSynchronisedCall() {
+				return getManipulator().removeDisjointClasses( classes);
 			}
 		}.call();
 	}
-	
+
+
+
 	// [[[[[[[[[[[[[[[[[[[[[[   METHOD TO CALL REASONING (thread safe)   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 	/** 
 	 * This method just synchronises the call to the reasoner (performed by {@link OWLReferences}) with respect to 
@@ -1564,10 +2757,10 @@ public class OWLReferences extends OWLReferencesInterface{
 			for( int i = 0; i < getMutexes().size(); i++)
 				getMutexes().get( i).lock();
 		}
-		abstract T perfromSynchronisedCall(); //// main call function
+		abstract T performSynchronisedCall(); //// main call function
 		protected T doSynchronisedWork(){
 			setWorkInitialTime();
-			T out = perfromSynchronisedCall();
+			T out = performSynchronisedCall();
 			loggLockTime( getSynchronisatedInitialTime(), getWorkInitialTime());
 			return out;	
 		}
@@ -1617,8 +2810,8 @@ public class OWLReferences extends OWLReferencesInterface{
 		protected void setWorkInitialTime() {
 			this.workInitialTime = System.nanoTime();
 		}
-		protected void setMinLoggingThreshould(Float minLoggingThreshould) {
-			this.minLoggingThreshould = minLoggingThreshould;
+		protected void setMinLoggingThreshould(Float minLoggingThreshold) {
+			this.minLoggingThreshould = minLoggingThreshold;
 		}
 	}
 	// method to easy get object to initialise OWLReferencesCall 

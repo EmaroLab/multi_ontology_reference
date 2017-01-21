@@ -34,14 +34,14 @@ import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
 
 
 /**
- * Project: OWLHelper <br>
- * File: .../src/owlInterface/OWLLibrary.java <br>
- *  
- * @author Buoncompagni Luca <br><br>
- * DIBRIS emaroLab,<br> 
- * University of Genoa. <br>
- * Feb 9, 2016 <br>
- * License: GPL v2 <br><br>
+ * <div style="text-align:center;"><small>
+ * <b>Project</b>:    aMOR <br>
+ * <b>File</b>:       it.emarolab.amor.owlInterface.OWLReferencesInterface <br>
+ * <b>Licence</b>:    GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
+ * <b>Author</b>:     Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
+ * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
+ * <b>date</b>:       Feb 10, 2016 <br>
+ * </small></div>
  * 
  * <p>
  * This class implements the basic structure provided by the OWL api.<br>
@@ -166,23 +166,23 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 			switch( command){
 			case 0: //OWLReferencesContainer.COMMAND_CREATE
 				this.setIriFilePath( IRI.create( filePath));
-				this.setManager(); // creates and sets the filed that you can retrieve from getManager(); 
-				this.createOntology(); // creates and set the field taht you can retrieve from getOntology();
+				this.setManager(); // creates and sets the filed that you can retrieve from getOWLManager();
+				this.createOntology(); // creates and set the field taht you can retrieve from getOWLOntology();
 				break;
 			case 1: //OWLReferencesContainer.COMMAND_LOAD_FILE
 				this.setIriFilePath( IRI.create( new File( filePath)));
-				this.setManager(); // creates and sets the filed that you can retrieve from getManager();
-				this.loadOntologyFromFile(); // creates and set the field taht you can retrieve from getOntology();
+				this.setManager(); // creates and sets the filed that you can retrieve from getOWLManager();
+				this.loadOntologyFromFile(); // creates and set the field taht you can retrieve from getOWLOntology();
 				break;
 			case 2: //OWLReferencesContainer.COMMAND_LOAD_WEB
 				this.setIriFilePath( IRI.create( filePath)); // in this case the file path should be a WEB URL
-				this.setManager(); // creates and sets the filed that you can retrieve from getManager();
-				this.loadOntologyFromWeb(); // creates and set the field taht you can retrieve from getOntology();
+				this.setManager(); // creates and sets the filed that you can retrieve from getOWLManager();
+				this.loadOntologyFromWeb(); // creates and set the field taht you can retrieve from getOWLOntology();
 				break;
 			default : logger.addDebugString( "Cannot initialise OWL References with the given command: " + command, true);
 			}
 			// now that the manager and the ontology is initialise, create other owl api objects
-			this.setFactory(); // creates and sets the field that you can retrieve from getFactory();
+			this.setFactory(); // creates and sets the field that you can retrieve from getOWLFactory();
 			//this.setPrefixFormat(); // creates and sets the field that you can retrieve from getPrefixForamt();
 
 			if( reasonerFactory == null || reasonerFactory.equals( OWLLibrary.REASONER_DEFAULT)) 
@@ -308,7 +308,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	 * @return the object that applies manipulation to the ontology (not thread safe).
 	 * This object should not be used by a user. Use {@link OWLReferences} instead.
 	 */
-	protected synchronized OWLManipulator getOWLManipulator(){
+	protected synchronized OWLManipulator getManipulator(){
 		return this.manipulator;
 	}
 	/**
@@ -359,7 +359,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	 * @return the object used to query the ontology (not thread safe).
 	 * This object should not be used from an aMOR user. Use {@link OWLReferences} instead.
 	 */
-	protected synchronized OWLEnquirer getOWLEnquirer(){
+	protected synchronized OWLEnquirer getEnquirer(){
 		return this.enquirer;
 	}
 	/**
@@ -388,7 +388,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		if( this.isConsistent()){
 			try{
 				Long initialTime = System.nanoTime(); 
-				this.getOWLManipulator().applyChanges(); // be sure to empty the buffer (if any)
+				this.getManipulator().applyChanges(); // be sure to empty the buffer (if any)
 				this.callReasoning( initialTime);
 				if( !this.checkConsistent())
 					this.logInconsistency();
@@ -399,7 +399,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 			this.checkConsistent();
 		}
 	}
-	/**
+
      /**
      * Applies some changes, then synchronize the reasoner.
      * If the Ontology is consistent, it will synchronise a buffering reasoner
@@ -410,12 +410,13 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
      * Note that if the ontology is inconsistent then all the methods in this class may return {@code null}.
      * WARNING: manipulation buffer is always flushed before synchronizing the reasoner by {@link OWLManipulator#applyChanges()}.
      * You can synchronize the reasoner manually (non-buffering mode) by using {@link #checkConsistent()}
+      * @param changesBuffer the buffer of ontology changes to be applied before reasoning.
      */
 	public synchronized void synchronizeReasoner(List< OWLOntologyChange> changesBuffer){
 		if( this.isConsistent()){
 			try{
 				Long initialTime = System.nanoTime(); 
-				this.getOWLManipulator().applyChanges( changesBuffer);
+				this.getManipulator().applyChanges( changesBuffer);
 				this.callReasoning( initialTime);
 				if( !this.checkConsistent())
 					this.logInconsistency();
@@ -464,7 +465,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	 * License: GPL v2 <br><br>
 	 *  
 	 * <p>
-	 * This class implements {@link ReasonerExplanator(OWLLibrary)}
+	 * This class implements {@link ReasonerExplanator#ReasonerExplanator(OWLLibrary)}
 	 * only for the Pellet reasoner.
 	 * </p>
 	 * 
@@ -506,7 +507,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 				StringWriter out = new StringWriter();
 				renderers.startRendering( out );
 				// Create an explanation generator
-				PelletExplanation expGen = new PelletExplanation( ontoRef.getOntology(), false);//pelletReasoners );
+				PelletExplanation expGen = new PelletExplanation( ontoRef.getOWLOntology(), false);//pelletReasoners );
 				Set<Set<org.semanticweb.owlapi.model.OWLAxiom>> explanation = expGen.getInconsistencyExplanations();
 
 				renderers.render( explanation );
@@ -623,7 +624,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	public synchronized void saveOntology(){
 		try {
 			File file = new File( this.getIriFilePath().toString());
-			this.getManager().saveOntology( this.getOntology(), IRI.create( file.toURI()));
+			this.getOWLManager().saveOntology( this.getOWLOntology(), IRI.create( file.toURI()));
 			logger.addDebugString( "Ontology References: " + this + " saved on path: " + this.getIriFilePath().toString());
 		} catch (OWLOntologyStorageException e) {
 			e.printStackTrace();
@@ -637,7 +638,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	public synchronized void saveOntology( String filePath){
 		try {
 			File file = new File( filePath);
-			this.getManager().saveOntology( this.getOntology(), IRI.create( file.toURI()));
+			this.getOWLManager().saveOntology( this.getOWLOntology(), IRI.create( file.toURI()));
 			logger.addDebugString( "Ontology References: " + this + " saved on path: " + filePath);
 		} catch (OWLOntologyStorageException e) {
 			e.printStackTrace();
@@ -651,8 +652,8 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		/*try{
 			long initialTime = System.nanoTime();
 			ManchesterOWLSyntaxOntologyFormat manSyntaxFormat = new ManchesterOWLSyntaxOntologyFormat();
-			OWLOntologyManager man = this.getManager();
-			OWLOntology ont = this.getOntology();
+			OWLOntologyManager man = this.getOWLManager();
+			OWLOntology ont = this.getOWLOntology();
 			OWLOntologyFormat format = man.getOntologyFormat(ont);
 			if (format.isPrefixOWLOntologyFormat())
 				manSyntaxFormat.copyPrefixesFrom(format.asPrefixOWLOntologyFormat());
@@ -669,14 +670,14 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 
 
 	/**
-	 * Project: OWLHelper <br>
-	 * File: .../src/owlInterface/OWLLibrary.java <br>
-	 *  
-	 * @author Buoncompagni Luca <br><br>
-	 * DIBRIS emaroLab,<br> 
-	 * University of Genoa. <br>
-	 * Feb 9, 2016 <br>
-	 * License: GPL v2 <br><br>
+	 * <div style="text-align:center;"><small>
+     * <b>Project</b>:    aMOR <br>
+     * <b>File</b>:       it.emarolab.amor.owlInterface.OWLReferencesInterface <br>
+     * <b>Licence</b>:    GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
+     * <b>Author</b>:     Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
+     * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
+     * <b>date</b>:       Feb 10, 2016 <br>
+     * </small></div>
 	 *  
 	 * <p>
 	 * This class implements methods to instantiate or retrieve a reference to an ontology.<br>
@@ -694,17 +695,17 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   CLASS CONSTANTS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 		/**
 		 * Command value that specifies that the new ontology references has to point to a new ontology.
-		 * In particular, its value is: {@value #COMMAND_CREATE}.  
+		 * In particular, its value is: {@link  #COMMAND_CREATE}.  
 		 */
 		static public final Integer COMMAND_CREATE = 0;
 		/**
 		 * Command value that specifies that the new ontology references has to point to an ontology file.
-		 * In particular, its value is: {@value #COMMAND_LOAD_FILE}.
+		 * In particular, its value is: {@link  #COMMAND_LOAD_FILE}.
 		 */
 		static public final Integer COMMAND_LOAD_FILE = 1;
 		/**
 		 * Command value that specifies that the new ontology references has to point to an ontology stored in the web.
-		 * In particular, its value is: {@value #COMMAND_LOAD_WEB}.
+		 * In particular, its value is: {@link  #COMMAND_LOAD_WEB}.
 		 */
 		static public final Integer COMMAND_LOAD_WEB = 2;
 
