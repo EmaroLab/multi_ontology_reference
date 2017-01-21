@@ -1,8 +1,0 @@
- 29/07/16_18:29:06,575 -> Class OWLReferencesInterface$OWLReferencesContainer : Create a new prefix manager for References: OWLReferencesInterface "ontoRef3"
- 29/07/16_18:29:07,077 -> Class OWLReferencesInterface$OWLReferencesContainer : Ontology OWL manager created for References: OWLReferencesInterface "ontoRef3"
- 29/07/16_18:29:08,355 -> Class OWLReferencesInterface$OWLReferencesContainer : Ontology loaded from web for References: OWLReferencesInterface "ontoRef3"
- 29/07/16_18:29:08,355 -> Class OWLReferencesInterface$OWLReferencesContainer : Create a OWL Data Factory for References: OWLReferencesInterface "ontoRef3"
- 29/07/16_18:29:08,464 -> Class OWLReferencesInterface$OWLReferencesContainer : Reasoner (openllet.owlapi.OpenlletReasonerFactory) created in: 108550842 [ns] for the References: OWLReferencesInterface "ontoRef3"
- 29/07/16_18:29:08,468 -> OWLReferences OWLReferencesInterface "ontoRef3" : new OWL References initialised in: 2100474646 [ns] for the Object OWLReferencesInterface "ontoRef3"
- 29/07/16_18:29:08,849 -> Class OWLReferencesInterface : [[ !!! ERROR !!! ]]Cannot get the OWL name of a null OWL object
- 29/07/16_18:29:14,543 -> ReasonerMonitor@7a56812e : Classifying ontoRef3 started at: 29/07/16_18:29:13,738 and ends now. ontoRef3 [Durarion:804386218ns]
