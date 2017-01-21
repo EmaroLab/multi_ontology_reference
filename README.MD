@@ -2,13 +2,13 @@
 
 **AMOR** - a Multi-Ontology Reference library, is a complete library of helper functions for OWL ontologies with some remarkable features. 
 
-+ Support for multiple ontologies.
-+ Ensures thread-safe ontology manipulations.
++ Support for multiple OWL ontologies.
++ Ensures thread-safe ontology manipulations and queries.
 + Implements a wide range of functions: from simple "add an individual" to more esoteric "modify an SWRL rule".
 + Excellent performances which can be further customized based on user needs.
-+ Ontology debug GUI available (currently working but not stable).
-+ Extensive logging.
-+ Out-of-the-box support for most reasoners. Easy to add more.
++ Ontology debug GUI available (currently working on OWL API 3, see branches).
++ Extensive and concentraded logging.
++ Out-of-the-box support for OWL reasoners. Easy to add more.
 + Based on latest standards: Java 8 and OWL API 5.
 
 This is the ROS version of the library, ready to be included in your ROS projects. 
@@ -23,7 +23,7 @@ Javadoc [documentation](https://htmlpreview.github.io/?https://github.com/EmaroL
 
 Check out the [/lib](https://github.com/EmaroLab/multi_ontology_reference/tree/master/amor/libs) folder for a complite jar of the library *amor-0.1.0.jar*. You will also find all the needed dependencig jars in the same folder.
 
-Finally, see the [/examples](https://github.com/EmaroLab/multi_ontology_reference/tree/master/amor/src/main/java/it/emarolab/amor/examples) package for tutorials about the API. Note that the GUI is becoming unstable with the integration with OWL 5.
+Finally, see the [/examples](https://github.com/EmaroLab/multi_ontology_reference/tree/master/amor/src/main/java/it/emarolab/amor/examples) package for tutorials about the API. Note that unfortunatelly, the GUI is becoming unstable after the integration with OWL 5 as wel as other mijor utility of saving and loading the ontology.
 
 ## Contacts
 For comment, discussions or support refer to this git repository or contact us at:
