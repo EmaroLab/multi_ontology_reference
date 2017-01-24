@@ -43,7 +43,7 @@ import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContain
  * Initialization of this class should be done by calling (in this order):
  * {@link #setIriFilePath(IRI)}, {@link #setIriOntologyPath(IRI)}, {@link #setManager()},
  * {@link #createOntology()} or {@link #loadOntologyFromFile()}, {@link #setFactory()},
- * {@link #setPrefixFormat()} and {@link #setReasoner(String, boolean, String)}.<br>
+ * {@link #setPrefixFormat()} and {@link #setOWLReasoner(String, boolean, String)}.<br>
  * WARNING: It is recommended not to interact directly twith this class,
  * use {@link OWLReferences} instead.<br>
  * </p>
@@ -137,7 +137,7 @@ public class OWLLibrary {
 	 * @see #createOntology()
 	 * @see #setFactory()
 	 * @see #setPrefixFormat()
-	 * @see #setReasoner(String, boolean, String)
+	 * @see #setOWLReasoner(String, boolean, String)
 	 */
 	protected OWLLibrary() {}
 
@@ -269,6 +269,14 @@ public class OWLLibrary {
 		logger.addDebugString( "Create a new prefix manager for References: " + this);
 	}
 
+
+    /**
+     * Set the reasoner that should be correctly initialised.
+     * @param reasoner the instance to set.
+     */
+    protected void setOWLReasoner(OWLReasoner reasoner) {
+        this.reasoner = reasoner;
+    }
 	// methods to create the reasoner from java reflection
 	/**
 	 * It creates and sets a Reasoner instance.
@@ -285,7 +293,7 @@ public class OWLLibrary {
 	 * @param buffering if {@code true} the reasoner buffers changes.
 	 * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
 	 */
-	protected synchronized void setReasoner( String reasonerFactoryName, boolean buffering, String loggingName){
+	protected synchronized void setOWLReasoner(String reasonerFactoryName, boolean buffering, String loggingName){
 		long initialTime = System.nanoTime();
 		try {
 			OWLReasonerFactory reasonerFactory = (OWLReasonerFactory) Class.forName(reasonerFactoryName).newInstance();
@@ -320,43 +328,43 @@ public class OWLLibrary {
 	}
 	/**
 	 * Creates and sets an instance of the Pellet reasoner by calling
-	 * {@link #setReasoner(String, boolean, String)} with input parameter set to:
+	 * {@link #setOWLReasoner(String, boolean, String)} with input parameter set to:
 	 * {@link #REASONER_QUALIFIER_PELLET}, {@code buffering} and {@code loggingName} respectively. 
 	 * @param buffering if {@code true} the reasoner must be synchronized manually. Else, sync is automatic.
 	 * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
 	 */
 	protected synchronized void setPelletReasoner( boolean buffering, String loggingName){
-		setReasoner( REASONER_QUALIFIER_PELLET, buffering, loggingName);
+		setOWLReasoner( REASONER_QUALIFIER_PELLET, buffering, loggingName);
 	}
 	/**
 	 * Creates and sets an instance of the Snorocket reasoner by calling
-	 * {@link #setReasoner(String, boolean, String)} with input parameter set to:
+	 * {@link #setOWLReasoner(String, boolean, String)} with input parameter set to:
 	 * {@link #REASONER_QUALIFIER_SNOROCKET}, {@code buffering} and {@code loggingName} respectively. 
 	 * @param buffering if {@code true} the reasoner must be synchronized manually. Else, sync is automatic.
      * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
 	 */
 	protected synchronized void setSnorocketReasoner(boolean buffering, String loggingName){
-		setReasoner( REASONER_QUALIFIER_SNOROCKET, buffering, loggingName);
+		setOWLReasoner( REASONER_QUALIFIER_SNOROCKET, buffering, loggingName);
 	}
 	/**
 	 * Creates and sets an instance of the Hermit reasoner by calling
-	 * {@link #setReasoner(String, boolean, String)} with input parameter set to:
+	 * {@link #setOWLReasoner(String, boolean, String)} with input parameter set to:
 	 * {@link #REASONER_QUALIFIER_HERMIT}, {@code buffering} and {@code loggingName} respectively. 
 	 * @param buffering if {@code true} the reasoner must be synchronized manually. Else, sync is automatic.
      * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
 	 */
 	protected synchronized void setHermitReasoner(boolean buffering, String loggingName){
-		setReasoner( REASONER_QUALIFIER_HERMIT, buffering, loggingName);
+		setOWLReasoner( REASONER_QUALIFIER_HERMIT, buffering, loggingName);
 	}
 	/**
 	 * Creates and sets an instance of the Fact reasoner by calling
-	 * {@link #setReasoner(String, boolean, String)} with input parameter set to:
+	 * {@link #setOWLReasoner(String, boolean, String)} with input parameter set to:
 	 * {@link #REASONER_QUALIFIER_FACT}, {@code buffering} and {@code loggingName} respectively. 
 	 * @param buffering if {@code true} the reasoner must be synchronized manually. Else, sync is automatic.
      * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
 	 */
 	protected synchronized void setFactReasoner(boolean buffering, String loggingName){
-		setReasoner( REASONER_QUALIFIER_FACT, buffering, loggingName);
+		setOWLReasoner( REASONER_QUALIFIER_FACT, buffering, loggingName);
 	}
 
 
@@ -551,8 +559,7 @@ public class OWLLibrary {
 		this.callReasoning( System.nanoTime());
 	}
 
-
-	@Override
+    @Override
 	public String toString() {
 		return "OWLLibrary [getOWLManager()=" + getOWLManager() + ", getOWLFactory()="
 				+ getOWLFactory() + ", getOWLOntology()=" + getOWLOntology()

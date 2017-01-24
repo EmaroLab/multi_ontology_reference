@@ -35,7 +35,7 @@ public class LoadOntology {
 		OWLReferences ontoRef = (OWLReferences) OWLReferencesContainer.getOWLReferences( ontoName);
 		if( ontoRef != null){
 			//ClassExchange.setOntoName( ontoName);
-	    	/*ClassExchange.setReasoner( ontoRef.getReasoner());
+	    	/*ClassExchange.setOWLReasoner( ontoRef.getReasoner());
 	    	ClassExchange.setFactory( ontoRef.getOWLFactory());
 	    	ClassExchange.setPm( ontoRef.getPm());
 	    	ClassExchange.setOntology( ontoRef.getOWLOntology());

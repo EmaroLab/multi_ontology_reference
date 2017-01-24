@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 //import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxOntologyFormat;
+import org.apache.jena.base.Sys;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -188,7 +189,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 			if( reasonerFactory == null || reasonerFactory.equals( OWLLibrary.REASONER_DEFAULT)) 
 				setDefaultReasoner( bufferingReasoner); // actually it Initialise  pellet as reasoner
 			else {
-				this.setReasoner( reasonerFactory, bufferingReasoner, referenceName);
+				this.setOWLReasoner( reasonerFactory, bufferingReasoner, referenceName);
 				//this.resonerFactory = reasonerFactory; // used for serialisation  
 				if( reasonerFactory.equals( OWLLibrary.REASONER_QUALIFIER_PELLET))
 					setPelletReasonerExplanator();
@@ -570,11 +571,20 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		if( obj != null){
 			String tmp = obj.toString();
 			// ex: <http://www.co-ode.org/ontologies/pizza/pizza.owl#America>
-			int start = tmp.indexOf( "#");
-			int end = tmp.indexOf( ">");
+			int start = tmp.lastIndexOf( "#");
+			int end = tmp.lastIndexOf( ">");
 			if( start >= 0 & end >= 0)
 				return tmp.substring( start + 1, end);
-			else {
+			else if( tmp.contains("http") & tmp.contains( "://")) {
+                int s = tmp.lastIndexOf( "/");
+                if( s >= tmp.length()){
+                    tmp = tmp.substring( 0, tmp.length() - 2);
+                    s = tmp.lastIndexOf( "/");
+                }
+                int e = tmp.lastIndexOf( ">");
+                if( s >= 0 & e >= 0)
+                    return tmp.substring( s + 1, e);
+            } else {
 				// ex: "1"^^xsd:integer
 				String s = tmp;
 				start = s.indexOf("\"");
@@ -817,8 +827,6 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		public static OWLReferences newOWLReferences( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner, Integer command){
 			return new OWLReferences( referenceName, filePath, ontologyPath, bufferingReasoner, command);
 		}
-
-
 		/**
 		 * Creates a new OWL References by calling {@link OWLReferences#OWLReferences(String, String, String, String, Boolean, Integer)}
 		 * @param referenceName the unique identifier of this ontology reference to store in {@link OWLReferencesContainer#allReferences}.
@@ -1034,7 +1042,17 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	}
 
 
-	
+	/**
+	 * Stores the reasoner and buffering mode, no further actions are taken by this method.
+	 * @param refInterface the OWL reference that can {@link #getReasoner()} and {@link #bufferingReasoner} to set.
+	 */
+	public void setReasoner( OWLReferencesInterface refInterface){
+		this.setOWLReasoner( refInterface.getReasoner());
+		this.bufferingReasoner = refInterface.useBufferingReasoner();
+	}
+
+
+
 	/**
 	 * @return (verbose) print all the fields of this object
 	 */
