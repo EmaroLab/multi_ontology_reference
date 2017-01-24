@@ -106,10 +106,10 @@ class MyReasonerInterface extends OWLReferences{
 	}
 
 	@Override
-	protected synchronized void setReasoner(String reasonerFactoryName,
-			boolean buffering, String lggingName) {
+	protected synchronized void setOWLReasoner(String reasonerFactoryName,
+                                               boolean buffering, String lggingName) {
 		// change this call if you want to modify how the library instantiates your reasoner.
-		super.setReasoner(reasonerFactoryName, buffering, lggingName);
+		super.setOWLReasoner(reasonerFactoryName, buffering, lggingName);
 		
 		// do not forgot to add debugging features by implementing the above class
 		// and set to your implementation as:
@@ -119,9 +119,9 @@ class MyReasonerInterface extends OWLReferences{
 	
 	@Override
 	// otherwise you may to want to do the above operations also for the method 
-	// setDefaultReasoner. Note that here you must to call setReasoner().
+	// setDefaultReasoner. Note that here you must to call setOWLReasoner().
 	protected void setDefaultReasoner( Boolean buffering){ 
-		this.setReasoner(REASONER_FACTORY, buffering, this.getReferenceName());
+		this.setOWLReasoner(REASONER_FACTORY, buffering, this.getReferenceName());
 		this.setReasonerExplanator( new MyReasonerExplanator( this));
 	}
 	

@@ -57,22 +57,22 @@ public class OWLManipulator{
     protected static final int RESTRICTION_ONLY = 1;
     /**
      * A tag to represent an existential restriction expression.
-     * {@link ClassExpressionType#OBJECT_SOME_VALUES_FROM}
+     * (see: {@link ClassExpressionType#OBJECT_SOME_VALUES_FROM}
      */
     protected static final int RESTRICTION_SOME = 2;
     /**
      * A tag to represent an minimal cardinality restriction expression.
-     * {@link ClassExpressionType#OBJECT_MIN_CARDINALITY})
+     * (see: {@link ClassExpressionType#OBJECT_MIN_CARDINALITY})
      */
     protected static final int RESTRICTION_MIN = 3; // >= 3 has cardinality
     /**
      * A tag to represent an exact cardinality restriction expression.
-     * {@link ClassExpressionType#OBJECT_EXACT_CARDINALITY})
+     * (see: {@link ClassExpressionType#OBJECT_EXACT_CARDINALITY})
      */
     protected static final int RESTRICTION_EXACT = 4;
     /**
      * A tag to represent an maximal cardinality restriction expression.
-     * {@link ClassExpressionType#OBJECT_MAX_CARDINALITY})
+     * (see: {@link ClassExpressionType#OBJECT_MAX_CARDINALITY})
      */
     protected static final int RESTRICTION_MAX = 5;
 

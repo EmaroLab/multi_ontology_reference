@@ -354,7 +354,7 @@ public class ClassExchange {
 	/*public synchronized static OWLReasoner getReasoner() {
 		return ontoRef.getReasoner();//reasoner;
 	}
-//	public synchronized static void setReasoner(OWLReasoner reasoner) {
+//	public synchronized static void setOWLReasoner(OWLReasoner reasoner) {
 //		ClassExchange.reasoner = reasoner;
 //	}
 	
