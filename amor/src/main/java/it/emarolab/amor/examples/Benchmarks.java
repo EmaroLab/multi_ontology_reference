@@ -57,7 +57,7 @@ public class Benchmarks {
 
         // classical MOR query example
         // ATTENTION: you may not see those reasoning results from Protétè !!!!
-        // ATTENTION: you may not see those reasoning result if the ontology contains only the TBox
+        // ATTENTION: you may not see empty result if the ontology contains only the TBox
         ontoRef.synchronizeReasoner();
         System.out.println( "\nExample: query all the students  " + OWLReferencesInterface.getOWLName(
                ontoRef.getIndividualB2Class( "Student")) + "\n");
