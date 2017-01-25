@@ -55,7 +55,7 @@ public class OWLRefManipulationExample {
 		OWLObjectProperty objProp = ontoRef.getOWLObjectProperty( "hasObjectProperty");
 		ontoRef.addObjectPropertyB2Individual( indWithProp, objProp, objPropValue);
 
-		// 8) apply all the changes made (it have effects only if BUFFERING_OWLMANIPULATOR=true, otherwise are applied by default)
+		// 8) apply all the changes made (it have effects only if BUFFERING_MANIPULATOR=true, otherwise are applied by default)
 		ontoRef.applyOWLManipulatorChanges();
 
 		// 9) print the ontology to check the changes (or save it if you prefer)
