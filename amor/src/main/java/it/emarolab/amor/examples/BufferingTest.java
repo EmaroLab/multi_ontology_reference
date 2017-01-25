@@ -34,7 +34,7 @@ public class BufferingTest {
 		ontoRef.addIndividual( X1_IND);
 		ontoRef.addIndividual( X2_IND);
 		ontoRef.addIndividual( X3_IND);
-		applyChanges( ontoRef); // this considers BUFFERING_OWLMANIPULATOR flag
+		applyChanges( ontoRef); // this considers BUFFERING_MANIPULATOR flag
 		
 		// 3) get the starting cnt
 		Integer javaCnt = 0;
@@ -46,19 +46,19 @@ public class BufferingTest {
 		assignIncrementalId( ontoRef, X1_IND, javaCnt); 			// id1 = INITIAL_CNT, 		cnt = INITIAL_CNT + 1;
 		assignIncrementalId( ontoRef, X2_IND, javaCnt);				// id2 = INITIAL_CNT, 		cnt = INITIAL_CNT + 1;
 		javaCnt = assignIncrementalId( ontoRef, X3_IND, javaCnt);	// id3 = INITIAL_CNT,	 	cnt = INITIAL_CNT + 1;
-		applyChanges( ontoRef); // this considers BUFFERING_OWLMANIPULATOR flag
+		applyChanges( ontoRef); // this considers BUFFERING_MANIPULATOR flag
 		
 		// 5) do something similar to (3) for testing purposes
 		assignIncrementalId( ontoRef, X1_IND, javaCnt);				// id1 = INITIAL_CNT + 1, 	cnt = INITIAL_CNT + 2;
 		assignIncrementalId( ontoRef, X2_IND, javaCnt);				// id2 = INITIAL_CNT + 1, 	cnt = INITIAL_CNT + 2;
 		javaCnt = assignIncrementalId( ontoRef, X3_IND, javaCnt);	// id3 = INITIAL_CNT + 1, 	cnt = INITIAL_CNT + 2;
-		applyChanges( ontoRef); // this considers BUFFERING_OWLMANIPULATOR flag
+		applyChanges( ontoRef); // this considers BUFFERING_MANIPULATOR flag
 		
 		// 6) do something similar to (3) for testing purposes
 		assignIncrementalId( ontoRef, X1_IND, javaCnt);				// id1 = INITIAL_CNT + 2, 	cnt = INITIAL_CNT + 3;
 		assignIncrementalId( ontoRef, X2_IND, javaCnt);				// id2 = INITIAL_CNT + 2, 	cnt = INITIAL_CNT + 3;
 		javaCnt = assignIncrementalId( ontoRef, X3_IND, javaCnt);	// id3 = INITIAL_CNT + 2, 	cnt = INITIAL_CNT + 3;
-		applyChanges( ontoRef); // this considers BUFFERING_OWLMANIPULATOR flag
+		applyChanges( ontoRef); // this considers BUFFERING_MANIPULATOR flag
 		
 		// 7) reason (if it is buffer)
 		reason( ontoRef);

@@ -822,6 +822,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
     /**
      * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
+	 * This call do not apply any time out.
      * Used to share the results with other code and processes.
      * @param query a string defining the query in SPARQL query syntax.
      * @return formatted list of solutions.
