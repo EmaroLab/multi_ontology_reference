@@ -471,7 +471,6 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	 * 
 	 * @version 2.0
 	 */
-
 	public class PelletReasonerExplanation extends ReasonerExplanator{
 		/**
 		 * The References to the ontology whose inconsistencies should be explained
@@ -752,14 +751,23 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
          * and no action was taken. {@code true} otherwise.
 		 */
 		private static Boolean removeInstance( OWLReferencesInterface instance){
-			String refName = instance.getReferenceName();
-			if( isInstance( refName)){
-				allReferences.remove( refName);
-				return( true);
-			}
-			logger.addDebugString( "Exception: cannot remove an Ontology with referencing name: " + refName, true);
-			return( false);
+			return removeInstance( instance.getReferenceName());
 		}
+        /**
+         * This method remove an instance from the internal map {@link #allReferences}.
+         * This is automatically done when {@link OWLReferencesInterface#finalize()} method is called.
+         * @param refName the OWL reference name to be removed from the internal map.
+         * @return {@code false} if the map does not contain an object with name {@link OWLReferencesInterface#getReferenceName()}
+         * and no action was taken. {@code true} otherwise.
+         */
+        private static Boolean removeInstance( String refName){
+            if( isInstance( refName)){
+                allReferences.remove( refName);
+                return( true);
+            }
+            logger.addDebugString( "Exception: cannot remove an Ontology with referencing name: " + refName, true);
+            return( false);
+        }
 
 		/**
 		 * @param instance the OWL interface object to check.
@@ -800,6 +808,27 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 			return allReferences.values();
 		}
 
+        /**
+         * This method remove an instance from the internal map {@link #allReferences}.
+         * Be carefull, this action should invalidate other using of the same references.
+         * @param refName the OWL reference name to be removed from the internal map.
+         * @return {@code false} if the map does not contain an object with name {@link OWLReferencesInterface#getReferenceName()}
+         * and no action was taken. {@code true} otherwise.
+         */
+		public static boolean removeOWLReference( String refName){
+			return removeInstance( refName);
+		}
+        /**
+         * This method remove an instance from the internal map {@link #allReferences}.
+         * Be carefull, this action should invalidate other using of the same references.
+         * @param ontoRef the OWL reference to be removed from the internal map.
+         * @return {@code false} if the map does not contain an object with name {@link OWLReferencesInterface#getReferenceName()}
+         * and no action was taken. {@code true} otherwise.
+         */
+		public static boolean removeOWLReference( OWLReferencesInterface ontoRef){
+            return removeInstance( ontoRef);
+		}
+
 		// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   METHODS TO CREATE ONTOLOGY REFERENCES   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 
 		/**
@@ -817,7 +846,6 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		public static OWLReferences newOWLReferences( String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner, Integer command){
 			return new OWLReferences( referenceName, filePath, ontologyPath, bufferingReasoner, command);
 		}
-
 
 		/**
 		 * Creates a new OWL References by calling {@link OWLReferences#OWLReferences(String, String, String, String, Boolean, Integer)}
@@ -838,7 +866,6 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		public static OWLReferences newOWLReferences( String referenceName, String filePath, String ontologyPath, String reasonerFactory, Boolean bufferingReasoner, Integer command){
 			return new OWLReferences(referenceName, filePath, ontologyPath, reasonerFactory, bufferingReasoner, command);
 		}
-
 
 		/**
 		 * Create a new References from a new empty ontology with the default reasoner ({@link OWLReferencesInterface#setDefaultReasoner(Boolean)}). 
