@@ -1,22 +1,16 @@
 package it.emarolab.amor.owlDebugger.OFGUI;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.StringReader;
-import java.util.ArrayList;
-
-import javax.swing.JOptionPane;
-
+import it.emarolab.amor.owlDebugger.FileManager;
+import it.emarolab.amor.owlInterface.OWLReferences;
+import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContainer;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxOntologyFormat;
 import org.semanticweb.owlapi.io.StreamDocumentTarget;
 import org.semanticweb.owlapi.model.OWLOntologyFormat;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
-import it.emarolab.amor.owlDebugger.FileManager;
-import it.emarolab.amor.owlInterface.OWLReferences;
-import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContainer;
+import javax.swing.*;
+import java.io.*;
+import java.util.ArrayList;
 
 public class LoadOntology {
 
