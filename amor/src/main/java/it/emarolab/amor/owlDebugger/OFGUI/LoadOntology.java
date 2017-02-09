@@ -3,10 +3,7 @@ package it.emarolab.amor.owlDebugger.OFGUI;
 import it.emarolab.amor.owlDebugger.FileManager;
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContainer;
-import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxOntologyFormat;
 import org.semanticweb.owlapi.io.StreamDocumentTarget;
-import org.semanticweb.owlapi.model.OWLOntologyFormat;
-import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import javax.swing.*;
 import java.io.*;
@@ -128,8 +125,9 @@ public class LoadOntology {
 	    PrintStream ps = new PrintStream(baos);
 		
 		StreamDocumentTarget print = new StreamDocumentTarget( ps);// new SystemOutDocumentTarget();
-		
-		try {
+
+		/*
+        try {
 			ManchesterOWLSyntaxOntologyFormat manSyntaxFormat = new ManchesterOWLSyntaxOntologyFormat();
 			OWLOntologyFormat format =  ontoRef.getManager().getOntologyFormat(ontoRef.getOntology());
 			if (format.isPrefixOWLOntologyFormat())
@@ -138,8 +136,9 @@ public class LoadOntology {
 		} catch (OWLOntologyStorageException e) {	
 			e.printStackTrace();
 		}
-		
-		StringBuilder buffer = new StringBuilder();
+		*/
+
+        StringBuilder buffer = new StringBuilder();
 		buffer.append( baos.toString());
 		BufferedReader br = new BufferedReader(new StringReader(buffer.toString()));
 		
