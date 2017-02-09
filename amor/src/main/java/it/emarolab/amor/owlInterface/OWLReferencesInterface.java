@@ -1,30 +1,19 @@
 package it.emarolab.amor.owlInterface;
 
+import it.emarolab.amor.owlDebugger.Logger;
+import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
+
 import java.io.File;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 //import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxOntologyFormat;
-import org.apache.jena.base.Sys;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLObject;
-import org.semanticweb.owlapi.model.OWLOntologyChange;
 //import org.semanticweb.owlapi.model.OWLOntologyFormat;
-import org.semanticweb.owlapi.model.OWLOntologyStorageException;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
-
 //import uk.ac.manchester.cs.owlapi.dlsyntax.DLSyntaxObjectRenderer;
-
 //import openllet.owlapi.explanation.PelletExplanation;
 //import openllet.owlapi.explanation.io.manchester.ManchesterSyntaxExplanationRenderer;
-
-import it.emarolab.amor.owlDebugger.Logger;
-import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
 
 // TODO : serialisation, toString. equals
 // TODO : test load from web
@@ -257,7 +246,16 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	 * Else, it returns only the first direct assertion.
 	 */
 	public synchronized void setOWLEnquirerCompletenessFlag( Boolean flag){
-		this.enquirer.setReturningCompleteDescription( flag);
+		this.enquirer.setReturnCompleteDescription( flag);
+	}
+
+	/**
+	 * Modify the current enquirer reasoning setting.
+	 * @param flag set to {@code false} if the query should consider only asserted axioms.
+	 *             Set to {@code true} for considering also reasoned axioms.
+	 */
+	public synchronized void setOWLEnquirerIncludesInferences(Boolean flag){
+		this.enquirer.setIncludeInferences( flag);
 	}
 
 	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   GETTERS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
@@ -370,6 +368,13 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 	 */
 	public synchronized Boolean getOWLEnquirerCompletenessFlag(){
 		return this.enquirer.isReturningCompleteDescription();
+	}
+	/**
+	 * @return {@code false} if the enquirer is set to query only the asserted axioms.
+	 * {@code True}, if also inferred axiom are returned byb the enquirer.
+	 */
+	public synchronized Boolean getOWLEnquirerReasoningFlag(){
+		return this.enquirer.isIncludingInferences();
 	}
 
 	
@@ -705,7 +710,7 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 		// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   CLASS CONSTANTS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 		/**
 		 * Command value that specifies that the new ontology references has to point to a new ontology.
-		 * In particular, its value is: {@link  #COMMAND_CREATE}.  
+		 * In particular, its value is: {@link  #COMMAND_CREATE}.
 		 */
 		static public final Integer COMMAND_CREATE = 0;
 		/**

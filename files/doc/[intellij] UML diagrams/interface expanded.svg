@@ -4727,7 +4727,7 @@
                    xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAhklEQVR42mNkwAJm&#10;rdiYnxbhP3Hmig2bsMmnRwT4wdhM2DT/Z/jvzEAkYKJEM4oB5GgGARYYA+RnIDWR&#10;bANwBRhJYTAgBlAMGEGE/bb7M6nqhTdTKmyHTiCiGPBubrP5/x/fWMgy4P/7Vxz/&#10;//xhejunyZKZX/grySmRUVDsh3B643FSvQAA+/UwzyWsvoYAAAAASUVORK5CYII="
                    height="16" preserveAspectRatio="none"/>
             <rect x="20" width="184" height="24" y="0" clip-path="url(#clipPath72)" stroke="none"/>
-            <text fill="rgb(187,187,187)" x="21" xml:space="preserve" y="17" clip-path="url(#clipPath72)" stroke="none">returnCompleteDescription</text>
+            <text fill="rgb(187,187,187)" x="21" xml:space="preserve" y="17" clip-path="url(#clipPath72)" stroke="none">returnsCompleteDescription</text>
         </g>
         <g fill="rgb(60,63,65)" font-size="15" font-family="'Cantarell'"
            transform="matrix(1,0,0,1,20,20) translate(1167.6508,3035)" stroke="rgb(60,63,65)">
@@ -5693,7 +5693,7 @@
                    xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAhklEQVR42mNkwAJm&#10;rdiYnxbhP3Hmig2bsMmnRwT4wdhM2DT/Z/jvzEAkYKJEM4oB5GgGARYYA+RnIDWR&#10;bANwBRhJYTAgBlAMGEGE/bb7M6nqhTdTKmyHTiCiGPBubrP5/x/fWMgy4P/7Vxz/&#10;//xhejunyZKZX/grySmRUVDsh3B643FSvQAA+/UwzyWsvoYAAAAASUVORK5CYII="
                    height="16" preserveAspectRatio="none"/>
             <rect x="20" width="184" height="24" y="0" clip-path="url(#clipPath72)" stroke="none"/>
-            <text fill="rgb(187,187,187)" x="21" xml:space="preserve" y="17" clip-path="url(#clipPath72)" stroke="none">returnCompleteDescription</text>
+            <text fill="rgb(187,187,187)" x="21" xml:space="preserve" y="17" clip-path="url(#clipPath72)" stroke="none">returnsCompleteDescription</text>
         </g>
         <g fill="rgb(60,63,65)" font-size="15" font-family="'Cantarell'"
            transform="matrix(1,0,0,1,20,20) translate(1167.6508,3035)" stroke="rgb(60,63,65)">

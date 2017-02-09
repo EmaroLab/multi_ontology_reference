@@ -1,11 +1,9 @@
 package it.emarolab.amor.owlInterface;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import com.clarkparsia.pellet.owlapi.PelletReasoner;
 import com.clarkparsia.pellet.sparqldl.jena.SparqlDLExecutionFactory;
+import it.emarolab.amor.owlDebugger.Logger;
+import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.InfModel;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -15,14 +13,11 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 import org.semanticweb.owlapi.search.EntitySearcher;
 
-import it.emarolab.amor.owlDebugger.Logger;
-import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static it.emarolab.amor.owlInterface.OWLManipulator.RESTRICTION_MIN;
-import static it.emarolab.amor.owlInterface.OWLManipulator.RESTRICTION_EXACT;
-import static it.emarolab.amor.owlInterface.OWLManipulator.RESTRICTION_MAX;
-import static it.emarolab.amor.owlInterface.OWLManipulator.RESTRICTION_ONLY;
-import static it.emarolab.amor.owlInterface.OWLManipulator.RESTRICTION_SOME;
+import static it.emarolab.amor.owlInterface.OWLManipulator.*;
 
 // TODO : bring up to OWLReferences getSubObjectPropertyOf getSubDataPropertyOf and all its case
 // TODO : make an abstract class interface to be implemented for all methods (all have the same shape)
@@ -51,37 +46,51 @@ public class OWLEnquirer {
 	 */
 	private Logger logger = new Logger( this, LoggerFlag.getLogOWLEnquirer());
 
-	/**
+    /**
+     * The default value for including also inferences on queries response
+     * (see: {@link #isIncludingInferences()}).
+     */
+    public static final Boolean DEFAULT_INCLUDE_INFERENCES = true;
+
+    /**
 	 * Boolean used to query the reasoner sub/super-(class or properties).
 	 * If it is {@code false} only hierarchically direct entities will be returned
 	 * (all non-reasoned values are returned anyway).
-	 * Else, it collects all entities up to the leafs and root of the structure.
+	 * Else, it collects all entities up to the leafs and root of the structure
+     * (see: {@link #isReturningCompleteDescription()}).
 	 */
 	public static final Boolean DEFAULT_RETURN_COMPLETE_DESCRIPTION = true;
-	
-	private Boolean returnCompleteDescription;
+
+    /**
+     * If it is true the call ask to the reasoner, otherwise only asserted knowledge will be queried.
+     */
+	private Boolean returnsCompleteDescription, includesInferences;
 	/**
 	 * Ontology reference to be manipulated given in the constructor.
 	 */
 	private OWLReferencesInterface ontoRef;
 
 	/**
-	 * Constructor which sets {@link #returnCompleteDescription} flag to
-	 * default value {@link #DEFAULT_RETURN_COMPLETE_DESCRIPTION}.
+	 * Constructor which sets {@link #returnsCompleteDescription} flag to
+	 * default value {@link #DEFAULT_RETURN_COMPLETE_DESCRIPTION} and
+     * {@link #includesInferences} flag to {@link #DEFAULT_INCLUDE_INFERENCES}.
 	 * @param owlRef the ontology in which perform queries
 	 */
 	protected OWLEnquirer( OWLReferencesInterface owlRef){
 		this.ontoRef = owlRef;
-		this.returnCompleteDescription = DEFAULT_RETURN_COMPLETE_DESCRIPTION;
+		this.returnsCompleteDescription = DEFAULT_RETURN_COMPLETE_DESCRIPTION;
+		this.includesInferences = DEFAULT_INCLUDE_INFERENCES;
 	}
 	/**
-	 * Constructor to define custom {@link #returnCompleteDescription} value.
+	 * Constructor to define custom {@link #returnsCompleteDescription} value.
 	 * @param owlRef the ontology in which perform queries.
-	 * @param returnCompleteDescription the value given to {@link #returnCompleteDescription}.
+	 * @param returnsCompleteDescription the value given to {@link #returnsCompleteDescription}.
+     * @param includesInferences set to {@code false} for consider only asserted axioms.
 	 */
-	protected OWLEnquirer( OWLReferencesInterface owlRef, Boolean returnCompleteDescription){
+	protected OWLEnquirer(OWLReferencesInterface owlRef, Boolean returnsCompleteDescription, Boolean includesInferences){
 		this.ontoRef = owlRef;
-		this.returnCompleteDescription = returnCompleteDescription;
+		this.returnsCompleteDescription = returnsCompleteDescription;
+		this.includesInferences = includesInferences;
 	}
 	
 	/**
@@ -93,22 +102,43 @@ public class OWLEnquirer {
 	}
 
 	/**
-	 * @return current value of {@link #returnCompleteDescription}.
+	 * @return current value of {@link #returnsCompleteDescription}.
 	 */
 	protected Boolean isReturningCompleteDescription(){
-		return returnCompleteDescription;
+		return returnsCompleteDescription;
 	}
 	/**
-	 * @param flag value to set for {@link #returnCompleteDescription}.
+	 * @param flag value to set for {@link #returnsCompleteDescription}.
 	 */
-	protected void setReturningCompleteDescription(Boolean flag){
-		returnCompleteDescription = flag;
-	} 
-	
-	/**
+	protected void setReturnCompleteDescription(Boolean flag){
+		returnsCompleteDescription = flag;
+	}
+
+    /**
+	 * It is {@code True} if {@code this} {@link OWLEnquirer} is also appending inferred
+	 * axioms to the queries. If it is set to {@code false} it
+     * enables/disables the effects of {@link #isIncludingInferences()},
+     * since no reasoning processes are involved.<br>
+	 * This flag is not considered on {@link #sparql(String, Long)} and
+	 * derived methods, which always relies on the reasoner.
+	 * @return {@code false} if the queries consider only asserted axioms.
+	 */
+    public Boolean isIncludingInferences() {
+        return includesInferences;
+    }
+    /**
+     * Set to {@code false} if the queries consider only asserted axioms.
+     * Set to {@code true} to get also inferred axioms
+     * @param includesInferences the flag to indicate if {@code this.{@link #isIncludingInferences()}}.
+     */
+    public void setIncludeInferences(boolean includesInferences) {
+        this.includesInferences = includesInferences;
+    }
+
+    /**
 	 * Returns all individual defined in the ontology {@link OWLDataFactory#getOWLThing()}.
 	 * It returns {@code null} if no individuals belong to the root class or if such class does not exist.
-	 * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+	 * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * 
 	 * @return individuals belonging to the root class of the ontology.
 	 */
@@ -120,7 +150,7 @@ public class OWLEnquirer {
 	 * The method takes a string and calls {@link OWLLibrary#getOWLClass(String)},
      * to fetch the corresponding OWL class object {@link #getIndividualB2Class(OWLClass)}.
      * It returns {@code null} if no individual belongs to that class or if such class does not exist.
-	 * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+	 * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * 
 	 * @param className name of the class.
 	 * @return non-ordered set of individuals belonging to such class.
@@ -132,7 +162,7 @@ public class OWLEnquirer {
      * Returns all individuals belonging to the specified class.
      * The method takes an OWL class object {@link #getIndividualB2Class(OWLClass)}.
      * It returns {@code null} if no individual belongs to that class or if such class does not exist.
-     * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+     * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * 
 	 * @param ontoClass OWL class.
 	 * @return non-ordered set of individuals belonging to such class.
@@ -148,21 +178,24 @@ public class OWLEnquirer {
 		if( set != null)
 			out.addAll( set.stream().map( AsOWLNamedIndividual::asOWLNamedIndividual).collect( Collectors.toList()));
 
-		try{
-			Stream<OWLNamedIndividual> streamReasoned = ontoRef.getReasoner().getInstances(ontoClass, !returnCompleteDescription).entities();
-			Set< OWLIndividual> reasoned = streamReasoned.collect(Collectors.toSet());
-			if( reasoned != null)
-				out.addAll(reasoned.stream().map( AsOWLNamedIndividual::asOWLNamedIndividual).collect( Collectors.toList()));
-		} catch( InconsistentOntologyException e){
-			ontoRef.logInconsistency();
-		}
+		if(includesInferences) {
+            try {
+                Stream<OWLNamedIndividual> streamReasoned = ontoRef.getReasoner()
+                        .getInstances(ontoClass, ! isReturningCompleteDescription()).entities();
+                Set<OWLIndividual> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    out.addAll(reasoned.stream().map(AsOWLNamedIndividual::asOWLNamedIndividual).collect(Collectors.toList()));
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
 		logger.addDebugString( "Individual belonging to class given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
 	/**
 	 * Returns one individual belonging to the root class {@link OWLDataFactory#getOWLThing()}.
 	 * It returns {@code null} if no individual is classified in the class, meaning the ontology is not populated.
-	 * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+	 * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * 
 	 * @return an individual belonging to the root class of the ontology.
 	 */
@@ -174,7 +207,7 @@ public class OWLEnquirer {
 	 * Returns {@code null} if no individual are classified in that class,
 	 * if such class does not exist or if the Set returned by 
 	 * {@code this.getIndividualB2Class( .. )} has {@code size > 1}.
-	 * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+	 * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * 
 	 * @param className name of the ontological class.
 	 * @return an individual belonging to ontoClass.
@@ -188,7 +221,7 @@ public class OWLEnquirer {
 	 * Returns {@code null} if no individual are classified in that class,
 	 * if such class does not exist or if the Set returned by 
 	 * {@code this.getIndividualB2Class( .. )} has {@code size > 1}.
-	 * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+	 * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * 
 	 * @param ontoClass OWLClass object in which to search.
 	 * @return an individual belonging to ontoClass.
@@ -200,7 +233,7 @@ public class OWLEnquirer {
 
 	/**
 	 * Returns the set of classes in which an individual has been classified (except for OWLREA).
-	 * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+	 * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * 
 	 * @param individual the instance belonging to the returning classes.
 	 * @return set of all classes the individual belongs to.
@@ -216,21 +249,24 @@ public class OWLEnquirer {
 		if( set != null)
 			out.addAll(set.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
 
-		try{
-			Stream<OWLClass> streamReasoned = ontoRef.getReasoner().getTypes( individual, !returnCompleteDescription).entities();
-			Set<OWLClass> reasoned = streamReasoned.collect(Collectors.toSet());
-			if( reasoned != null)
-				out.addAll( reasoned.stream().map( AsOWLClass::asOWLClass).collect( Collectors.toList()));
-		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			ontoRef.logInconsistency();
-		}
+        if(includesInferences) {
+            try {
+                Stream<OWLClass> streamReasoned = ontoRef.getReasoner()
+                        .getTypes(individual, ! isReturningCompleteDescription()).entities();
+                Set<OWLClass> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    out.addAll(reasoned.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
+            } catch ( InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
 		out.remove( ontoRef.getOWLFactory().getOWLThing());
 		logger.addDebugString( "Types of individual given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return out;
 	}
 	/**
 	 * Returns the set of classes in which an individual has been classified.
-	 * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+	 * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 *
 	 * @param individualName name of the individual.
 	 * @return a set of all classes the individual belongs to.
@@ -294,13 +330,15 @@ public class OWLEnquirer {
 		//Set<OWLLiteral>  value = individual.getDataPropertyValues(property, ontoRef.getOWLOntology());
 		Stream<OWLLiteral> stream = EntitySearcher.getDataPropertyValues(individual, property, ontoRef.getOWLOntology());
 		Set< OWLLiteral> value = stream.collect( Collectors.toSet());
-		
-		try{
-			Set<OWLLiteral> valueInf = ontoRef.getReasoner().getDataPropertyValues( individual, property);
-			value.addAll( valueInf);
-		} catch( InconsistentOntologyException e){
-			ontoRef.logInconsistency();
-		}
+
+        if(includesInferences) {
+            try {
+                Set<OWLLiteral> valueInf = ontoRef.getReasoner().getDataPropertyValues(individual, property);
+                value.addAll(valueInf);
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
 		logger.addDebugString( "Data property belonging to individual given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return ( value);
 	}
@@ -366,14 +404,17 @@ public class OWLEnquirer {
 		if( set != null){
 			out.addAll(set.stream().map(AsOWLNamedIndividual::asOWLNamedIndividual).collect(Collectors.toList()));
 		}
-		try{
-			Stream<OWLNamedIndividual> streamReasoned = ontoRef.getReasoner().getObjectPropertyValues(individual, property).entities();
-			Set<OWLIndividual> reasoned = streamReasoned.collect(Collectors.toSet());
-			if( reasoned != null)
-				out.addAll( reasoned.stream().map( AsOWLNamedIndividual::asOWLNamedIndividual).collect( Collectors.toList()));
-		} catch( InconsistentOntologyException e){
-			ontoRef.logInconsistency();
-		}
+
+        if(includesInferences) {
+            try {
+                Stream<OWLNamedIndividual> streamReasoned = ontoRef.getReasoner().getObjectPropertyValues(individual, property).entities();
+                Set<OWLIndividual> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    out.addAll(reasoned.stream().map(AsOWLNamedIndividual::asOWLNamedIndividual).collect(Collectors.toList()));
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
 		logger.addDebugString( "Object property belonging to individual given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
@@ -568,7 +609,7 @@ public class OWLEnquirer {
 	 * inferred axioms by the reasoner.
 	 * Also note that the completeness of the results 
 	 * of this methods also depends from the value
-	 * of {@link #returnCompleteDescription}.
+	 * of {@link #returnsCompleteDescription}.
 	 * @param prop an object property
 	 * @return the sub object property of the input parameter ({@code prop})
 	 */
@@ -583,21 +624,24 @@ public class OWLEnquirer {
 		if( set != null)
 			out.addAll(set.stream().map(AsOWLObjectProperty::asOWLObjectProperty).collect(Collectors.toList()));
 
-		try{
-			Stream<OWLObjectPropertyExpression> streamReasoned = ontoRef.getReasoner().getSubObjectProperties(prop, !returnCompleteDescription).entities();
-			Set< OWLObjectPropertyExpression> reasoned = streamReasoned.collect(Collectors.toSet());
-			if( reasoned != null)
-				out.addAll(reasoned.stream().map( AsOWLObjectProperty::asOWLObjectProperty).collect( Collectors.toList()));
-		} catch( InconsistentOntologyException e){
-			ontoRef.logInconsistency();
-		}
+        if(includesInferences) {
+            try {
+                Stream<OWLObjectPropertyExpression> streamReasoned = ontoRef.getReasoner()
+                        .getSubObjectProperties(prop, ! isReturningCompleteDescription()).entities();
+                Set<OWLObjectPropertyExpression> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    out.addAll(reasoned.stream().map(AsOWLObjectProperty::asOWLObjectProperty).collect(Collectors.toList()));
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
 	/**
 	 * Returns all sub-properties of a given object property fetched by {@link #getSubObjectPropertyOf(OWLObjectProperty)}.
 	 * It checks axioms in the ontology first, then reasoner inferred axioms.
-     * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+     * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * @param propName the name of the property property.
 	 * @return set of sub-properties of {@code propName}.
 	 */
@@ -608,7 +652,7 @@ public class OWLEnquirer {
 	
 	/** Returns all the super-properties of a given object property.
      * It checks axioms in the ontology first, then reasoner inferred axioms.
-     * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+     * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * @param prop an object property.
 	 * @return set of super-properties of {@code propName}.
 	 */
@@ -623,22 +667,25 @@ public class OWLEnquirer {
 		if( set != null)
 			out.addAll(set.stream().map(AsOWLObjectProperty::asOWLObjectProperty).collect(Collectors.toList()));
 
-		try{
-			Stream<OWLObjectPropertyExpression> streamReasoned = ontoRef.getReasoner().getSuperObjectProperties(prop, !returnCompleteDescription).entities();
-			Set< OWLObjectPropertyExpression> reasoned = streamReasoned.collect(Collectors.toSet());
-			if( reasoned != null)
-				out.addAll(reasoned.stream().map( AsOWLObjectProperty::asOWLObjectProperty).collect( Collectors.toList()));
+        if(includesInferences) {
+            try {
+                Stream<OWLObjectPropertyExpression> streamReasoned = ontoRef.getReasoner()
+                        .getSuperObjectProperties(prop, ! isReturningCompleteDescription()).entities();
+                Set<OWLObjectPropertyExpression> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    out.addAll(reasoned.stream().map(AsOWLObjectProperty::asOWLObjectProperty).collect(Collectors.toList()));
 
-		} catch( InconsistentOntologyException e){
-			ontoRef.logInconsistency();
-		}
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
 	/**
 	 * Returns all sub-properties of a given object property fetched by {@link #getSuperObjectPropertyOf(OWLObjectProperty)}.
      * It checks axioms in the ontology first, then reasoner inferred axioms.
-     * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+     * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * @param propName the object property name.
 	 * @return set of super-properties of {@code propName}.
 	 */
@@ -650,7 +697,7 @@ public class OWLEnquirer {
 	/**
 	 * Returns all sub-properties of a given data property.
      * It checks axioms in the ontology first, then reasoner inferred axioms.
-     * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+     * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * @param prop a data property.
 	 * @return set of sub-properties of {@code prop}.
 	 */
@@ -665,21 +712,24 @@ public class OWLEnquirer {
 		if( set != null)
 			out.addAll(set.stream().map(AsOWLDataProperty::asOWLDataProperty).collect(Collectors.toList()));
 
-		try{
-			Stream<OWLDataProperty> streamReasoned = ontoRef.getReasoner().getSubDataProperties(prop, !returnCompleteDescription).entities();
-			Set<OWLDataProperty> reasoned = streamReasoned.collect(Collectors.toSet());
-			if( reasoned != null)
-				out.addAll(reasoned.stream().map( AsOWLDataProperty::asOWLDataProperty).collect( Collectors.toList()));
-		} catch( InconsistentOntologyException e){
-			ontoRef.logInconsistency();
-		}
+        if(includesInferences) {
+            try {
+                Stream<OWLDataProperty> streamReasoned = ontoRef.getReasoner()
+                        .getSubDataProperties(prop, ! isReturningCompleteDescription()).entities();
+                Set<OWLDataProperty> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    out.addAll(reasoned.stream().map(AsOWLDataProperty::asOWLDataProperty).collect(Collectors.toList()));
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
 	/**
 	 * Returns all sub-properties of a given data property fetched by {@link #getSubDataPropertyOf(OWLDataProperty)}.
      * It checks axioms in the ontology first, then reasoner inferred axioms.
-     * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+     * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * @param propName data property name.
 	 * @return set of sub-properties of {@code prop}.
 	 */
@@ -691,7 +741,7 @@ public class OWLEnquirer {
 	/**
 	 * Returns all super-properties of a given data property.
      * It checks axioms in the ontology first, then reasoner inferred axioms.
-     * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+     * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * @param prop a data property.
 	 * @return set of sub-properties of {@code prop}.
 	 */
@@ -706,21 +756,24 @@ public class OWLEnquirer {
 		if( set != null){
 			out.addAll(set.stream().map(AsOWLDataProperty::asOWLDataProperty).collect(Collectors.toList()));
 		}
-		try{
-			Stream<OWLDataProperty> streamReasoned = ontoRef.getReasoner().getSuperDataProperties(prop, !returnCompleteDescription).entities();
-			Set<OWLDataProperty> reasoned = streamReasoned.collect(Collectors.toSet());
-			if( reasoned != null)
-				out.addAll(reasoned.stream().map( AsOWLDataProperty::asOWLDataProperty).collect( Collectors.toList()));
-		} catch( InconsistentOntologyException e){
-			ontoRef.logInconsistency();
-		}
+        if(includesInferences) {
+            try {
+                Stream<OWLDataProperty> streamReasoned = ontoRef.getReasoner()
+                        .getSuperDataProperties(prop, ! isReturningCompleteDescription()).entities();
+                Set<OWLDataProperty> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    out.addAll(reasoned.stream().map(AsOWLDataProperty::asOWLDataProperty).collect(Collectors.toList()));
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
 	/**
 	 * Returns all super-properties of a given data property fetched by {@link #getSuperDataPropertyOf(OWLDataProperty)}.
      * It checks axioms in the ontology first, then reasoner inferred axioms.
-     * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+     * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * @param propName a data property.
 	 * @return set of sub-properties of {@code prop}.
 	 */
@@ -732,7 +785,7 @@ public class OWLEnquirer {
 	
 	/**
 	 * Returns all sub-classes of a given class.
-	 * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+	 * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * 
 	 * @param className name of an OWL class.
 	 * @return non-ordered set of sub-classes.
@@ -743,7 +796,7 @@ public class OWLEnquirer {
 	}
 	/**
 	 * Returns all sub-classes of a given class (except for {@link OWLDataFactory#getOWLThing()}).
-         * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+         * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * 
 	 * @param cl an OWL class.
 	 * @return non-ordered set of sub-classes.
@@ -758,14 +811,17 @@ public class OWLEnquirer {
 		if( set != null)
 			out.addAll( set.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
 
-		try{
-			Stream<OWLClass> streamReasoned = ontoRef.getReasoner().getSubClasses( cl, !returnCompleteDescription).entities();
-			Set<OWLClass> reasoned = streamReasoned.collect(Collectors.toSet());
-			if( reasoned != null)
-				out.addAll( reasoned.stream().map( AsOWLClass::asOWLClass).collect( Collectors.toList()));
-		} catch( InconsistentOntologyException e){
-			ontoRef.logInconsistency();
-		}
+        if(includesInferences) {
+            try {
+                Stream<OWLClass> streamReasoned = ontoRef.getReasoner()
+                        .getSubClasses(cl, ! isReturningCompleteDescription()).entities();
+                Set<OWLClass> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    out.addAll(reasoned.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
 		out.remove( ontoRef.getOWLFactory().getOWLThing());
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
@@ -773,7 +829,7 @@ public class OWLEnquirer {
 
 	/**
 	 * Returns all super-classes of a given class.
-         * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+         * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * 
 	 * @param className name of an OWL class.
 	 * @return non-ordered set of sub-classes.
@@ -784,7 +840,7 @@ public class OWLEnquirer {
 	}
 	/**
 	 * Returns all super-classes of a given class (except for {@link OWLDataFactory#getOWLThing()}).
-         * Results completeness is ensured only if {@link #returnCompleteDescription} is set to {@code true}.
+         * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * 
 	 * @param cl an OWL class.
 	 * @return non-ordered set of sub-classes.
@@ -800,14 +856,17 @@ public class OWLEnquirer {
 		if( set != null)
 			classes.addAll(set.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
 
-		try{
-			Stream<OWLClass> streamReasoned = ontoRef.getReasoner().getSuperClasses( cl, !returnCompleteDescription).entities();
-			Set<OWLClass> reasoned = streamReasoned.collect(Collectors.toSet());
-			if( reasoned != null)
-				classes.addAll( reasoned.stream().map( AsOWLClass::asOWLClass).collect( Collectors.toList()));
-		} catch( InconsistentOntologyException e){
-			ontoRef.logInconsistency();
-		}
+        if( isIncludingInferences()) {
+            try {
+                Stream<OWLClass> streamReasoned = ontoRef.getReasoner()
+                        .getSuperClasses(cl, ! isReturningCompleteDescription()).entities();
+                Set<OWLClass> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    classes.addAll(reasoned.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
 		classes.remove( ontoRef.getOWLFactory().getOWLThing());
 		logger.addDebugString( "get super classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( classes);
