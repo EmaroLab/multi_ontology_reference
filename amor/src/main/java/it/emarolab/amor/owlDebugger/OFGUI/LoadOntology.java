@@ -35,11 +35,11 @@ public class LoadOntology {
 		OWLReferences ontoRef = (OWLReferences) OWLReferencesContainer.getOWLReferences( ontoName);
 		if( ontoRef != null){
 			//ClassExchange.setOntoName( ontoName);
-	    	/*ClassExchange.setOWLReasoner( ontoRef.getReasoner());
-	    	ClassExchange.setFactory( ontoRef.getOWLFactory());
+	    	/*ClassExchange.setReasoner( ontoRef.getReasoner());
+	    	ClassExchange.setFactory( ontoRef.getFactory());
 	    	ClassExchange.setPm( ontoRef.getPm());
-	    	ClassExchange.setOntology( ontoRef.getOWLOntology());
-	    	ClassExchange.setManager( ontoRef.getOWLManager());*/
+	    	ClassExchange.setOntology( ontoRef.getOntology());
+	    	ClassExchange.setManager( ontoRef.getManager());*/
 			ClassExchange.setOntoRef( ontoRef);
 		} else {
 			// show a dialog box
@@ -53,20 +53,16 @@ public class LoadOntology {
 			ClassExchange.changeVisibilityProgressBar(false);
 	}
 
-	public static synchronized void saveOntology(){
-		saveOntology( true);
-	}
 	// if true print on file the ontology
 	// if false save the ontology 
-	@Deprecated
 	public static synchronized void saveOntology( boolean toOWL){
 		OWLReferences ontoRef = ClassExchange.getOntoRef();
 		
 		String message;
-		String format = "txt";
-		ArrayList<String> strs = new ArrayList<String>(); 
+		String format;
+		ArrayList<String> strs; 
 		if( ! toOWL){
-		/*	format = "txt";
+			format = "txt";
 			strs = new ArrayList<String>();
 			BufferedReader tmp = getOntologyTokens();
 			boolean loop =true;
@@ -87,8 +83,7 @@ public class LoadOntology {
 				e.printStackTrace();
 				message = "IO Exception " + e.getCause() + System.getProperty("line.separator") +
 						e.getMessage();
-			}*/
-			System.err.println( "Deprecated with owl api 5");
+			}
 		}
 		else{
 			format = "owl";
@@ -132,7 +127,7 @@ public class LoadOntology {
 	}
 	
 	// print ontology and return the string
-/*	public static synchronized BufferedReader getOntologyTokens(){
+	public static synchronized BufferedReader getOntologyTokens(){
 		OWLReferences ontoRef = ClassExchange.getOntoRef();
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -142,10 +137,10 @@ public class LoadOntology {
 		
 		try {
 			ManchesterOWLSyntaxOntologyFormat manSyntaxFormat = new ManchesterOWLSyntaxOntologyFormat();
-			OWLOntologyFormat format =  ontoRef.getOWLManager().getOntologyFormat(ontoRef.getOWLOntology());
+			OWLOntologyFormat format =  ontoRef.getManager().getOntologyFormat(ontoRef.getOntology());
 			if (format.isPrefixOWLOntologyFormat())
 				manSyntaxFormat.copyPrefixesFrom(format.asPrefixOWLOntologyFormat());
-			ontoRef.getOWLManager().saveOntology( ontoRef.getOWLOntology(), manSyntaxFormat, print);
+			ontoRef.getManager().saveOntology( ontoRef.getOntology(), manSyntaxFormat, print); 
 		} catch (OWLOntologyStorageException e) {	
 			e.printStackTrace();
 		}
@@ -155,5 +150,5 @@ public class LoadOntology {
 		BufferedReader br = new BufferedReader(new StringReader(buffer.toString()));
 		
 		return( br);
-	}	*/
+	}	
 }
