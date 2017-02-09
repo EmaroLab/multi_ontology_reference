@@ -1,21 +1,21 @@
 package it.emarolab.amor.examples;
 
 
-
 import it.emarolab.amor.owlDebugger.Logger;
-
-import java.util.List;
-import java.util.Map;
-
 import it.emarolab.amor.owlInterface.OWLLibrary;
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContainer;
 
+import java.util.List;
+import java.util.Map;
+
 
 
 
 public class Benchmarks {
+
+    // USE THE DEDICATE BRANCH WITH THE DATA !!!
 
     // todo: manage folders
     // example with only A-box
@@ -36,14 +36,9 @@ public class Benchmarks {
 
     public static final Boolean BUFFERING_REASONER = true; // if true you must to update manually the reasoner. Otherwise it synchronises itself any time is needed
     public static final Boolean BUFFERING_MANIPULATOR = false; // if true you must to apply changes manually. Otherwise their are applied as soon as possible.
-    private static final Long SPARQL_TIMEOUT = -1L; //[ms] set to <0 to disable time out.
-
-
-
-    private static Logger logger = new Logger(OWLRefEnquirerExample.class, true);
     public static final String ONTOLOGY_SAVING_PATH = ""; // todo: set and use
-
-
+    private static final Long SPARQL_TIMEOUT = -1L; //[ms] set to <0 to disable time out.
+    private static Logger logger = new Logger(OWLRefEnquirerExample.class, true);
 
     public static void main(String[] args) {
 

@@ -1,18 +1,16 @@
 package it.emarolab.amor.owlInterface;
 
-import java.util.Set;
-
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
-
 import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
+
+import java.util.Set;
 
 /**
+ * Static class used to export an ontology.
+ * Reasoner generated asserted property will be exported as fixed.
+ *
  * <div style="text-align:center;"><small>
  * <b>Project</b>:    aMOR <br>
  * <b>File</b>:       it.emarolab.amor.owlInterface.InferredAxiomExporter <br>
@@ -22,9 +20,6 @@ import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
  * <b>date</b>:       Feb 10, 2016 <br>
  * </small></div>
  *
- * Static class used to export an ontology.
- * Reasoner generated asserted property will be exported as fixed.
- * 
  * @author Buoncomapgni Luca
  * @version 1.0
  *

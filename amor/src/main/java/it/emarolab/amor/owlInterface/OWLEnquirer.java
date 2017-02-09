@@ -23,6 +23,8 @@ import static it.emarolab.amor.owlInterface.OWLManipulator.*;
 // TODO : make an abstract class interface to be implemented for all methods (all have the same shape)
 
 /**
+ * This class defines and implement the interface for querying the ontology.
+ *
  * <div style="text-align:center;"><small>
  * <b>Project</b>:    aMOR <br>
  * <b>File</b>:       it.emarolab.amor.owlInterface.OWLEnquirer <br>
@@ -32,11 +34,7 @@ import static it.emarolab.amor.owlInterface.OWLManipulator.*;
  * <b>date</b>:       Feb 10, 2016 <br>
  * </small></div>
  *
- * <p>
- *     This class defines and implement the interface for querying the ontology.
- * </p>
- *
- * @version 2.1
+ * @version 2.2
  */
 public class OWLEnquirer {
 
@@ -1051,6 +1049,15 @@ public class OWLEnquirer {
      * A {@link ObjectPropertyRelations} object is returned by
      * {@link OWLEnquirer#getObjectPropertyB2Individual(OWLNamedIndividual)}
      * and {@link OWLEnquirer#getObjectPropertyB2Individual(String)}.
+     *
+     * <div style="text-align:center;"><small>
+     * <b>Project</b>:    aMOR <br>
+     * <b>File</b>:       it.emarolab.amor.owlInterface.OWLEnquirer <br>
+     * <b>Licence</b>:    GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
+     * <b>Author</b>:     Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
+     * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
+     * <b>date</b>:       Feb 10, 2016 <br>
+     * </small></div>
      */
     public class ObjectPropertyRelations {
         private OWLObjectProperty prop;
@@ -1103,6 +1110,15 @@ public class OWLEnquirer {
      * A {@link DataPropertyRelations} object is returned by
      * {@link OWLEnquirer#getObjectPropertyB2Individual(OWLNamedIndividual)}
      * and {@link OWLEnquirer#getObjectPropertyB2Individual(String)}.
+     *
+     * <div style="text-align:center;"><small>
+     * <b>Project</b>:    aMOR <br>
+     * <b>File</b>:       it.emarolab.amor.owlInterface.OWLEnquirer <br>
+     * <b>Licence</b>:    GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
+     * <b>Author</b>:     Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
+     * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
+     * <b>date</b>:       Feb 10, 2016 <br>
+     * </small></div>
      */
     public class DataPropertyRelations {
         private OWLDataProperty prop;
@@ -1159,6 +1175,15 @@ public class OWLEnquirer {
      * {@link ClassExpressionType#OBJECT_MAX_CARDINALITY}, {@link ClassExpressionType#DATA_MAX_CARDINALITY},
      * {@link ClassExpressionType#OBJECT_EXACT_CARDINALITY}, {@link ClassExpressionType#DATA_EXACT_CARDINALITY}.
      * Where the getters of this containers depends from one of those types, assigned through setters.
+     *
+     * <div style="text-align:center;"><small>
+     * <b>Project</b>:    aMOR <br>
+     * <b>File</b>:       it.emarolab.amor.owlInterface.OWLEnquirer <br>
+     * <b>Licence</b>:    GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
+     * <b>Author</b>:     Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
+     * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
+     * <b>date</b>:       Feb 10, 2016 <br>
+     * </small></div>
      */
     public class ClassRestriction{
 		private OWLClass definitionOf;
