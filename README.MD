@@ -25,6 +25,12 @@ Check out the [/lib](https://github.com/EmaroLab/multi_ontology_reference/tree/m
 
 Finally, see the [/examples](https://github.com/EmaroLab/multi_ontology_reference/tree/master/amor/src/main/java/it/emarolab/amor/examples) package for tutorials about the API. Note that unfortunatelly, the GUI is becoming unstable after the integration with OWL 5 as wel as other mijor utility of saving and loading the ontology.
 
+
+#
+
+This specific **branch** contains utilities and example for testing the change of performances over the standard [LUBM benchmark](http://swat.cse.lehigh.edu/projects/lubm/) of aMOR interface, with resoect to purly OWL API 5.
+
+
 ## Contacts
 For comment, discussions or support refer to this git repository or contact us at:
  - [luca.buoncompagni@edu.unige.it](mailto:luca.buoncompagni@edu.unige.it), 
