@@ -495,11 +495,11 @@ public class OWLEnquirer {
 
 	private void getAllObjectPropertiesRecursive(OWLObjectProperty prop) {
 		Set<OWLObjectProperty> props = getSubObjectPropertyOf(prop);
-		allObjectPropertyRecoursive.addAll(props);
 		if (props.isEmpty())
 			return;
 		else {
-			for (OWLObjectProperty p : props)
+            allObjectPropertyRecoursive.addAll(props);
+            for (OWLObjectProperty p : props)
 				getAllObjectPropertiesRecursive(p);
 		}
 	}
@@ -544,11 +544,11 @@ public class OWLEnquirer {
 
 	private void getAllDataPropertiesRecursive(OWLDataProperty prop) {
 		Set<OWLDataProperty> props = getSubDataPropertyOf(prop);
-		allDataPropertyRecoursive.addAll(props);
 		if (props.isEmpty())
 			return;
 		else {
-			for (OWLDataProperty p : props)
+            allDataPropertyRecoursive.addAll(props);
+            for (OWLDataProperty p : props)
 				getAllDataPropertiesRecursive(p);
 		}
 	}
