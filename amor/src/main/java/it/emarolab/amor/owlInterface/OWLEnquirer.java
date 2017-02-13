@@ -69,7 +69,9 @@ public class OWLEnquirer {
 	 * Ontology reference to be manipulated given in the constructor.
 	 */
 	private OWLReferencesInterface ontoRef;
-
+	private Set<OWLObjectProperty> allObjectPropertyRecoursive = new HashSet<>();
+	private Set<OWLDataProperty> allDataPropertyRecoursive = new HashSet<>();
+	
 	/**
 	 * Constructor which sets {@link #returnsCompleteDescription} flag to
 	 * default value {@link #DEFAULT_RETURN_COMPLETE_DESCRIPTION} and
@@ -81,6 +83,7 @@ public class OWLEnquirer {
 		this.returnsCompleteDescription = DEFAULT_RETURN_COMPLETE_DESCRIPTION;
 		this.includesInferences = DEFAULT_INCLUDE_INFERENCES;
 	}
+
 	/**
 	 * Constructor to define custom {@link #returnsCompleteDescription} value.
 	 * @param owlRef the ontology in which perform queries.
@@ -92,7 +95,7 @@ public class OWLEnquirer {
 		this.returnsCompleteDescription = returnsCompleteDescription;
 		this.includesInferences = includesInferences;
 	}
-	
+
 	/**
 	 * @return a container of all the objects of the referenced ontology,
 	 * set by constructor.
@@ -107,6 +110,7 @@ public class OWLEnquirer {
 	protected Boolean isReturningCompleteDescription(){
 		return returnsCompleteDescription;
 	}
+
 	/**
 	 * @param flag value to set for {@link #returnsCompleteDescription}.
 	 */
@@ -126,6 +130,7 @@ public class OWLEnquirer {
     public Boolean isIncludingInferences() {
         return includesInferences;
     }
+
     /**
      * Set to {@code false} if the queries consider only asserted axioms.
      * Set to {@code true} to get also inferred axioms.
@@ -139,42 +144,44 @@ public class OWLEnquirer {
 	 * Returns all individual defined in the ontology {@link OWLDataFactory#getOWLThing()}.
 	 * It returns {@code null} if no individuals belong to the root class or if such class does not exist.
 	 * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
-	 * 
+	 *
 	 * @return individuals belonging to the root class of the ontology.
 	 */
 	public Set<OWLNamedIndividual> getIndividualB2Thing(){
 		return( getIndividualB2Class( ontoRef.getOWLFactory().getOWLThing()));
 	}
+
 	/**
 	 * Returns all individuals belonging to the specified class.
 	 * The method takes a string and calls {@link OWLLibrary#getOWLClass(String)},
      * to fetch the corresponding OWL class object {@link #getIndividualB2Class(OWLClass)}.
      * It returns {@code null} if no individual belongs to that class or if such class does not exist.
 	 * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
-	 * 
+	 *
 	 * @param className name of the class.
 	 * @return non-ordered set of individuals belonging to such class.
 	 */
 	public Set<OWLNamedIndividual> getIndividualB2Class( String className){
 		return( getIndividualB2Class( ontoRef.getOWLClass( className)));
 	}
+
 	/**
      * Returns all individuals belonging to the specified class.
      * The method takes an OWL class object {@link #getIndividualB2Class(OWLClass)}.
      * It returns {@code null} if no individual belongs to that class or if such class does not exist.
      * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
-	 * 
+	 *
 	 * @param ontoClass OWL class.
 	 * @return non-ordered set of individuals belonging to such class.
 	 */
 	public Set<OWLNamedIndividual> getIndividualB2Class( OWLClass ontoClass){
 		long initialTime = System.nanoTime();
 		Set< OWLNamedIndividual> out = new HashSet< OWLNamedIndividual>();
-		
+
 		//Set<OWLIndividual> set = ontoClass.getIndividuals( ontoRef.getOWLOntology());
 		Stream<OWLIndividual> stream = EntitySearcher.getIndividuals( ontoClass, ontoRef.getOWLOntology());
 		Set<OWLIndividual> set = stream.collect(Collectors.toSet());
-		
+
 		if( set != null)
 			out.addAll( set.stream().map( AsOWLNamedIndividual::asOWLNamedIndividual).collect( Collectors.toList()));
 
@@ -192,23 +199,25 @@ public class OWLEnquirer {
 		logger.addDebugString( "Individual belonging to class given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
+
 	/**
 	 * Returns one individual belonging to the root class {@link OWLDataFactory#getOWLThing()}.
 	 * It returns {@code null} if no individual is classified in the class, meaning the ontology is not populated.
 	 * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
-	 * 
+	 *
 	 * @return an individual belonging to the root class of the ontology.
 	 */
 	public OWLNamedIndividual getOnlyIndividualB2Thing(){
 		return( getOnlyIndividualB2Class( ontoRef.getOWLFactory().getOWLThing()));
 	}
+
 	/**
-	 * Returns one individual belonging to the specified class. 
+	 * Returns one individual belonging to the specified class.
 	 * Returns {@code null} if no individual are classified in that class,
-	 * if such class does not exist or if the Set returned by 
+	 * if such class does not exist or if the Set returned by
 	 * {@code this.getIndividualB2Class( .. )} has {@code size > 1}.
 	 * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
-	 * 
+	 *
 	 * @param className name of the ontological class.
 	 * @return an individual belonging to ontoClass.
 	 */
@@ -216,13 +225,14 @@ public class OWLEnquirer {
 		Set<OWLNamedIndividual> set = getIndividualB2Class( ontoRef.getOWLClass( className));
 		return( (OWLNamedIndividual) ontoRef.getOnlyElement(set));
 	}
+
 	/**
-	 * Returns one individual belonging to the specified class. 
+	 * Returns one individual belonging to the specified class.
 	 * Returns {@code null} if no individual are classified in that class,
-	 * if such class does not exist or if the Set returned by 
+	 * if such class does not exist or if the Set returned by
 	 * {@code this.getIndividualB2Class( .. )} has {@code size > 1}.
 	 * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
-	 * 
+	 *
 	 * @param ontoClass OWLClass object in which to search.
 	 * @return an individual belonging to ontoClass.
 	 */
@@ -234,18 +244,18 @@ public class OWLEnquirer {
 	/**
 	 * Returns the set of classes in which an individual has been classified (except for OWLREA).
 	 * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
-	 * 
+	 *
 	 * @param individual the instance belonging to the returning classes.
 	 * @return set of all classes the individual belongs to.
 	 */
 	public Set<OWLClass> getIndividualClasses( OWLNamedIndividual individual){
 		long initialTime = System.nanoTime();
 		Set< OWLClass> out = new HashSet<>();
-		
+
 		//Set< OWLClassExpression> set = individual.getTypes( ontoRef.getOWLOntology());
 		Stream<OWLClassExpression> stream = EntitySearcher.getTypes( individual, ontoRef.getOWLOntology());
 		Set< OWLClassExpression> set = stream.collect(Collectors.toSet());
-		
+
 		if( set != null)
 			out.addAll(set.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
 
@@ -264,6 +274,7 @@ public class OWLEnquirer {
 		logger.addDebugString( "Types of individual given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return out;
 	}
+
 	/**
 	 * Returns the set of classes in which an individual has been classified.
 	 * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
@@ -275,9 +286,10 @@ public class OWLEnquirer {
 		OWLNamedIndividual ind = ontoRef.getOWLIndividual( individualName);
 		return getIndividualClasses( ind);
 	}
+
 	/**
 	 * Returns only one class the individual belongs to.
-	 * 
+	 *
 	 * @param individualName name of the individual.
 	 * @return a class.
 	 */
@@ -285,12 +297,13 @@ public class OWLEnquirer {
 		Set< OWLClass> set = getIndividualClasses( individualName);
 		return( ( OWLClass) ontoRef.getOnlyElement( set));
 	}
+
 	/**
 	 * Returns one class the individual belongs to.
 	 * Calls {@link #getIndividualClasses(OWLNamedIndividual)},
 	 * then {@link OWLReferencesInterface#getOnlyElement(Set)}
      * and returns the resulting {@link OWLClass}.
-	 * 
+	 *
 	 * @param individual ontological individual object.
 	 * @return one class in which the input individual is belonging to.
 	 */
@@ -298,56 +311,58 @@ public class OWLEnquirer {
 		Set< OWLClass> set = getIndividualClasses( individual);
 		return( ( OWLClass) ontoRef.getOnlyElement( set));
 	}
-	
+
 	/**
 	 * Returns the set of literal values of a specific OWL Data Property instance
 	 * assigned to an individual. Retrieves an OWL object from a string and calls
 	 * {@link #getDataPropertyB2Individual(OWLNamedIndividual, OWLDataProperty)},
 	 * then returns the results.
-	 * 
+	 *
 	 * @param individualName name of the individual the data property belongs to.
 	 * @param propertyName data property name.
 	 * @return non-ordered set of the data property literal values.
 	 */
 	public Set<OWLLiteral> getDataPropertyB2Individual( String individualName, String propertyName){
 		OWLNamedIndividual ind = ontoRef.getOWLIndividual( individualName);
-		OWLDataProperty prop = ontoRef.getOWLDataProperty( propertyName); 
+		OWLDataProperty prop = ontoRef.getOWLDataProperty(propertyName);
 		return( getDataPropertyB2Individual( ind, prop));
 	}
+
 	/**
      * Returns the set of literal values of a specific OWL Data Property instance
      * assigned to an individual. Returns {@code null} if such data property or
 	 * individual do not exist, or if there is no instance of the data property
      * assigned to the individual.
-	 * 
+	 *
 	 * @param individual individual the data property belongs to.
 	 * @param property data property whose values are queried.
 	 * @return non-ordered set of the data property literal values.
 	 */
 	public Set<OWLLiteral> getDataPropertyB2Individual( OWLNamedIndividual individual, OWLDataProperty property){
 		long initialTime = System.nanoTime();
-		
+
 		//Set<OWLLiteral>  value = individual.getDataPropertyValues(property, ontoRef.getOWLOntology());
 		Stream<OWLLiteral> stream = EntitySearcher.getDataPropertyValues(individual, property, ontoRef.getOWLOntology());
 		Set< OWLLiteral> value = stream.collect( Collectors.toSet());
 
-        if(includesInferences) {
-            try {
-                Set<OWLLiteral> valueInf = ontoRef.getReasoner().getDataPropertyValues(individual, property);
-                value.addAll(valueInf);
-            } catch (InconsistentOntologyException e) {
-                ontoRef.logInconsistency();
-            }
-        }
+		if (includesInferences) {
+			try {
+				Set<OWLLiteral> valueInf = ontoRef.getReasoner().getDataPropertyValues(individual, property);
+				value.addAll(valueInf);
+			} catch (InconsistentOntologyException e) {
+				ontoRef.logInconsistency();
+			}
+		}
 		logger.addDebugString( "Data property belonging to individual given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return ( value);
 	}
+
 	/**
 	 * Returns one literal value of a specific OWL Data Property instance
 	 * assigned to an individual. Takes as input the individual and
 	 * property names and calls {@link #getDataPropertyB2Individual(OWLNamedIndividual, OWLDataProperty)},
 	 * then returns the result as {@link OWLLiteral}.
-	 * 
+	 *
 	 * @param individualName name of the individual the data property belongs to.
 	 * @param propertyName name of the data property whose values are queried.
 	 * @return queried literal value.
@@ -356,12 +371,13 @@ public class OWLEnquirer {
 		Set<OWLLiteral> set = getDataPropertyB2Individual( individualName, propertyName);
 		return( (OWLLiteral) ontoRef.getOnlyElement( set));
 	}
+
 	/**
      * Returns one literal value of a specific OWL Data Property instance
      * assigned to an individual. This returns {@code null} if such data property or
      * individual do not exist, or if there is no instance of the data property
      * assigned to the individual.
-	 * 
+	 *
 	 * @param individual individual the data property belongs to.
 	 * @param property data property whose values are queried.
 	 * @return queried literal value.
@@ -371,11 +387,10 @@ public class OWLEnquirer {
 		return( (OWLLiteral) ontoRef.getOnlyElement( set));
 	}
 
-
 	/**
      * Returns all value objects of a specific OWL Object Property instance
      * assigned to an individual.
-	 * 
+	 *
 	 * @param individualName name of an individual.
 	 * @param propertyName name of the object property.
 	 * @return non-ordered set of the property value entities ({@link OWLNamedIndividual}).
@@ -385,11 +400,12 @@ public class OWLEnquirer {
 		OWLObjectProperty prop = ontoRef.getOWLObjectProperty( propertyName);
 		return( getObjectPropertyB2Individual( ind, prop));
 	}
+
 	/**
      * Returns all value objects of a specific OWL Object Property instance
      * assigned to an individual. Returns {@code null}
 	 * if the object property or individual do not exist.
-	 * 
+	 *
 	 * @param individual from which the object property is retrieved.
 	 * @param property the object property to lock for.
 	 * @return non-ordered set of the property value entities ({@link OWLNamedIndividual}).
@@ -397,10 +413,10 @@ public class OWLEnquirer {
 	public Set<OWLNamedIndividual> getObjectPropertyB2Individual( OWLNamedIndividual individual, OWLObjectProperty property){
 		long initialTime = System.nanoTime();
 		Set< OWLNamedIndividual> out = new HashSet<>();
-		
+
 		Stream< OWLIndividual> stream = EntitySearcher.getObjectPropertyValues(individual, property, ontoRef.getOWLOntology());
 		Set< OWLIndividual> set = stream.collect( Collectors.toSet());
-		
+
 		if( set != null){
 			out.addAll(set.stream().map(AsOWLNamedIndividual::asOWLNamedIndividual).collect(Collectors.toList()));
 		}
@@ -418,11 +434,12 @@ public class OWLEnquirer {
 		logger.addDebugString( "Object property belonging to individual given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
+
 	/**
      * Returns one value object of a specific OWL Object Property instance
      * assigned to an individual, given by name.
      * It actually queries all values and then returns only one.
-	 * 
+	 *
 	 * @param individualName name of the individual.
 	 * @param propertyName name of the object property.
 	 * @return property value entity ({@link OWLNamedIndividual}).
@@ -433,12 +450,13 @@ public class OWLEnquirer {
 		Set<OWLNamedIndividual> set = getObjectPropertyB2Individual( ind, prop);
 		return( (OWLNamedIndividual) ontoRef.getOnlyElement( set));
 	}
+
 	/**
 	 * Returns one value object of a specific OWL Object Property instance
      * assigned to an individual. It actually queries all values and then returns only one.
      * Returns {@code null} if the object property or individual do not exist,
      * or {@link OWLReferencesInterface#getOnlyElement(Set)} returns {@code null}.
-	 * 
+	 *
 	 * @param individual from which the object property is retrieved.
 	 * @param property the object property to lock for.
 	 * @return property value entity ({@link OWLNamedIndividual}).
@@ -452,7 +470,7 @@ public class OWLEnquirer {
 	 * Returns all object properties and relative value entities relative to an individual.
 	 * Note: this implementation may be not efficient since it iterate over all
 	 * the object property of the ontology.
-	 * 
+	 *
 	 * @param individual the instance from which retrieve its objects properties.
 	 * @return all the object properties and value entities of the given individual.
 	 */
@@ -460,25 +478,43 @@ public class OWLEnquirer {
 		Set<ObjectPropertyRelations> out = new HashSet<ObjectPropertyRelations>();
 		// get all object prop in the ontology
 		OWLObjectProperty topObjProp = ontoRef.getOWLFactory().getOWLTopObjectProperty();
-		Set<OWLObjectProperty> allProp = getSubObjectPropertyOf(topObjProp);
+		Set<OWLObjectProperty> allProp = getAllObjectPropertiesRecursive();//getSubObjectPropertyOf(topObjProp);
 		for( OWLObjectProperty p : allProp){ // check if a property belongs to this individual
 			Set<OWLNamedIndividual> values = getObjectPropertyB2Individual(individual, p);
 			if( ! values.isEmpty())
 				out.add( new ObjectPropertyRelations(individual, p, values, ontoRef));
 		}
-		return out;	
+		return out;
 	}
+
+	private Set<OWLObjectProperty> getAllObjectPropertiesRecursive() {
+		allObjectPropertyRecoursive = new HashSet<>();
+		getAllObjectPropertiesRecursive(ontoRef.getOWLFactory().getOWLTopObjectProperty());
+		return allObjectPropertyRecoursive;
+	}
+
+	private void getAllObjectPropertiesRecursive(OWLObjectProperty prop) {
+		Set<OWLObjectProperty> props = getSubObjectPropertyOf(prop);
+		if (props.isEmpty())
+			return;
+		else {
+			allObjectPropertyRecoursive.addAll(props);
+			for (OWLObjectProperty p : props)
+				getAllObjectPropertiesRecursive(p);
+		}
+	}
+
 	/**
      * Returns all object properties and relative value entities relative to an individual.
-	 * Note that this implementation may be not efficient since it iterate over all 
+	 * Note that this implementation may be not efficient since it iterate over all
 	 * the object property of the ontology.
-	 * 
+	 *
 	 * @param individualName name of the individual.
 	 * @return all the object properties and value entities of the given individual.
 	 */
 	public Set<ObjectPropertyRelations> getObjectPropertyB2Individual(String individualName){
-		return getObjectPropertyB2Individual( ontoRef.getOWLIndividual( individualName));	
-	}	
+		return getObjectPropertyB2Individual(ontoRef.getOWLIndividual(individualName));
+	}
 
 	/** Returns all data properties and relative value entities relative to an individual.
      * Note that this implementation may be not efficient since it iterate over all
@@ -491,7 +527,7 @@ public class OWLEnquirer {
 		Set< DataPropertyRelations> out = new HashSet< DataPropertyRelations>();
 		// get all object prop in the ontology
 		OWLDataProperty topObjProp = ontoRef.getOWLFactory().getOWLTopDataProperty();
-		Set<OWLDataProperty> allProp = getSubDataPropertyOf(topObjProp);
+		Set<OWLDataProperty> allProp = getAllDataPropertiesRecursive();//getSubDataPropertyOf(topObjProp);
 		for( OWLDataProperty p : allProp){ // check if a property belongs to this individual
 			Set<OWLLiteral> values = getDataPropertyB2Individual(individual, p);
 			if( ! values.isEmpty())
@@ -499,6 +535,23 @@ public class OWLEnquirer {
         }
         return out;
     }
+
+	private Set<OWLDataProperty> getAllDataPropertiesRecursive() {
+		allDataPropertyRecoursive = new HashSet<>();
+		getAllDataPropertiesRecursive(ontoRef.getOWLFactory().getOWLTopDataProperty());
+		return allDataPropertyRecoursive;
+	}
+
+	private void getAllDataPropertiesRecursive(OWLDataProperty prop) {
+		Set<OWLDataProperty> props = getSubDataPropertyOf(prop);
+		if (props.isEmpty())
+			return;
+		else {
+			allDataPropertyRecoursive.addAll(props);
+			for (OWLDataProperty p : props)
+				getAllDataPropertiesRecursive(p);
+		}
+	}
 
     /**
 	 * Returns all data properties and relative value entities relative to an individual.
@@ -618,7 +671,6 @@ public class OWLEnquirer {
 		//Set<OWLDataPropertyExpression> set = prop.getSubProperties( ontoRef.getOWLOntology());
 		Stream<OWLDataPropertyExpression> stream = EntitySearcher.getSubProperties( prop, ontoRef.getOWLOntology());
 		Set<OWLDataPropertyExpression> set = stream.collect( Collectors.toSet());
-
 		Set<OWLDataProperty> out = new HashSet<>();
 		if( set != null)
 			out.addAll(set.stream().map(AsOWLDataProperty::asOWLDataProperty).collect(Collectors.toList()));
