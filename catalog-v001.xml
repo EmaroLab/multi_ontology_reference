@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base="">
+        <uri id="Automatically generated entry, Timestamp=1487641365685"
+             name="file:/home/bubx/ros_ws/src/ontology_reference/multi_ontology_reference/files/benchmarks/UOBM0.owl"
+             uri="AAA.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1487641365685" name="file:benchmarks/A-box_dep0-uni0.owl"
+             uri="files/benchmarks/A-box_dep0-uni0.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1487641365685"
+             name="duplicate:http://protege.stanford.edu/ontologies/pizza/pizza.owl"
+             uri="files/ontologies/test_loadFromWeb_changed.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1487641365685"
+             name="duplicate:http://protege.stanford.edu/ontologies/pizza/pizza.owl"
+             uri="files/ontologies/test_loadFromFile.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1487641365685"
+             name="duplicate:http://swat.cse.lehigh.edu/onto/univ-bench.owl"
+             uri="files/benchmarks/T-A-box_dep0-uni0.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1487641365685"
+             name="duplicate:http://swat.cse.lehigh.edu/onto/univ-bench.owl" uri="files/benchmarks/T-box.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1487641365685"
+             name="duplicate:http://www.co-ode.org/ontologies/pizza/pizza.owl"
+             uri="files/ontologies/pizza_enquired.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1487641365685"
+             name="duplicate:http://www.co-ode.org/ontologies/pizza/pizza.owl"
+             uri="files/ontologies/test_loadFromWeb.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1487641365685"
+             name="duplicate:http://www.semanticweb.org/luca-buoncompagni/aMor/examples"
+             uri="files/ontologies/utility.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1487641365685"
+             name="duplicate:http://www.semanticweb.org/luca-buoncompagni/aMor/examples"
+             uri="files/ontologies/ontology_manipulation.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1487641365685"
+             name="duplicate:http://www.semanticweb.org/luca-buoncompagni/aMor/examples"
+             uri="files/ontologies/ontology_manipulation1.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1487641365685"
+             name="duplicate:http://www.semanticweb.org/luca-buoncompagni/aMor/examples"
+             uri="files/ontologies/test_creation.owl"/>
+    </group>
+</catalog>
