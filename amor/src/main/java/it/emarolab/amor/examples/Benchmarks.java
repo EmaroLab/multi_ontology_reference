@@ -28,7 +28,6 @@ public class Benchmarks {
     public static final String REASONER_FACTORY = OWLLibrary.REASONER_QUALIFIER_PELLET;
 
 
-
     public static final Boolean BUFFERING_REASONER = true; // if true you must to update manually the reasoner. Otherwise it synchronises itself any time is needed
     public static final Boolean BUFFERING_MANIPULATOR = false; // if true you must to apply changes manually. Otherwise their are applied as soon as possible.
     public static final String ONTOLOGY_SAVING_PATH = ""; // todo: set and use
