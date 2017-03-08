@@ -34,7 +34,7 @@ public class MergingOntology {
         // marge uni1 e uni0 in Tbox
         tRef.getOWLManager().addAxioms( tRef.getOWLOntology(), u0Ref.getOWLOntology().axioms());
         tRef.getOWLManager().addAxioms( tRef.getOWLOntology(), u1Ref.getOWLOntology().axioms());
-        System.out.print( "£££££ " + tRef.getIndividualB2Class("Person"));
+        System.out.print( "Test a query person: " + tRef.getIndividualB2Class("Person"));
         tRef.saveOntology();
     }
 
