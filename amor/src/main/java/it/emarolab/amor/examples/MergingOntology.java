@@ -4,7 +4,7 @@ import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface;
 
-public class ManipulationBenchmarks {
+public class MergingOntology {
 
     public static final Boolean BUFFERING_REASONER = true; // if true you must to update manually the reasoner. Otherwise it synchronises itself any time is needed
     public static final Boolean BUFFERING_MANIPULATOR = true; // if true you must to apply changes manually. Otherwise their are applied as soon as possible.
