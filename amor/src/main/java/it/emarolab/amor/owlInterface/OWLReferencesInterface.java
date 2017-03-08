@@ -165,9 +165,10 @@ public abstract class OWLReferencesInterface extends OWLLibrary{
 				this.loadOntologyFromFile(); // creates and set the field taht you can retrieve from getOWLOntology();
 				break;
 			case 2: //OWLReferencesContainer.COMMAND_LOAD_WEB
-				this.setIriFilePath( IRI.create( filePath)); // in this case the file path should be a WEB URL
+				this.setIriFilePath( IRI.create( ontologyPath)); // in this case the file path should be a WEB URL
 				this.setManager(); // creates and sets the filed that you can retrieve from getOWLManager();
 				this.loadOntologyFromWeb(); // creates and set the field taht you can retrieve from getOWLOntology();
+				this.setIriFilePath( IRI.create( filePath));
 				break;
 			default : logger.addDebugString( "Cannot initialise OWL References with the given command: " + command, true);
 			}
