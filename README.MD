@@ -25,6 +25,8 @@ Check out the [/lib](https://github.com/EmaroLab/multi_ontology_reference/tree/m
 
 Finally, see the [/examples](https://github.com/EmaroLab/multi_ontology_reference/tree/master/amor/src/main/java/it/emarolab/amor/examples) package for tutorials about the API. Note that unfortunatelly, the GUI is becoming unstable after the integration with OWL 5 as wel as other mijor utility of saving and loading the ontology.
 
+**Benchmark Testing**
+To test the aMOR execution time w.r.t. OWL-api launch the main in multi_ontology_reference/amor/src/main/java/aMORanalysis
 
 #
 
