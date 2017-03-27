@@ -1,0 +1,55 @@
+			GENERATOR BASE: LUMB
+
+generator references: 
+	http://swat.cse.lehigh.edu/projects/lubm/
+generator download:
+	http://swat.cse.lehigh.edu/projects/lubm/uba1.7.zip
+
+ontology base (Tbox): 
+	http://swat.cse.lehigh.edu/onto/univ-bench.owl
+
+arguments for generating (cd into the 'classes' folder first):
+	java edu.lehigh.swat.bench.uba.Generator -univ 4 -onto http://swat.cse.lehigh.edu/onto/univ-bench.owl
+
+example of generated file (Tbox+Abox):
+	file: LUBM-UOB/LUBM-TAbox.owl
+	iri:  http://swat.cse.lehigh.edu/projects/lubm/University0_0.owl
+
+queries:
+	http://swat.cse.lehigh.edu/projects/lubm/queries-sparql.txt
+
+
+
+			GENERATOR EXTANTION: UOB
+generator references:
+	https://www.cs.ox.ac.uk/isg/tools/UOBMGenerator/
+generator download
+	https://www.cs.ox.ac.uk/isg/tools/UOBMGenerator/UOBMGenerator.zip
+
+ontology basse (based on LUMB TBox)
+	http://www.cs.ox.ac.uk/isg/tools/RDFox/2014/AAAI/input/UOBM/owl/UOBM.owl	
+
+example of generated file (Abox):
+	java -Xmx3000M -Xms500M -classpath UOBMGenerator.jar gen.Generator -onto http://www.cs.ox.ac.uk/isg/tools/RDFox/2014/AAAI/input/UOBM/owl/UOBM.owl -univ 1 -path ./preload_generated_uobm/ -merge true
+
+example of generated file (Tbox, see below to generate T+A box):
+	file: LUBM-UOB/LUBM-Abox.owl
+	iri:  http://swat.cse.lehigh.edu/projects/lubm/University0_0.owl
+
+extended queries
+	?????????????????????????????????????????????
+
+
+
+############################################################################
+
+
+for generate the benchmark:
+	1- download the UOB TBox and make all URI related to LUMB pointing to: http://swat.cse.lehigh.edu/onto/univ-bench.owl (see UOBM-Tbox.owl)
+	2- use the UOB generator to populate universities. Make each of them pointing to the Tbox by changing the Ontology import like:
+		<owl:Ontology rdf:about="file:/home/bubx/ros_ws/src/ontology_reference/multi_ontology_reference/files/benchmarks/LUBM-UOB/UOBM-Tbox.owl">
+    		<owl:imports rdf:resource="http://swat.cse.lehigh.edu/onto/univ-bench.owl"/>
+		</owl:Ontology>
+
+	
+
