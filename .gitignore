@@ -223,3 +223,4 @@ CATKIN_IGNORE
 
 catalog-v001.xml
 
+/.nb-gradle/
