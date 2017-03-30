@@ -33,7 +33,7 @@ In [OWL-api5-Benchmarks](https://github.com/EmaroLab/multi_ontology_reference/tr
 + a folder containing the results will be created in [/benchmark/LUBM-references](https://github.com/EmaroLab/multi_ontology_reference/files/benchmarks/LUBM-references)
 + this folder will contain results of all executed test, named with a timestamp
 + in each timestamp folder there are 71 folders, one for each tested ontology
-+ in these folders you'll find a copy of the ontology file, two .csv file (one for aMOR and one for OWL-APIs) containing the results and a charts folder containing a plot of the mean of execution time for each query, a plot with the standard deviation of all queries and 14 plots each one containing the standard deviation of a single query
++ in these folders you'll find a copy of the ontology file, two *.csv* file (one for *aMOR* and one for *OWL-APIs*) containing the results and a charts folder containing a plot of the mean of execution time for each query, a plot with the standard deviation of all queries and 14 plots each one containing the standard deviation of a single query
 + to create charts use the Python scripts in [/files]((https://github.com/EmaroLab/multi_ontology_reference/files) folder
 
 #
