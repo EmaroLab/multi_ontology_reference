@@ -26,7 +26,7 @@ Check out the [/lib](https://github.com/EmaroLab/multi_ontology_reference/tree/m
 Finally, see the [/examples](https://github.com/EmaroLab/multi_ontology_reference/tree/master/amor/src/main/java/it/emarolab/amor/examples) package for tutorials about the API. Note that unfortunatelly, the GUI is becoming unstable after the integration with OWL 5 as wel as other mijor utility of saving and loading the ontology.
 
 **Benchmark Testing** - 
-In [OWL-api5-Benchmarks](https://github.com/EmaroLab/multi_ontology_reference/tree/OWL-api5-Benchmarks) branch it's possible compare the execution time of 14 queries between aMOR and the OWL-APIs on 71 ontologies (you can find them in [/benchmark/LUBM-references/generated](https://github.com/EmaroLab/multi_ontology_reference/files/benchmarks/LUBM-references/generated)). To do that follow these steps:
+In [OWL-api5-Benchmarks](https://github.com/EmaroLab/multi_ontology_reference/tree/OWL-api5-Benchmarks) branch it's possible to compare the execution time of 14 queries between aMOR and the OWL-APIs on 71 ontologies (you can find them in [/benchmark/LUBM-references/generated](https://github.com/EmaroLab/multi_ontology_reference/files/benchmarks/LUBM-references/generated)). To do that follow these steps:
 
 + if you want to see the queries open the queries.text file in [/benchmark/LUBM-references](https://github.com/EmaroLab/multi_ontology_reference/files/benchmarks/LUBM-references)
 + launch the Test.java file in the [/aMORanalysis](https://github.com/EmaroLab/multi_ontology_reference/amor/src/main/java/aMORanalysis)
