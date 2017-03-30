@@ -25,15 +25,24 @@ Check out the [/lib](https://github.com/EmaroLab/multi_ontology_reference/tree/m
 
 Finally, see the [/examples](https://github.com/EmaroLab/multi_ontology_reference/tree/master/amor/src/main/java/it/emarolab/amor/examples) package for tutorials about the API. Note that unfortunatelly, the GUI is becoming unstable after the integration with OWL 5 as wel as other mijor utility of saving and loading the ontology.
 
-**Benchmark Testing**
-To test the aMOR execution time w.r.t. OWL-api launch the main in multi_ontology_reference/amor/src/main/java/aMORanalysis
+**Benchmark Testing** - 
+In [OWL-api5-Benchmarks](https://github.com/EmaroLab/multi_ontology_reference/tree/OWL-api5-Benchmarks) branch it's possible compare the execution time of 14 queries between aMOR and the OWL-APIs on 71 ontologies (you can find them in [/benchmark/LUBM-references/generated](https://github.com/EmaroLab/multi_ontology_reference/files/benchmarks/LUBM-references/generated)). To do that follow these steps:
+
++ if you want to see the queries open the queries.text file in [/benchmark/LUBM-references](https://github.com/EmaroLab/multi_ontology_reference/files/benchmarks/LUBM-references)
++ launch the Test.java file in the [/aMORanalysis](https://github.com/EmaroLab/multi_ontology_reference/amor/src/main/java/aMORanalysis)
++ a folder containing the results will be created in [/benchmark/LUBM-references](https://github.com/EmaroLab/multi_ontology_reference/files/benchmarks/LUBM-references)
++ this folder will contain results of all executed test, named with a timestamp
++ in each timestamp folder there are 71 folders, one for each tested ontology
++ in these folders you'll find a copy of the ontology file, two .csv file (one for aMOR and one for OWL-APIs) containing the results and a charts folder containing a plot of the mean of execution time for each query, a plot with the standard deviation of all queries and 14 plots each one containing the standard deviation of a single query
++ to create charts use the python scripts in [/files]((https://github.com/EmaroLab/multi_ontology_reference/files) folder
 
 #
 
-This specific **branch** contains utilities and example for testing the change of performances over the standard [LUBM benchmark](http://swat.cse.lehigh.edu/projects/lubm/) of aMOR interface, with resoect to purly OWL API 5.
+This specific **branch** contains utilities and examples for testing the change of performances over the standard [LUBM benchmark](http://swat.cse.lehigh.edu/projects/lubm/) of aMOR interface, with respect to purly OWL API 5.
 
 
 ## Contacts
 For comment, discussions or support refer to this git repository or contact us at:
  - [luca.buoncompagni@edu.unige.it](mailto:luca.buoncompagni@edu.unige.it), 
- - [alessio.capitanelli@dibris.unige.it](mailto:alessio.capitanelli@dibris.unige.it).
+ - [alessio.capitanelli@dibris.unige.it](mailto:alessio.capitanelli@dibris.unige.it),
+ - [matteo.mini92@gmail.com](mailto:matteo.mini92@gmail.com).
