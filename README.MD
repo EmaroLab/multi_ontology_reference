@@ -1,4 +1,4 @@
-#AMOR
+# AMOR
 
 **AMOR** - a Multi-Ontology Reference library, is a complete library of helper functions for OWL ontologies with some remarkable features. 
 

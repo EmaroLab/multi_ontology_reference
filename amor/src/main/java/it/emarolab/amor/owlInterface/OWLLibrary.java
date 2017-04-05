@@ -147,8 +147,8 @@ public class OWLLibrary {
 		if( iriOnto != null){
 			if( iriFile != null){
 				SimpleIRIMapper mapper = new SimpleIRIMapper( iriOnto, iriFile);
-				manager.addIRIMapper( mapper); // load from file
-				this.manager = manager;
+                manager.getIRIMappers().add(mapper); // load from file
+                this.manager = manager;
 				logger.addDebugString( "Ontology OWL manager created for References: " + this);
 				return;
 			}

@@ -16,19 +16,16 @@ public class Benchmarks {
 
     // todo: manage folders
     // example with only A-box
-    public static final String ONTOLOGY_FILE_PATH = "files/benchmarks/A-box_dep0-uni0.owl";
-    public static final String ONTOLOGY_IRI_PATH = "file:benchmarks/A-box_dep0-uni0.owl"; // may depends on your file path as well
+    public static final String ONTOLOGY_FILE_PATH = "files/benchmarks/LUBM-UOB/samples/UOBM-Abox.owl";
+    public static final String ONTOLOGY_IRI_PATH = "";// ex:"file:benchmarks/UOBM0.owl"; // may depends on your file path as well
 
     // try also with TA-box obtained by copy paste the TBox in a generated ABox (see comments on that file):
     //public static final String ONTOLOGY_FILE_PATH = "files/benchmarks/T-A-box_dep0-uni0.owl";
     //public static final String ONTOLOGY_IRI_PATH = "http://swat.cse.lehigh.edu/onto/univ-bench.owl";
 
-
-
     public static final String OWLREFERENCES_NAME = "refName";
     public static final Integer COMMAND = OWLReferencesContainer.COMMAND_LOAD_FILE;
     public static final String REASONER_FACTORY = OWLLibrary.REASONER_QUALIFIER_PELLET;
-
 
 
     public static final Boolean BUFFERING_REASONER = true; // if true you must to update manually the reasoner. Otherwise it synchronises itself any time is needed
@@ -87,9 +84,6 @@ public class Benchmarks {
                 + "}";
         List<Map<String, String>> result = ontoRef.sparql2Msg(PREFIX + SELECT + WHERE, SPARQL_TIMEOUT);
         logger.addDebugString("SPARQL results: " + result);
-
-
-
 
         // todo: cheep track of changes in queries and benchmarks in the 'files/benchmarks' directory
     }
