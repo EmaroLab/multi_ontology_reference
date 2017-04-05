@@ -24,7 +24,7 @@ Javadoc [documentation](https://htmlpreview.github.io/?https://github.com/EmaroL
 
 Finally, see the [/examples](https://github.com/EmaroLab/multi_ontology_reference/tree/master/amor/src/main/java/it/emarolab/amor/examples) package for tutorials about the API. 
 
-*NOTE:* the GUI and some minor utilities have become unstable after porting to OWL 5. We'll try to fix them as soon as we can.
+**NOTE:** the GUI and some minor utilities have become unstable after porting to OWL 5. We'll try to fix them as soon as we can.
 
 
 ## OWLapi5-Benchmarks
