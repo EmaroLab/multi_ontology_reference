@@ -968,6 +968,8 @@ public class OWLEnquirer {
         Set<OWLClass> out = new HashSet<>();
         for ( OWLClass cl : types) {
             Set<OWLClass> subCl = getSubClassOf(cl);
+            if ( subCl.isEmpty())
+                out.add( cl);
             if ( subCl.size() == 1)
                 for ( OWLClass sub : subCl)
                     if ( sub.isOWLNothing())
@@ -998,6 +1000,8 @@ public class OWLEnquirer {
         Set<OWLClass> types = getIndividualClasses(individual);
         for ( OWLClass cl : types) {
             Set<OWLClass> subCl = getSubClassOf(cl);
+            if ( subCl.isEmpty())
+                return cl;
             if ( subCl.size() == 1)
                 for ( OWLClass sub : subCl)
                     if ( sub.isOWLNothing())
