@@ -8,6 +8,9 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import java.util.Set;
 
 /**
+ * Static class used to export an ontology.
+ * Reasoner generated asserted property will be exported as fixed.
+ *
  * <div style="text-align:center;"><small>
  * <b>Project</b>:    aMOR <br>
  * <b>File</b>:       it.emarolab.amor.owlInterface.InferredAxiomExporter <br>
@@ -17,9 +20,6 @@ import java.util.Set;
  * <b>date</b>:       Feb 10, 2016 <br>
  * </small></div>
  *
- * Static class used to export an ontology.
- * Reasoner generated asserted property will be exported as fixed.
- * 
  * @author Buoncomapgni Luca
  * @version 1.0
  *

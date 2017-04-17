@@ -1,36 +1,22 @@
 package it.emarolab.amor.owlInterface;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import it.emarolab.amor.owlDebugger.Logger;
+import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
 import org.semanticweb.owlapi.change.ConvertSuperClassesToEquivalentClass;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OWLEntityRemover;
 import org.semanticweb.owlapi.util.OWLEntityRenamer;
-
-import it.emarolab.amor.owlDebugger.Logger;
-import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
+
+import java.util.*;
 
 
 // TODO :  SWRL
 // TODO : move mutex management from owl reference to here, and make this an interface
 
 /**
- * <div style="text-align:center;"><small>
- * <b>Project</b>:    aMOR <br>
- * <b>File</b>:       it.emarolab.amor.owlInterface.OWLManipulator <br>
- * <b>Licence</b>:    GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
- * <b>Author</b>:     Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
- * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
- * <b>date</b>:       Feb 10, 2016 <br>
- * </small></div>
- *  
- * <p>
- * This class implements basic ontology manipulations.<br>
+ * This class implements basic ontology manipulations.
+ *
  * It is NOT thread-safe. Users should refrain from using this class directly, especially in multi-ontology scenarios.
  * Use {@link OWLReferences} instead.<br>
  * 
@@ -44,7 +30,15 @@ import org.semanticweb.owlapi.vocab.OWL2Datatype;
  *
  * The following naming convention applies:<br>
  * {@literal B2} stands for "belong to".
- * </p>
+ *
+ * <div style="text-align:center;"><small>
+ * <b>Project</b>:    aMOR <br>
+ * <b>File</b>:       it.emarolab.amor.owlInterface.OWLManipulator <br>
+ * <b>Licence</b>:    GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
+ * <b>Author</b>:     Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
+ * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
+ * <b>date</b>:       Feb 10, 2016 <br>
+ * </small></div>
  * 
  * @version 2.1
  */
@@ -75,20 +69,34 @@ public class OWLManipulator{
      * (see: {@link ClassExpressionType#OBJECT_MAX_CARDINALITY})
      */
     protected static final int RESTRICTION_MAX = 5;
-
-	/**
-	 * Member required to log class activity.
-	 * Logs can be activated by setting the flag {@link LoggerFlag#LOG_OWL_MANIPULATOR}
-	 */
-	private Logger logger = new Logger( this, LoggerFlag.getLogOWLManipulator());
-
 	/**
 	 * The default value of the {@link #manipulationBuffering} field.
 	 * Used if no value is passed to {@link #OWLManipulator(OWLReferencesInterface)} constructor.
 	 */
 	public static Boolean DEFAULT_MANIPULATION_BUFFERING = false;
+	/**
+	 * This is a vector of buffered ontological changes to be applied to this class.
+	 * Changes can be applied by calling {@link #applyChanges()}.
+	 */
+	private final List<OWLOntologyChange> changeList = new ArrayList<OWLOntologyChange>();
 	
 	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   CONSTRUCTOR   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+	/**
+	 * Member required to log class activity.
+	 * Logs can be activated by setting the flag {@link LoggerFlag#LOG_OWL_MANIPULATOR}
+	 */
+	private Logger logger = new Logger(this, LoggerFlag.getLogOWLManipulator());
+	/**
+	 * Buffered manipulation change. If {@code true}, it buffers changes till {@link #applyChanges()} method is called.
+	 * Else, it applies changes immediately. In buffered mode, changes can be applied by {@link #applyChanges()}.
+	 */
+	private Boolean manipulationBuffering;
+
+	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[   CHANGE BUFFERING FLAG MANAGEMENT   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+	/**
+	 * The basic Reference to an ontology.
+	 */
+	private OWLReferencesInterface ontoRef;
 	/**
 	 * Class constructor.
 	 * @param owlRef reference to the ontology to be manipulated.
@@ -108,12 +116,9 @@ public class OWLManipulator{
 		this.manipulationBuffering = DEFAULT_MANIPULATION_BUFFERING;
 	}
 
-	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[   CHANGE BUFFERING FLAG MANAGEMENT   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-	/**
-	 * Buffered manipulation change. If {@code true}, it buffers changes till {@link #applyChanges()} method is called.
-     * Else, it applies changes immediately. In buffered mode, changes can be applied by {@link #applyChanges()}.
-	 */
-	private Boolean manipulationBuffering;
+
+	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[   OWL REFERENCE POINTER MANGMENT  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
 	/**
 	 * @return {@link #manipulationBuffering}. If {@code true}, it buffers changes till {@link #applyChanges()} method
      * is called. Else, it applies changes immediately.
@@ -121,6 +126,7 @@ public class OWLManipulator{
 	public synchronized Boolean isChangeBuffering() {
 		return manipulationBuffering;
 	}
+
 	/**
      * Sets the {@link #manipulationBuffering} flag.
 	 * @param manipulationBuffering {@code true}, buffers changes till {@link #applyChanges()} method is called.
@@ -131,25 +137,14 @@ public class OWLManipulator{
 	}
 
 
-	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[   OWL REFERENCE POINTER MANGMENT  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-	/**
-	 * The basic Reference to an ontology.
-	 */
-	private OWLReferencesInterface ontoRef;
+	// [[[[[[[[[[[[[[[[[[[[   METHODS TO COLLECT AND APPLY ONTOLOGY CHANGES   ]]]]]]]]]]]]]]]]]]]]]]]]]]
+
 	/**
 	 * @return a container of all entities in the ontology.
 	 */
 	protected OWLReferencesInterface getOwlLibrary(){
 		return ontoRef;
 	}
-
-
-	// [[[[[[[[[[[[[[[[[[[[   METHODS TO COLLECT AND APPLY ONTOLOGY CHANGES   ]]]]]]]]]]]]]]]]]]]]]]]]]]
-	/**
-	 * This is a vector of buffered ontological changes to be applied to this class.
-	 * Changes can be applied by calling {@link #applyChanges()}.
-	 */
-	private final List< OWLOntologyChange> changeList = new ArrayList< OWLOntologyChange>();
 
 	/**
 	 * Returns the list of additions necessary to express an axiom in the ontology.

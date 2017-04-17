@@ -1,11 +1,13 @@
 package it.emarolab.amor.owlInterface;
 
-import javax.swing.JOptionPane;
-
 import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
 
+import javax.swing.*;
+
 /**
+ *This class implements the basic interface for reasoner inconsistencies and explanation.
+ *
  * <div style="text-align:center;"><small>
  * <b>Project</b>:    aMOR <br>
  * <b>File</b>:       it.emarolab.amor.owlInterface.ReasonerExplanator <br>
@@ -14,11 +16,6 @@ import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
  * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
  * <b>date</b>:       Feb 10, 2016 <br>
  * </small></div>
-*  
-* <p>
-* This class implements the basic interface for reasoner inconsistencies and explanation.
-* </p>
-*
  * @version 1.0
 */
 abstract public class ReasonerExplanator{
