@@ -1,47 +1,23 @@
 package it.emarolab.amor.owlDebugger.OFGUI.individualGui;
 
 
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.SwingWorker;
-import javax.swing.ToolTipManager;
-import javax.swing.table.AbstractTableModel;
-
+import com.google.common.collect.Multimap;
 import it.emarolab.amor.owlDebugger.OFGUI.ClassExchange;
-
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
-import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
-import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
+import it.emarolab.amor.owlInterface.OWLReferences;
+import it.emarolab.amor.owlInterface.OWLReferencesInterface;
+import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.search.EntitySearcher;
 
-import com.google.common.collect.Multimap;
-
-import it.emarolab.amor.owlInterface.OWLReferences;
-import it.emarolab.amor.owlInterface.OWLReferencesInterface;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -53,17 +29,15 @@ import java.util.stream.Stream;
 @SuppressWarnings("serial")
 public class ClassTableIndividual extends JPanel implements MouseListener {
     
-	private boolean DEBUG = false;
-	
     private static final String infoTitle =   "\n\n     ############    ONTOLOGY SOURCE    ########### \n\n";
     private static final String infodataDef = "\n\n     #######    DATA PROPERTY DEFINITION    ####### \n\n";
     private static final String infoobjeDef = "\n\n     #######   OBJECT PROPERTY DEFINITION    ###### \n\n";
     private static final String infoclasDef = "\n\n     ############   CLASS DEFINITION    ########### \n\n";
     private static final String infotypeDef = "\n\n     ###############   DATA TYPES    ############## \n\n";
     private static final String infodiffDef = "\n\n     ##########   DIFFERENT INDIVIDUALS    ######## \n\n";
-    
     private final String individualname;
-    private JTable table;	
+	private boolean DEBUG = false;
+	private JTable table;
     private Integer tableType;
     private List< List< Object>> tableData;
     private JTextArea textArea;
@@ -486,7 +460,7 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 */		
 	// caller of table type
 	public synchronized Object[][] renderItem() {
-		//synchronized( ontoRef.getReasoner()){
+		//synchronized( ontoRef.getOWLReasoner()){
 			if( tableType == ClassExchange.dataPropertyTable){
 				return( renderDataPropertyItem());
 			} else if( tableType == ClassExchange.objectPropertyTable){
@@ -507,7 +481,7 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 		Map<OWLDataPropertyExpression, Collection<OWLLiteral>> nonInf;
 		Set<OWLDataProperty> allDataProperty;
 		OWLNamedIndividual ind;
-		synchronized( ontoRef.getReasoner()){
+		synchronized (ontoRef.getOWLReasoner()) {
 			ind = ontoRef.getOWLFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
 			
 			//nonInf = ind.getDataPropertyValues( ontoRef.getOWLOntology());
@@ -535,9 +509,9 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 
 		// get all the object property and check if they can be asserted
 		//System.out.println( "----" + inf);
-		synchronized( ontoRef.getReasoner()){
+		synchronized (ontoRef.getOWLReasoner()) {
 			for ( OWLDataProperty dataProp : allDataProperty){
-				Set< OWLLiteral> a = ontoRef.getReasoner().getDataPropertyValues( ind, dataProp);
+				Set<OWLLiteral> a = ontoRef.getOWLReasoner().getDataPropertyValues(ind, dataProp);
 				for ( OWLLiteral value : a){				
 					temp.add( ClassExchange.imDataPropIcon);
 					temp.add( OWLReferencesInterface.getOWLName( dataProp));
@@ -577,7 +551,7 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 		Map<OWLObjectPropertyExpression, Collection<OWLIndividual>> nonInf;
 		Set<OWLObjectProperty> allDataProperty;
 		OWLNamedIndividual ind;
-		synchronized( ontoRef.getReasoner()){
+		synchronized (ontoRef.getOWLReasoner()) {
 			ind = ontoRef.getOWLFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
 			
 			//nonInf = ind.getObjectPropertyValues( ontoRef.getOWLOntology());
@@ -602,9 +576,9 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 
 		// get all the object property and check if they can be asserted
 		Map<OWLDataPropertyExpression, Set<OWLLiteral>> inf = new HashMap<OWLDataPropertyExpression, Set<OWLLiteral>>();
-		synchronized( ontoRef.getReasoner()){
+		synchronized (ontoRef.getOWLReasoner()) {
 			for ( OWLObjectProperty dataProp : allDataProperty){
-				Set<OWLNamedIndividual> a = ontoRef.getReasoner().getObjectPropertyValues( ind, dataProp).getFlattened();
+				Set<OWLNamedIndividual> a = ontoRef.getOWLReasoner().getObjectPropertyValues(ind, dataProp).getFlattened();
 				for ( OWLNamedIndividual value : a){				
 					temp.add( ClassExchange.imObjPropIcon);
 					temp.add( OWLReferencesInterface.getOWLName( dataProp));
@@ -634,10 +608,10 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 	private synchronized Object[][] renderClassItem(){
 		Set<OWLClass> nonInf;
 		Set<OWLClass> classes;
-		synchronized( ontoRef.getReasoner()){
+		synchronized (ontoRef.getOWLReasoner()) {
 			OWLNamedIndividual ind = ontoRef.getOWLFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
 			nonInf = ind.getClassesInSignature();
-			classes = ontoRef.getReasoner().getTypes( ind, false).getFlattened();
+			classes = ontoRef.getOWLReasoner().getTypes(ind, false).getFlattened();
 		}
 		
 		// get not asserted class
@@ -681,15 +655,15 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 	private synchronized Object[][] renderSameIndividualItem(){
 		Set<OWLIndividual> nonInf;
 		Node<OWLNamedIndividual> individuals;
-		synchronized( ontoRef.getReasoner()){
+		synchronized (ontoRef.getOWLReasoner()) {
 			OWLNamedIndividual ind = ontoRef.getOWLFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
 			
 			//nonInf = ind.getSameIndividuals( ontoRef.getOWLOntology());
 			Stream<OWLIndividual> nonInfStream = EntitySearcher.getSameIndividuals( ind, ontoRef.getOWLOntology());
-			nonInf = nonInfStream.collect(Collectors.toSet());	
-        	
-			
-			individuals = ontoRef.getReasoner().getSameIndividuals(ind);
+			nonInf = nonInfStream.collect(Collectors.toSet());
+
+
+			individuals = ontoRef.getOWLReasoner().getSameIndividuals(ind);
 		}
 		
 		// get not asserted same individual
@@ -811,20 +785,20 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 	// set the column title name for each type of table
 	private synchronized String[] getColoumsName(){
 		if( tableType == ClassExchange.dataPropertyTable){
-			return( new String[] { 
-					ontoRef.getReasoner().getReasonerName(), 
+			return( new String[] {
+					ontoRef.getOWLReasoner().getReasonerName(),
 					"Data Property","Value","Type"});//,"Follow"});
 		} else if( tableType == ClassExchange.objectPropertyTable){
 			return( new String[] {
-					ontoRef.getReasoner().getReasonerName(),
+					ontoRef.getOWLReasoner().getReasonerName(),
 					"Object Property","Value"});//, "Follow"});
 		} else if( tableType == ClassExchange.classTable){
 			return( new String[] {
-					ontoRef.getReasoner().getReasonerName(),
+					ontoRef.getOWLReasoner().getReasonerName(),
 					"Class"});//, "Follow"});
 		} else if( tableType == ClassExchange.sameIndividualTable){
 			return( new String[] {
-					ontoRef.getReasoner().getReasonerName(),
+					ontoRef.getOWLReasoner().getReasonerName(),
 					"Same Individual as"});//, "Follow"});
 		}
 		//System.out.println( " returning null from getColumsName");
@@ -855,19 +829,36 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 	public MyTableModel getModel() {
 		return model;
 	}
-	
+
+	// UNIMPLEMENTED METHODS
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+
 	// table renderer
 	// the last must be "follow"
 	// only the last column is editable
     public class MyTableModel extends AbstractTableModel {
         private String[] columnNames =  CN;
         private Object[][] data = D;
-        
-        public MyTableModel(){
+
+		public MyTableModel(){
         	update();
         }
-        
-        public synchronized int getColumnCount() {
+
+		public synchronized int getColumnCount() {
             return CN.length; //columnNames.length;
         }
 
@@ -883,8 +874,8 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
 
         public synchronized Object getValueAt(int row, int col) {
             return D[row][col];//data[row][col];
-            
-        }
+
+		}
 
         /*
          * JTable uses this method to determine the default renderer/
@@ -926,8 +917,8 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
                 printDebugData();
             }
         }
-        
-        private synchronized void printDebugData() {
+
+		private synchronized void printDebugData() {
             int numRows = getRowCount();
             int numCols = getColumnCount();
 
@@ -940,19 +931,8 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
             }
             System.out.println("--------------------------");
         }
-    
-    }
 
-    
-    // UNIMPLEMENTED METHODS
-    @Override
-	public void mouseClicked(MouseEvent e) {}
-	@Override
-	public void mouseEntered(MouseEvent e) {}
-	@Override
-	public void mouseExited(MouseEvent e) {}
-	@Override
-	public void mousePressed(MouseEvent e) {}
+	}
 
 }
 

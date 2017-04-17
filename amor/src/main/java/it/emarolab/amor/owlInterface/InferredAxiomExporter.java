@@ -1,16 +1,11 @@
 package it.emarolab.amor.owlInterface;
 
-import java.util.Set;
-
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
-
 import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
+
+import java.util.Set;
 
 /**
  * <div style="text-align:center;"><small>
@@ -54,7 +49,7 @@ public class InferredAxiomExporter {
 	public synchronized static OWLReferences exportOntology( OWLReferences ontoRef){
 		long initialTime = System.nanoTime();
 		Set< OWLNamedIndividual> allIndividuals = ontoRef.getIndividualB2Class( ontoRef.getOWLFactory().getOWLThing());
-		Set<OWLObjectProperty> allObjProp = ontoRef.getOWLOntology().getObjectPropertiesInSignature( importingClosure);
+		Set<OWLObjectProperty> allObjProp = ontoRef.getOWLOntology().getObjectPropertiesInSignature(importingClosure);
 		Set<OWLDataProperty> allDataProp = ontoRef.getOWLOntology().getDataPropertiesInSignature( importingClosure);
 		for( OWLNamedIndividual i : allIndividuals){ //for all individuals belong to the ontology
 			exportObjectProperties( allObjProp, i, ontoRef);
@@ -62,15 +57,15 @@ public class InferredAxiomExporter {
 			exportClassAssertion( i, ontoRef);
 		}
 		ontoRef.applyOWLManipulatorChanges();
-		//ontoRef.getReasoner().dispose();
+		//ontoRef.getOWLReasoner().dispose();
 		//ontoRef.setPelletReasoner( ontoRef.useBufferingReasoner());
 		logger.addDebugString( "Ontology infered axiom succesfully exported in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( ontoRef);
 	}
 
 	private synchronized static void exportObjectProperties( Set< OWLObjectProperty> allProp, OWLNamedIndividual ind, OWLReferences ontoRef){
-		synchronized( ontoRef.getReasoner()){
-			OWLReasoner reasoner = ontoRef.getReasoner();
+		synchronized (ontoRef.getOWLReasoner()) {
+			OWLReasoner reasoner = ontoRef.getOWLReasoner();
 			for( OWLObjectProperty p : allProp){ 
 				// for all the object property in the ontology
 				Set< OWLNamedIndividual> indWithThisProp = reasoner.getObjectPropertyValues(ind, p).getFlattened();
@@ -83,8 +78,8 @@ public class InferredAxiomExporter {
 		
 	
 	private synchronized static void exportDataProperties( Set< OWLDataProperty> allProp, OWLNamedIndividual ind, OWLReferences ontoRef){
-		synchronized( ontoRef.getReasoner()){
-			OWLReasoner reasoner = ontoRef.getReasoner();
+		synchronized (ontoRef.getOWLReasoner()) {
+			OWLReasoner reasoner = ontoRef.getOWLReasoner();
 			for( OWLDataProperty p : allProp){ 
 				// for all the data property in the ontology
 				Set< OWLLiteral> indWithThisProp = reasoner.getDataPropertyValues(ind, p);
@@ -97,8 +92,8 @@ public class InferredAxiomExporter {
 	
 	
 	private synchronized static void exportClassAssertion( OWLNamedIndividual ind, OWLReferences ontoRef){
-		synchronized( ontoRef.getReasoner()){
-			OWLReasoner reasoner = ontoRef.getReasoner();
+		synchronized (ontoRef.getOWLReasoner()) {
+			OWLReasoner reasoner = ontoRef.getOWLReasoner();
 			Set<OWLClass> allClass = reasoner.getTypes( ind, false).getFlattened();
 			for( OWLClass c : allClass){
 				ontoRef.addIndividualB2Class( ind, c); // ad an axiom in the applied change list of ontoRef

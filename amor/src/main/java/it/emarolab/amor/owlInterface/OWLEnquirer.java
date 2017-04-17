@@ -40,18 +40,11 @@ import static it.emarolab.amor.owlInterface.OWLManipulator.*;
  */
 public class OWLEnquirer {
 
-	/**
-	 * Object used to log information about this class instances.
-	 * Logs are activated by flag: {@link LoggerFlag#LOG_OWL_ENQUIRER}
-	 */
-	private Logger logger = new Logger( this, LoggerFlag.getLogOWLEnquirer());
-
     /**
      * The default value for including also inferences on queries response
      * (see: {@link #isIncludingInferences()}).
      */
     public static final Boolean DEFAULT_INCLUDE_INFERENCES = true;
-
     /**
 	 * Boolean used to query the reasoner sub/super-(class or properties).
 	 * If it is {@code false} only hierarchically direct entities will be returned
@@ -60,7 +53,11 @@ public class OWLEnquirer {
      * (see: {@link #isReturningCompleteDescription()}).
 	 */
 	public static final Boolean DEFAULT_RETURN_COMPLETE_DESCRIPTION = true;
-
+    /**
+     * Object used to log information about this class instances.
+     * Logs are activated by flag: {@link LoggerFlag#LOG_OWL_ENQUIRER}
+     */
+    private Logger logger = new Logger(this, LoggerFlag.getLogOWLEnquirer());
     /**
      * If it is true the call ask to the reasoner, otherwise only asserted knowledge will be queried.
      */
@@ -180,7 +177,7 @@ public class OWLEnquirer {
 
 		if(includesInferences) {
             try {
-                Stream<OWLNamedIndividual> streamReasoned = ontoRef.getReasoner()
+                Stream<OWLNamedIndividual> streamReasoned = ontoRef.getOWLReasoner()
                         .getInstances(ontoClass, ! isReturningCompleteDescription()).entities();
                 Set<OWLIndividual> reasoned = streamReasoned.collect(Collectors.toSet());
                 if (reasoned != null)
@@ -251,7 +248,7 @@ public class OWLEnquirer {
 
         if(includesInferences) {
             try {
-                Stream<OWLClass> streamReasoned = ontoRef.getReasoner()
+                Stream<OWLClass> streamReasoned = ontoRef.getOWLReasoner()
                         .getTypes(individual, ! isReturningCompleteDescription()).entities();
                 Set<OWLClass> reasoned = streamReasoned.collect(Collectors.toSet());
                 if (reasoned != null)
@@ -333,7 +330,7 @@ public class OWLEnquirer {
 
         if(includesInferences) {
             try {
-                Set<OWLLiteral> valueInf = ontoRef.getReasoner().getDataPropertyValues(individual, property);
+                Set<OWLLiteral> valueInf = ontoRef.getOWLReasoner().getDataPropertyValues(individual, property);
                 value.addAll(valueInf);
             } catch (InconsistentOntologyException e) {
                 ontoRef.logInconsistency();
@@ -407,7 +404,7 @@ public class OWLEnquirer {
 
         if(includesInferences) {
             try {
-                Stream<OWLNamedIndividual> streamReasoned = ontoRef.getReasoner().getObjectPropertyValues(individual, property).entities();
+                Stream<OWLNamedIndividual> streamReasoned = ontoRef.getOWLReasoner().getObjectPropertyValues(individual, property).entities();
                 Set<OWLIndividual> reasoned = streamReasoned.collect(Collectors.toSet());
                 if (reasoned != null)
                     out.addAll(reasoned.stream().map(AsOWLNamedIndividual::asOWLNamedIndividual).collect(Collectors.toList()));
@@ -479,57 +476,11 @@ public class OWLEnquirer {
 	public Set<ObjectPropertyRelations> getObjectPropertyB2Individual(String individualName){
 		return getObjectPropertyB2Individual( ontoRef.getOWLIndividual( individualName));	
 	}	
-	/**
-	 * Class used to contain an object property relation associated to an individuals and its value entities.
-	 * A {@link ObjectPropertyRelations} object is returned by
-	 * {@link OWLEnquirer#getObjectPropertyB2Individual(OWLNamedIndividual)}
-	 * and {@link OWLEnquirer#getObjectPropertyB2Individual(String)}.
-	 */
-	public class ObjectPropertyRelations {
-		private OWLObjectProperty prop;
-		private OWLNamedIndividual ind;
-		private Set< OWLNamedIndividual> value;
-		private String propName, indName;
-		private Set<String> valueName;
-		
-		public ObjectPropertyRelations(OWLNamedIndividual ind, OWLObjectProperty prop, Set<OWLNamedIndividual> value,
-                                       OWLReferencesInterface ontoRef) {
-			this.prop = prop;
-			this.propName = ontoRef.getOWLObjectName( prop);
-			this.ind = ind;
-			this.indName = ontoRef.getOWLObjectName( ind);
-			this.value = value;
-			this.valueName = ontoRef.getOWLObjectName( value);
-		}
-		
-		public OWLObjectProperty getProperty() {
-			return prop;
-		}
-		public OWLNamedIndividual getIndividuals() {
-			return ind;
-		}
-		public Set< OWLNamedIndividual> getValues() {
-			return value;
-		}
-		
-		public String getPropertyName() {
-			return propName;
-		}
-		public String getIndividualsName() {
-			return indName;
-		}
-		public Set< String> getValuesName() {
-			return valueName;
-		}
-		public String toString(){
-			return "\"" + getIndividualsName() + "." + getPropertyName() + "( " + getValuesName() + ")"; 
-		}
-	}
-		
+
 	/** Returns all data properties and relative value entities relative to an individual.
-	 * Note that this implementation may be not efficient since it iterate over all 
-	 * the object property of the ontology.
-	 * 
+     * Note that this implementation may be not efficient since it iterate over all
+     * the object property of the ontology.
+     *
 	 * @param individual the instance from which retrieve its objects properties.
 	 * @return all the object properties and value entities of the given individual.
 	 */
@@ -542,91 +493,46 @@ public class OWLEnquirer {
 			Set<OWLLiteral> values = getDataPropertyB2Individual(individual, p);
 			if( ! values.isEmpty())
 				out.add( new DataPropertyRelations(individual, p, values, ontoRef));
-		}
-		return out;	
-	}
-	/**
+        }
+        return out;
+    }
+
+    /**
 	 * Returns all data properties and relative value entities relative to an individual.
-	 * Note that this implementation may be not efficient since it iterate over all 
-	 * the object property of the ontology.
-	 * 
+     * Note that this implementation may be not efficient since it iterate over all
+     * the object property of the ontology.
+     *
 	 * @param individualName name of the individual.
 	 * @return all the object properties and value entities of the given individual.
 	 */
 	public Set< DataPropertyRelations> getDataPropertyB2Individual( String individualName){
 		return getDataPropertyB2Individual( ontoRef.getOWLIndividual( individualName));
-	}
-	/**
-	 * Class used to contain a data property relation  associated to an individuals and its literal values.
-	 * A {@link DataPropertyRelations} object is returned by
-     * {@link OWLEnquirer#getObjectPropertyB2Individual(OWLNamedIndividual)}
-	 * and {@link OWLEnquirer#getObjectPropertyB2Individual(String)}.
-	 */
-	public class DataPropertyRelations{
-		private OWLDataProperty prop;
-		private OWLNamedIndividual ind;
-		private Set< OWLLiteral> value;
-		private String propName, indName;
-		private Set<String> valueName;
-		
-		public DataPropertyRelations( OWLNamedIndividual ind, OWLDataProperty prop, Set<OWLLiteral> value, OWLReferencesInterface ontoRef) {
-			this.prop = prop;
-			this.propName = ontoRef.getOWLObjectName( prop);
-			this.ind = ind;
-			this.indName = ontoRef.getOWLObjectName( ind);
-			this.value = value;
-			this.valueName = ontoRef.getOWLObjectName( value);
-		}
-		
-		public OWLDataProperty getProperty() {
-			return prop;
-		}
-		public OWLNamedIndividual getIndividual() {
-			return ind;
-		}
-		public Set<OWLLiteral> getValues() {
-			return value;
-		}
-		
-		public String getPropertyName() {
-			return propName;
-		}
-		public String getIndividualName() {
-			return indName;
-		}
-		public Set< String> getValuesName() {
-			return valueName;
-		}
-		public String toString(){
-			return "\"" + getIndividualName() + "." + getPropertyName() + "( " + getValuesName() + ")";
-		}
-	}
+    }
 
-
-	/**
-	 * Returns all the sub object properties of a given property. 
-	 * It check in the ontology definition frist and then in the 
-	 * inferred axioms by the reasoner.
-	 * Also note that the completeness of the results 
-	 * of this methods also depends from the value
+    /**
+     * Returns all the sub object properties of a given property.
+     * It check in the ontology definition frist and then in the
+     * inferred axioms by the reasoner.
+     * Also note that the completeness of the results
+     * of this methods also depends from the value
 	 * of {@link #returnsCompleteDescription}.
 	 * @param prop an object property
 	 * @return the sub object property of the input parameter ({@code prop})
 	 */
 	public Set<OWLObjectProperty> getSubObjectPropertyOf( OWLObjectProperty prop){
 		long initialTime = System.nanoTime();
-		
+
 		//Set<OWLObjectPropertyExpression> set = prop.getSubProperties( ontoRef.getOWLOntology());//cl.getSubClasses( ontoRef.getOWLOntology());
 		Stream<OWLObjectPropertyExpression> stream = EntitySearcher.getSubProperties( prop, ontoRef.getOWLOntology());
 		Set<OWLObjectPropertyExpression> set = stream.collect( Collectors.toSet());
-		
+
 		Set<OWLObjectProperty> out = new HashSet<>();
 		if( set != null)
 			out.addAll(set.stream().map(AsOWLObjectProperty::asOWLObjectProperty).collect(Collectors.toList()));
 
         if(includesInferences) {
             try {
-                Stream<OWLObjectPropertyExpression> streamReasoned = ontoRef.getReasoner()
+                Stream<OWLObjectPropertyExpression> streamReasoned = ontoRef.getOWLReasoner()
                         .getSubObjectProperties(prop, ! isReturningCompleteDescription()).entities();
                 Set<OWLObjectPropertyExpression> reasoned = streamReasoned.collect(Collectors.toSet());
                 if (reasoned != null)
@@ -638,6 +544,7 @@ public class OWLEnquirer {
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
+
 	/**
 	 * Returns all sub-properties of a given object property fetched by {@link #getSubObjectPropertyOf(OWLObjectProperty)}.
 	 * It checks axioms in the ontology first, then reasoner inferred axioms.
@@ -649,7 +556,7 @@ public class OWLEnquirer {
 		OWLObjectProperty prop = ontoRef.getOWLObjectProperty( propName);
 		return getSubObjectPropertyOf( prop);
 	}
-	
+
 	/** Returns all the super-properties of a given object property.
      * It checks axioms in the ontology first, then reasoner inferred axioms.
      * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
@@ -658,18 +565,18 @@ public class OWLEnquirer {
 	 */
 	public Set<OWLObjectProperty> getSuperObjectPropertyOf( OWLObjectProperty prop){
 		long initialTime = System.nanoTime();
-		
+
 		//Set<OWLObjectPropertyExpression> set = prop.getSuperProperties( ontoRef.getOWLOntology());
 		Stream<OWLObjectPropertyExpression> stream = EntitySearcher.getSuperProperties( prop, ontoRef.getOWLOntology());
 		Set<OWLObjectPropertyExpression> set = stream.collect( Collectors.toSet());
-		
+
 		Set<OWLObjectProperty> out = new HashSet<>();
 		if( set != null)
 			out.addAll(set.stream().map(AsOWLObjectProperty::asOWLObjectProperty).collect(Collectors.toList()));
 
         if(includesInferences) {
             try {
-                Stream<OWLObjectPropertyExpression> streamReasoned = ontoRef.getReasoner()
+                Stream<OWLObjectPropertyExpression> streamReasoned = ontoRef.getOWLReasoner()
                         .getSuperObjectProperties(prop, ! isReturningCompleteDescription()).entities();
                 Set<OWLObjectPropertyExpression> reasoned = streamReasoned.collect(Collectors.toSet());
                 if (reasoned != null)
@@ -682,6 +589,7 @@ public class OWLEnquirer {
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
+
 	/**
 	 * Returns all sub-properties of a given object property fetched by {@link #getSuperObjectPropertyOf(OWLObjectProperty)}.
      * It checks axioms in the ontology first, then reasoner inferred axioms.
@@ -693,28 +601,28 @@ public class OWLEnquirer {
 		OWLObjectProperty prop = ontoRef.getOWLObjectProperty( propName);
 		return getSuperObjectPropertyOf( prop);
 	}
-		
-	/**
+
+    /**
 	 * Returns all sub-properties of a given data property.
      * It checks axioms in the ontology first, then reasoner inferred axioms.
      * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * @param prop a data property.
 	 * @return set of sub-properties of {@code prop}.
-	 */
-	public Set<OWLDataProperty> getSubDataPropertyOf( OWLDataProperty prop){ 
-		long initialTime = System.nanoTime();
-		
+     */
+    public Set<OWLDataProperty> getSubDataPropertyOf(OWLDataProperty prop){
+        long initialTime = System.nanoTime();
+
 		//Set<OWLDataPropertyExpression> set = prop.getSubProperties( ontoRef.getOWLOntology());
 		Stream<OWLDataPropertyExpression> stream = EntitySearcher.getSubProperties( prop, ontoRef.getOWLOntology());
 		Set<OWLDataPropertyExpression> set = stream.collect( Collectors.toSet());
-		
+
 		Set<OWLDataProperty> out = new HashSet<>();
 		if( set != null)
 			out.addAll(set.stream().map(AsOWLDataProperty::asOWLDataProperty).collect(Collectors.toList()));
 
         if(includesInferences) {
             try {
-                Stream<OWLDataProperty> streamReasoned = ontoRef.getReasoner()
+                Stream<OWLDataProperty> streamReasoned = ontoRef.getOWLReasoner()
                         .getSubDataProperties(prop, ! isReturningCompleteDescription()).entities();
                 Set<OWLDataProperty> reasoned = streamReasoned.collect(Collectors.toSet());
                 if (reasoned != null)
@@ -726,6 +634,7 @@ public class OWLEnquirer {
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
+
 	/**
 	 * Returns all sub-properties of a given data property fetched by {@link #getSubDataPropertyOf(OWLDataProperty)}.
      * It checks axioms in the ontology first, then reasoner inferred axioms.
@@ -737,28 +646,28 @@ public class OWLEnquirer {
 		OWLDataProperty prop = ontoRef.getOWLDataProperty( propName);
 		return getSubDataPropertyOf( prop);
 	}
-	
-	/**
+
+    /**
 	 * Returns all super-properties of a given data property.
      * It checks axioms in the ontology first, then reasoner inferred axioms.
      * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
 	 * @param prop a data property.
 	 * @return set of sub-properties of {@code prop}.
-	 */
-	public Set<OWLDataProperty> getSuperDataPropertyOf( OWLDataProperty prop){ 
-		long initialTime = System.nanoTime();
-		
+     */
+    public Set<OWLDataProperty> getSuperDataPropertyOf(OWLDataProperty prop){
+        long initialTime = System.nanoTime();
+
 		//Set<OWLDataPropertyExpression> set = prop.getSuperProperties( ontoRef.getOWLOntology());
 		Stream<OWLDataPropertyExpression> stream = EntitySearcher.getSuperProperties( prop, ontoRef.getOWLOntology());
 		Set<OWLDataPropertyExpression> set = stream.collect( Collectors.toSet());
-		
+
 		Set<OWLDataProperty> out = new HashSet<>();
 		if( set != null){
 			out.addAll(set.stream().map(AsOWLDataProperty::asOWLDataProperty).collect(Collectors.toList()));
 		}
         if(includesInferences) {
             try {
-                Stream<OWLDataProperty> streamReasoned = ontoRef.getReasoner()
+                Stream<OWLDataProperty> streamReasoned = ontoRef.getOWLReasoner()
                         .getSuperDataProperties(prop, ! isReturningCompleteDescription()).entities();
                 Set<OWLDataProperty> reasoned = streamReasoned.collect(Collectors.toSet());
                 if (reasoned != null)
@@ -770,6 +679,7 @@ public class OWLEnquirer {
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
+
 	/**
 	 * Returns all super-properties of a given data property fetched by {@link #getSuperDataPropertyOf(OWLDataProperty)}.
      * It checks axioms in the ontology first, then reasoner inferred axioms.
@@ -782,38 +692,38 @@ public class OWLEnquirer {
 		return getSuperDataPropertyOf( prop);
 	}
 	
-	
 	/**
 	 * Returns all sub-classes of a given class.
 	 * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
-	 * 
+     *
 	 * @param className name of an OWL class.
 	 * @return non-ordered set of sub-classes.
 	 */
 	public Set<OWLClass> getSubClassOf( String className){
 		OWLClass cl = ontoRef.getOWLClass( className);
-		return( getSubClassOf( cl));
+		return( getSubClassOf(cl));
 	}
+
 	/**
 	 * Returns all sub-classes of a given class (except for {@link OWLDataFactory#getOWLThing()}).
          * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
-	 * 
+     *
 	 * @param cl an OWL class.
 	 * @return non-ordered set of sub-classes.
 	 */
 	public Set<OWLClass> getSubClassOf( OWLClass cl){
 		long initialTime = System.nanoTime();
-		
+
 		Stream<OWLClassExpression> stream = EntitySearcher.getSubClasses( cl, ontoRef.getOWLOntology());
 		Set<OWLClassExpression> set = stream.collect( Collectors.toSet());
-		
+
 		Set<OWLClass> out = new HashSet<>();
 		if( set != null)
 			out.addAll( set.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
 
         if(includesInferences) {
             try {
-                Stream<OWLClass> streamReasoned = ontoRef.getReasoner()
+                Stream<OWLClass> streamReasoned = ontoRef.getOWLReasoner()
                         .getSubClasses(cl, ! isReturningCompleteDescription()).entities();
                 Set<OWLClass> reasoned = streamReasoned.collect(Collectors.toSet());
                 if (reasoned != null)
@@ -824,41 +734,42 @@ public class OWLEnquirer {
         }
 		out.remove( ontoRef.getOWLFactory().getOWLThing());
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
-		return( out);
+		return(out);
 	}
 
-	/**
+    /**
 	 * Returns all super-classes of a given class.
          * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
-	 * 
+     *
 	 * @param className name of an OWL class.
 	 * @return non-ordered set of sub-classes.
 	 */
 	public Set<OWLClass> getSuperClassOf( String className){
 		OWLClass cl = ontoRef.getOWLClass( className);
-		return( getSuperClassOf( cl));
+		return( getSuperClassOf(cl));
 	}
+
 	/**
 	 * Returns all super-classes of a given class (except for {@link OWLDataFactory#getOWLThing()}).
          * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
-	 * 
+     *
 	 * @param cl an OWL class.
 	 * @return non-ordered set of sub-classes.
 	 */
 	public Set<OWLClass> getSuperClassOf( OWLClass cl){
 		long initialTime = System.nanoTime();
 		Set<OWLClass> classes = new HashSet< OWLClass>();
-		
+
 		//Set< OWLClassExpression> set = cl.getSuperClasses( ontoRef.getOWLOntology());
 		Stream<OWLClassExpression> stream = EntitySearcher.getSuperClasses( cl, ontoRef.getOWLOntology());
 		Set<OWLClassExpression> set = stream.collect( Collectors.toSet());
-		
+
 		if( set != null)
 			classes.addAll(set.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
 
         if( isIncludingInferences()) {
             try {
-                Stream<OWLClass> streamReasoned = ontoRef.getReasoner()
+                Stream<OWLClass> streamReasoned = ontoRef.getOWLReasoner()
                         .getSuperClasses(cl, ! isReturningCompleteDescription()).entities();
                 Set<OWLClass> reasoned = streamReasoned.collect(Collectors.toSet());
                 if (reasoned != null)
@@ -962,6 +873,7 @@ public class OWLEnquirer {
 		}
 		return out;
 	}
+
     /**
      * Returns the set of restrictions of the given class it terms
      * of: &forall; and &exist; quantifier, as well as: minimal, exact and maximal cardinality;
@@ -970,9 +882,317 @@ public class OWLEnquirer {
      * @return the container of all the class restrictions and cardinality, for
      * the given class.
      */
-	public Set<ClassRestriction> getClassRestrictions(String className){
+    public Set<ClassRestriction> getClassRestrictions(String className){
         return getClassRestrictions( ontoRef.getOWLClass( className));
     }
+
+    /**
+     * Return all the inverse object properties of a given property.
+     *
+     * @param propertyName the name of the property from which retrieve its inverses.
+     * @return the inverse properties of the given property.
+     */
+    public Set<OWLObjectProperty> getInverseProperty(String propertyName) {
+        return getInverseProperty(ontoRef.getOWLObjectProperty(propertyName));
+    }
+
+    /**
+     * Return all the inverse object properties of a given property.
+     *
+     * @param property the property from which retrieve its inverses.
+     * @return the inverse properties of the given property.
+     */
+    public Set<OWLObjectProperty> getInverseProperty(OWLObjectProperty property) {
+        final Set<OWLObjectProperty> prInverse = new HashSet<>();
+        Stream<OWLInverseObjectPropertiesAxiom> st = ontoRef.getOWLOntology().inverseObjectPropertyAxioms(property);
+        st.forEach(e -> prInverse.add(e.getSecondProperty().asOWLObjectProperty()));
+
+        if (includesInferences) {
+            Stream<OWLObjectPropertyExpression> a = ontoRef.getOWLReasoner().getInverseObjectProperties(property).entities();
+            a.forEach(e -> prInverse.add(e.asOWLObjectProperty()));
+        }
+        return prInverse;
+    }
+
+    /**
+     * Return an inverse object property of a given property.
+     *
+     * @param propertyName the name of the property from which retrieve an inverse.
+     * @return an inverse property of the given property.
+     */
+    public OWLObjectProperty getOnlyInverseProperty(String propertyName) {
+        return getOnlyInverseProperty(ontoRef.getOWLObjectProperty(propertyName));
+    }
+
+    /**
+     * Return an inverse object property of a given property.
+     *
+     * @param property the property from which retrieve an inverse.
+     * @return an inverse property of the given property.
+     */
+    public OWLObjectProperty getOnlyInverseProperty(OWLObjectProperty property) {
+        return ((OWLObjectProperty) ontoRef.getOnlyElement(getInverseProperty(property)));
+    }
+
+    /**
+     * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
+     * Works only with the Pellet reasoner. {@code timeOut} parameter sets the query timeout, no timeout is set if
+     * {@code timeOut &lt;=0}. Once timeout is reached, all solutions found up to that point are returned.
+     *
+     * @param query   a string defining the query in SPARQL query syntax.
+     * @param timeOut timeout for the query.
+     * @return list of solutions.
+     */
+    public List<QuerySolution> sparql(String query, Long timeOut) {
+        try {
+            // get objects
+            KnowledgeBase kb = ((PelletReasoner) ontoRef.getOWLReasoner()).getKB();
+            PelletInfGraph graph = new org.mindswap.pellet.jena.PelletReasoner().bind(kb);
+            InfModel model = ModelFactory.createInfModel(graph);
+            // make the query
+            QueryExecution qe = SparqlDLExecutionFactory.create(QueryFactory.create(query), model);
+            String queryLog = qe.getQuery().toString() + System.getProperty("line.separator") + "[TimeOut:";
+            if (timeOut != null) { // apply time out
+                if (timeOut > 0) {
+                    qe.setTimeout(timeOut); // TODO: it does not seems to work with pellet SELECT queries
+                    queryLog += timeOut + "ms].";
+                } else queryLog += "NONE].";
+            } else queryLog += "NONE].";
+            ResultSet result = qe.execSelect(); // TODO: it can do much more.... (ask query, evaluate constants, etc.)
+            // store the results
+            List<QuerySolution> solutions = new ArrayList<>();
+            while (result.hasNext()) {
+                QuerySolution r = result.next();
+                solutions.add(r);
+            }
+            logger.addDebugString("SPARQL query:" + System.getProperty("line.separator") + queryLog + System.getProperty("line.separator") + ResultSetFormatter.asText(result));
+            return solutions;
+        } catch (QueryCancelledException e) {
+            logger.addDebugString("SPARQL timed out !!");
+            return null;
+        }
+    }
+
+    /**
+     * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
+     * Works only with the Pellet reasoner.
+     *
+     * @param query a string defining the query in SPARQL query syntax.
+     * @return list of solutions.
+     */
+    public List<QuerySolution> sparql(String query) { // no time out
+        return sparql(query, null);
+    }
+
+    /**
+     * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
+     * Works only with the Pellet reasoner. {@code timeOut} parameter sets the query timeout, no timeout is set if
+     * {@code timeOut &lt;= 0}. Once timeout is reached, all solutions found up to that point are returned.
+     *
+     * @param prefix  a string defining the query prefix field in SPARQL query syntax.
+     * @param select  a string defining the query select field in SPARQL query syntax.
+     * @param where   a string defining the query where field in SPARQL query syntax.
+     * @param timeOut timeout for the query.
+     * @return list of solutions.
+     */
+    public List<QuerySolution> sparql(String prefix, String select, String where, Long timeOut) {
+        return sparql(prefix + select + where, timeOut);
+    }
+
+
+    // works only for pellet
+    // set time out to null or < 0 to do not apply any timing out
+
+    /**
+     * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
+     * Works only with the Pellet reasoner.
+     *
+     * @param prefix a string defining the query prefix field in SPARQL query syntax.
+     * @param select a string defining the query select field in SPARQL query syntax.
+     * @param where  a string defining the query where field in SPARQL query syntax.
+     * @return list of solutions.
+     */
+    public List<QuerySolution> sparql(String prefix, String select, String where) {
+        return sparql(prefix + select + where);
+    }
+
+    /**
+     * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
+     * Used to share the results with other code and processes. {@code timeOut} parameter sets the query timeout,
+     * no timeout is set if {@code timeOut &lt;= 0}. Once timeout is reached, all solutions found up to that point are returned.
+     *
+     * @param query   a string defining the query in SPARQL query syntax.
+     * @param timeOut timeout for the query.
+     * @return formatted list of solutions.
+     */
+    public List<Map<String, String>> sparqlMsg(String query, Long timeOut) {
+        return sparql2Msg(sparql(query, timeOut));
+    }
+
+    /**
+     * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
+     * This call do not apply any time out.
+     * Used to share the results with other code and processes.
+     *
+     * @param query a string defining the query in SPARQL query syntax.
+     * @return formatted list of solutions.
+     */
+    public List<Map<String, String>> sparqlMsg(String query) { // no time out
+        return sparql2Msg(sparql(query, null));
+    }
+
+    /**
+     * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
+     * Used to share the results with other code and processes. {@code timeOut} parameter sets the query timeout,
+     * no timeout is set if {@code timeOut &lt;= 0}. Once timeout is reached, all solutions found up to that point are returned.
+     *
+     * @param prefix  a string defining the query prefix field in SPARQL query syntax.
+     * @param select  a string defining the query select field in SPARQL query syntax.
+     * @param where   a string defining the query where field in SPARQL query syntax.
+     * @param timeOut timeout for the query.
+     * @return list of solutions.
+     */
+    public List<Map<String, String>> sparqlMsg(String prefix, String select, String where, Long timeOut) {
+        return sparql2Msg(sparql(prefix + select + where, timeOut));
+    }
+
+    /**
+     * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
+     * Used to share the results with other code and processes.
+     *
+     * @param prefix a string defining the query prefix field in SPARQL query syntax.
+     * @param select a string defining the query select field in SPARQL query syntax.
+     * @param where  a string defining the query where field in SPARQL query syntax.
+     * @return list of solutions.
+     */
+    public List<Map<String, String>> sparqlMsg(String prefix, String select, String where) {
+        return sparql2Msg(sparql(prefix + select + where));
+    }
+
+    /**
+     * Formats a list of {@link QuerySolution} into a list of maps among strings.
+     *
+     * @param results list of {@link QuerySolution}.
+     * @return formatted results.
+     */
+    private List<Map<String, String>> sparql2Msg(List<QuerySolution> results) {
+        List<Map<String, String>> out = new ArrayList();
+        if (results != null) // timeout
+            for (QuerySolution q : results) {
+                Iterator<String> names = q.varNames();
+                Map<String, String> item = new HashMap<>();
+                while (names.hasNext()) {
+                    String n = names.next();
+                    item.put(n, q.get(n).toString());
+                }
+                out.add(item);
+            }
+        return out;
+    }
+
+    /**
+     * Class used to contain an object property relation associated to an individuals and its value entities.
+     * A {@link ObjectPropertyRelations} object is returned by
+     * {@link OWLEnquirer#getObjectPropertyB2Individual(OWLNamedIndividual)}
+     * and {@link OWLEnquirer#getObjectPropertyB2Individual(String)}.
+     */
+    public class ObjectPropertyRelations {
+        private OWLObjectProperty prop;
+        private OWLNamedIndividual ind;
+        private Set<OWLNamedIndividual> value;
+        private String propName, indName;
+        private Set<String> valueName;
+
+        public ObjectPropertyRelations(OWLNamedIndividual ind, OWLObjectProperty prop, Set<OWLNamedIndividual> value,
+                                       OWLReferencesInterface ontoRef) {
+            this.prop = prop;
+            this.propName = ontoRef.getOWLObjectName(prop);
+            this.ind = ind;
+            this.indName = ontoRef.getOWLObjectName(ind);
+            this.value = value;
+            this.valueName = ontoRef.getOWLObjectName(value);
+        }
+
+        public OWLObjectProperty getProperty() {
+            return prop;
+        }
+
+        public OWLNamedIndividual getIndividual() {
+            return ind;
+        }
+
+        public Set<OWLNamedIndividual> getValues() {
+            return value;
+        }
+
+        public String getPropertyName() {
+            return propName;
+        }
+
+        public String getIndividualName() {
+            return indName;
+        }
+
+        public Set<String> getValuesName() {
+            return valueName;
+        }
+
+        public String toString() {
+            return "\"" + getIndividualName() + "." + getPropertyName() + "( " + getValuesName() + ")";
+        }
+    }
+
+    /**
+     * Class used to contain a data property relation  associated to an individuals and its literal values.
+     * A {@link DataPropertyRelations} object is returned by
+     * {@link OWLEnquirer#getObjectPropertyB2Individual(OWLNamedIndividual)}
+     * and {@link OWLEnquirer#getObjectPropertyB2Individual(String)}.
+     */
+    public class DataPropertyRelations {
+        private OWLDataProperty prop;
+        private OWLNamedIndividual ind;
+        private Set<OWLLiteral> value;
+        private String propName, indName;
+        private Set<String> valueName;
+
+        public DataPropertyRelations(OWLNamedIndividual ind, OWLDataProperty prop, Set<OWLLiteral> value, OWLReferencesInterface ontoRef) {
+            this.prop = prop;
+            this.propName = ontoRef.getOWLObjectName(prop);
+            this.ind = ind;
+            this.indName = ontoRef.getOWLObjectName(ind);
+            this.value = value;
+            this.valueName = ontoRef.getOWLObjectName(value);
+        }
+
+        public OWLDataProperty getProperty() {
+            return prop;
+        }
+
+        public OWLNamedIndividual getIndividual() {
+            return ind;
+        }
+
+        public Set<OWLLiteral> getValues() {
+            return value;
+        }
+
+        public String getPropertyName() {
+            return propName;
+        }
+
+        public String getIndividualName() {
+            return indName;
+        }
+
+        public Set<String> getValuesName() {
+            return valueName;
+        }
+
+        public String toString() {
+            return "\"" + getIndividualName() + "." + getPropertyName() + "( " + getValuesName() + ")";
+        }
+    }
+
     /**
      * This is a container for quantify class restrictions.
      * It is produced fom {@link #getClassRestrictions(OWLClass)} and
@@ -1009,38 +1229,38 @@ public class OWLEnquirer {
          * @param subject the class restricted by this axiom.
          * @param property the object property that restricts the class
          */
-		public ClassRestriction(OWLClass subject, OWLObjectProperty property) {
+        public ClassRestriction(OWLClass subject, OWLObjectProperty property) {
 			this.definitionOf = subject;
 			this.property = property;
 			this.isDataProperty = false;
 		}
 
         /**
-         * Initialise to describe universal data property restriction over 
+         * Initialise to describe universal data property restriction over
          * a data type (supported: {@link String}, {@link Double}, {@link Float}, {@link Integer} and {@link Long}).
          * In symbols: {@code class &forall; hasDataProperty dataType}.
          * @param dataType the range of data of the universal restriction.
          */
 		protected void setDataOnlyRestriction( OWLDataRange dataType){
 			if( isDataProperty) {
-				this.expressioneType = RESTRICTION_ONLY;
-				this.data = dataType;
-			} else logger.addDebugString( "Cannot set a 'only' data restriction over an object property", true);
+                this.expressioneType = RESTRICTION_ONLY;
+                this.data = dataType;
+            } else logger.addDebugString( "Cannot set a 'only' data restriction over an object property", true);
 		}
         /**
-         * Initialise to describe existential data property restriction over 
+         * Initialise to describe existential data property restriction over
          * a data type (supported: {@link String}, {@link Double}, {@link Float}, {@link Integer} and {@link Long}).
          * In symbols: {@code class &exists; hasDataProperty dataType}.
          * @param dataType the range of data of the existential restriction.
          */
 		protected void setDataSomeRestriction( OWLDataRange dataType){
 			if( isDataProperty) {
-				this.expressioneType = RESTRICTION_SOME;
-				this.data = dataType;
-			} else logger.addDebugString( "Cannot set a 'some' data restriction over an object property", true);
+                this.expressioneType = RESTRICTION_SOME;
+                this.data = dataType;
+            } else logger.addDebugString( "Cannot set a 'some' data restriction over an object property", true);
 		}
         /**
-         * Initialise to describe a data property with a minimal cardinality restriction over 
+         * Initialise to describe a data property with a minimal cardinality restriction over
          * a data type (supported: {@link String}, {@link Double}, {@link Float}, {@link Integer} and {@link Long}).
          * In symbols: {@code class &lt;<sub>d</sub> hasDataProperty dataType}.
          * @param cardinality the cardinality of the restriction {@code d}.
@@ -1049,12 +1269,12 @@ public class OWLEnquirer {
 		protected void setDataMinRestriction( int cardinality, OWLDataRange dataType){
 			if( isDataProperty) {
 				this.expressioneType = RESTRICTION_MIN;
-				this.cardinality = cardinality;
-				this.data = dataType;
-			} else logger.addDebugString( "Cannot set a 'min' data restriction over an object property", true);
+                this.cardinality = cardinality;
+                this.data = dataType;
+            } else logger.addDebugString( "Cannot set a 'min' data restriction over an object property", true);
 		}
         /**
-         * Initialise to describe a data property with a maximal cardinality restriction over 
+         * Initialise to describe a data property with a maximal cardinality restriction over
          * a data type (supported: {@link String}, {@link Double}, {@link Float}, {@link Integer} and {@link Long}).
          * In symbols: {@code class &gt;<sub>d</sub> hasDataProperty dataType}.
          * @param cardinality the cardinality of the restriction {@code d}.
@@ -1063,12 +1283,12 @@ public class OWLEnquirer {
 		protected void setDataMaxRestriction(int cardinality, OWLDataRange dataType){
 			if( isDataProperty) {
 				this.expressioneType = RESTRICTION_MAX;
-				this.cardinality = cardinality;
-				this.data = dataType;
-			} else logger.addDebugString( "Cannot set a 'max' data restriction over an object property", true);
+                this.cardinality = cardinality;
+                this.data = dataType;
+            } else logger.addDebugString( "Cannot set a 'max' data restriction over an object property", true);
 		}
         /**
-         * Initialise to describe a data property with an exact cardinality restriction over 
+         * Initialise to describe a data property with an exact cardinality restriction over
          * a data type (supported: {@link String}, {@link Double}, {@link Float}, {@link Integer} and {@link Long}).
          * In symbols: {@code class =<sub>d</sub> hasDataProperty dataType}.
          * @param cardinality the cardinality of the restriction {@code d}.
@@ -1077,25 +1297,25 @@ public class OWLEnquirer {
 		protected void setDataExactRestriction( int cardinality, OWLDataRange dataType){
 			if( isDataProperty) {
 				this.expressioneType = RESTRICTION_EXACT;
-				this.cardinality = cardinality;
-				this.data = dataType;
-			} else logger.addDebugString( "Cannot set a 'exact' data restriction over an object property", true);
+                this.cardinality = cardinality;
+                this.data = dataType;
+            } else logger.addDebugString( "Cannot set a 'exact' data restriction over an object property", true);
 		}
 
         /**
-         * Initialise to describe universal object property restriction over 
+         * Initialise to describe universal object property restriction over
          * a {@link OWLClass}.
          * In symbols: {@code classSubject &forall; hasObjectProperty classObject}.
          * @param object the class domain of the universal property restriction.
          */
         protected void setObjectOnlyRestriction( OWLClass object){
 			if( ! isDataProperty) {
-				this.expressioneType = RESTRICTION_ONLY;
-				this.object = object;
-			} else logger.addDebugString( "Cannot set a 'only' object restriction over a data property", true);
+                this.expressioneType = RESTRICTION_ONLY;
+                this.object = object;
+            } else logger.addDebugString( "Cannot set a 'only' object restriction over a data property", true);
 		}
         /**
-         * Initialise to describe existential object property restriction over 
+         * Initialise to describe existential object property restriction over
          * a {@link OWLClass}.
          * In symbols: {@code classSubject &exists; hasObjectProperty classObject}.
          * @param object the class domain of the existential property restriction.
@@ -1375,143 +1595,4 @@ public class OWLEnquirer {
 			return out;
 		}
 	}
-
-	// works only for pellet
-	// set time out to null or < 0 to do not apply any timing out
-
-    /**
-     * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
-     * Works only with the Pellet reasoner. {@code timeOut} parameter sets the query timeout, no timeout is set if
-     * {@code timeOut &lt;=0}. Once timeout is reached, all solutions found up to that point are returned.
-     * @param query a string defining the query in SPARQL query syntax.
-     * @param timeOut timeout for the query.
-     * @return list of solutions.
-     */
-	public List< QuerySolution> sparql( String query, Long timeOut){
-		try {
-			// get objects
-			KnowledgeBase kb = ((PelletReasoner) ontoRef.getReasoner()).getKB();
-			PelletInfGraph graph = new org.mindswap.pellet.jena.PelletReasoner().bind(kb);
-			InfModel model = ModelFactory.createInfModel(graph);
-			// make the query
-			QueryExecution qe = SparqlDLExecutionFactory.create(QueryFactory.create(query), model);
-			String queryLog = qe.getQuery().toString() + System.getProperty("line.separator") + "[TimeOut:";
-			if (timeOut != null) { // apply time out
-				if (timeOut > 0) {
-					qe.setTimeout(timeOut); // TODO: it does not seems to work with pellet SELECT queries
-					queryLog += timeOut + "ms].";
-				} else queryLog += "NONE].";
-			} else queryLog += "NONE].";
-			ResultSet result = qe.execSelect(); // TODO: it can do much more.... (ask query, evaluate constants, etc.)
-			// store the results
-			List<QuerySolution> solutions = new ArrayList<>();
-			while (result.hasNext()) {
-				QuerySolution r = result.next();
-				solutions.add(r);
-			}
-			logger.addDebugString("SPARQL query:" + System.getProperty("line.separator") + queryLog + System.getProperty("line.separator") + ResultSetFormatter.asText(result));
-			return solutions;
-		} catch ( QueryCancelledException e){
-            logger.addDebugString("SPARQL timed out !!");
-			return null;
-		}
-	}
-    /**
-     * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
-     * Works only with the Pellet reasoner.
-     * @param query a string defining the query in SPARQL query syntax.
-     * @return list of solutions.
-     */
-	public List< QuerySolution> sparql( String query){ // no time out
-		return sparql( query, null);
-	}
-    /**
-     * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
-     * Works only with the Pellet reasoner. {@code timeOut} parameter sets the query timeout, no timeout is set if
-     * {@code timeOut &lt;= 0}. Once timeout is reached, all solutions found up to that point are returned.
-     * @param prefix a string defining the query prefix field in SPARQL query syntax.
-     * @param select a string defining the query select field in SPARQL query syntax.
-     * @param where a string defining the query where field in SPARQL query syntax.
-     * @param timeOut timeout for the query.
-     * @return list of solutions.
-     */
-	public List< QuerySolution> sparql( String prefix, String select, String where, Long timeOut){
-		return sparql( prefix + select + where, timeOut);
-	}
-    /**
-     * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
-     * Works only with the Pellet reasoner.
-     * @param prefix a string defining the query prefix field in SPARQL query syntax.
-     * @param select a string defining the query select field in SPARQL query syntax.
-     * @param where a string defining the query where field in SPARQL query syntax.
-     * @return list of solutions.
-     */
-	public List< QuerySolution> sparql( String prefix, String select, String where){
-		return sparql( prefix + select + where);
-	}
-    /**
-     * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
-     * Used to share the results with other code and processes. {@code timeOut} parameter sets the query timeout,
-     * no timeout is set if {@code timeOut &lt;= 0}. Once timeout is reached, all solutions found up to that point are returned.
-     * @param query a string defining the query in SPARQL query syntax.
-     * @param timeOut timeout for the query.
-     * @return formatted list of solutions.
-     */
-	public List< Map< String, String>> sparqlMsg(String query, Long timeOut){
-		return sparql2Msg( sparql( query, timeOut));
-	}
-    /**
-     * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
-	 * This call do not apply any time out.
-     * Used to share the results with other code and processes.
-     * @param query a string defining the query in SPARQL query syntax.
-     * @return formatted list of solutions.
-     */
-	public List< Map< String, String>> sparqlMsg( String query){ // no time out
-		return sparql2Msg( sparql( query, null));
-	}
-    /**
-     * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
-     * Used to share the results with other code and processes. {@code timeOut} parameter sets the query timeout,
-     * no timeout is set if {@code timeOut &lt;= 0}. Once timeout is reached, all solutions found up to that point are returned.
-     * @param prefix a string defining the query prefix field in SPARQL query syntax.
-     * @param select a string defining the query select field in SPARQL query syntax.
-     * @param where a string defining the query where field in SPARQL query syntax.
-     * @param timeOut timeout for the query.
-     * @return list of solutions.
-     */
-	public List< Map< String, String>> sparqlMsg( String prefix, String select, String where, Long timeOut){
-		return sparql2Msg( sparql( prefix + select + where, timeOut));
-	}
-    /**
-     * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
-     * Used to share the results with other code and processes.
-     * @param prefix a string defining the query prefix field in SPARQL query syntax.
-     * @param select a string defining the query select field in SPARQL query syntax.
-     * @param where a string defining the query where field in SPARQL query syntax.
-     * @return list of solutions.
-     */
-    public List< Map< String, String>> sparqlMsg( String prefix, String select, String where){
-		return sparql2Msg( sparql( prefix + select + where));
-	}
-
-    /**
-     * Formats a list of {@link QuerySolution} into a list of maps among strings.
-     * @param results list of {@link QuerySolution}.
-     * @return formatted results.
-     */
-    private List< Map< String, String>> sparql2Msg( List< QuerySolution> results) {
-        List< Map< String, String>> out = new ArrayList();
-		if( results != null) // timeout
-			for( QuerySolution q : results){
-				Iterator<String> names = q.varNames();
-				Map<String, String> item = new HashMap<>();
-				while( names.hasNext()){
-					String n = names.next();
-					item.put( n, q.get( n).toString());
-				}
-				out.add( item);
-			}
-        return out;
-    }
 }

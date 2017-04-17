@@ -1,6 +1,16 @@
 package it.emarolab.amor.owlDebugger.OFGUI.individualGui;
 
-import java.awt.BorderLayout;
+import it.emarolab.amor.owlDebugger.OFGUI.ClassExchange;
+import it.emarolab.amor.owlInterface.OWLReferences;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.ChangeApplied;
+import org.semanticweb.owlapi.util.OWLEntityRemover;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.InvocationTargetException;
@@ -9,39 +19,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JLabel;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JComboBox;
-import javax.swing.JButton;
-import javax.swing.DefaultComboBoxModel;
-
-import it.emarolab.amor.owlDebugger.OFGUI.ClassExchange;
-
-import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
-import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
-import org.semanticweb.owlapi.model.parameters.ChangeApplied;
-import org.semanticweb.owlapi.util.OWLEntityRemover;
-
-import it.emarolab.amor.owlInterface.OWLReferences;
-
 public class EditorRunner  implements Runnable{
 
-	private String individualName;
+    private static Set<EditorRun> frames = new HashSet<EditorRun>();
+    private String individualName;
 	private List<List<String>> editorInfo;
 	private int replacing;
-	private static Set<EditorRun> frames = new HashSet<EditorRun>();
 	private EditorRun frame;
 	private OWLAxiom replacingAxiom;
 	
@@ -55,7 +38,13 @@ public class EditorRunner  implements Runnable{
 		t.start();
 	}
 
-	@Override
+    public static void disposeAll() {
+        for (EditorRun frame : frames) {
+            frame.dispose();
+        }
+    }
+
+    @Override
 	public void run() {
 		try {
 			frame = new EditorRun( individualName, editorInfo, replacing, replacingAxiom);
@@ -66,28 +55,19 @@ public class EditorRunner  implements Runnable{
 			e1.printStackTrace();
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
-		}		
-	}
+        }
+    }
 	
 	public void dispose(){
 		frame.dispose();
-	}
-	
-	public static void disposeAll(){
-		for( EditorRun frame : frames){
-			frame.dispose();
-		}
 	}
 }
 
 @SuppressWarnings("serial")
 class EditorRun extends JFrame implements Runnable{
 
-	private String individualName;
-	
 	private static final String REPLACE = "Replace";
 	private static final String CONFIRM = "Confirm";
-	
 	private final JTextField txtCc = new JTextField();
 	private final JComboBox data_typeCmbox = new JComboBox();
 	private final JTextField data_hasPropTxt = new JTextField();
@@ -96,28 +76,11 @@ class EditorRun extends JFrame implements Runnable{
 	private final JTextField obj_hasPropTxt = new JTextField();
 	private final JTextField obj_valueTxt = new JTextField();
 	private final JTextField individual_indTxt = new JTextField();
-	
-	private EditorRunner caller = null;
-	
-	public void setCaller( EditorRunner r){
-		caller = r;
-	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		try {
-			EditorRun frame = this;//new EditorRunner( individualName);
-			frame.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	private final String buttonLabel;
 	private final Boolean replaceFlag;
-	private Boolean doit_replace = true;
-
+    private String individualName;
+    private EditorRunner caller = null;
+    private Boolean doit_replace = true;
 	private OWLReferences ontoRef;
 //	private static Boolean doit_dataAdd = true;
 //	private static Boolean doit_dataRem = true;
@@ -133,9 +96,9 @@ class EditorRun extends JFrame implements Runnable{
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
-		
+
 		ontoRef = ClassExchange.getOntoRef();
-		
+
 		if( replacing >= 0){
 			replaceFlag = false; // setVisibility
 			buttonLabel = CONFIRM;
@@ -143,15 +106,15 @@ class EditorRun extends JFrame implements Runnable{
 			buttonLabel = REPLACE;
 			replaceFlag = true;
 		}
-		
-		
-		final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+
+
+        final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
 		contentPane.add(tabbedPane, BorderLayout.CENTER);
-		
+
 		/////////////////////////////////////////
 		JPanel data_pane = new JPanel();
 		tabbedPane.addTab("Data Prop", null, data_pane, null);
-		
+
 		final JButton replaceBnt = new JButton( buttonLabel);
 		contentPane.add( replaceBnt, BorderLayout.SOUTH);
 		replaceBnt.addMouseListener(new MouseAdapter() {
@@ -167,8 +130,9 @@ class EditorRun extends JFrame implements Runnable{
 						case 1 :	axiom = getObjPropAxiom();
 							break;
 						//case 2 :
-						default:	axiom = null; 
-						}
+                            default:
+                                axiom = null;
+                        }
 						new EditorRunner(individualName,  IndividualRunner.getEditorInfo(), tabbedPane.getSelectedIndex(), axiom);
 					}
 					if( buttonLabel.equals( CONFIRM)){
@@ -190,9 +154,9 @@ class EditorRun extends JFrame implements Runnable{
 							}
 							break;
 						case 2 :
-							
+
 						}
-						
+
 						JOptionPane a = new JOptionPane();
 						JOptionPane.showMessageDialog(a, " Property replaced to Individual", "operation successful", JOptionPane.INFORMATION_MESSAGE);
 						caller.dispose();
@@ -201,42 +165,42 @@ class EditorRun extends JFrame implements Runnable{
 				//} else doit_replace = true;
 			}
 		});
-		
+
 		String tmp;
-		
+
 		if( selectedInfo.get( 0).isEmpty())
 			tmp = "";
 		else tmp = selectedInfo.get( 0).get( 0);
 		data_hasPropTxt.setText( tmp);
 		data_hasPropTxt.setColumns(10);
-		
-		
-		data_indTxt.setText( individualName);
+
+
+        data_indTxt.setText( individualName);
 		data_indTxt.setColumns(10);
-		
-		if( selectedInfo.get( 0).isEmpty())
+
+        if( selectedInfo.get( 0).isEmpty())
 			tmp = "";
 		else tmp = selectedInfo.get( 0).get( 1);
 		txtCc.setText( tmp);
 		txtCc.setColumns(10);
-		
-		JLabel data_IndLabel = new JLabel("individual");
-		
-		JLabel data_hasPropLabel = new JLabel("hasDataProperty");
-		
-		JLabel data_valueLabel = new JLabel("Value");
-		
-		JLabel data_typeLabel = new JLabel("Type");
-		
-		
-		data_typeCmbox.setModel(new DefaultComboBoxModel(new String[] {"integer", "string", "double", "boolean"}));
-		
-		if( selectedInfo.get( 0).isEmpty())
+
+        JLabel data_IndLabel = new JLabel("individual");
+
+        JLabel data_hasPropLabel = new JLabel("hasDataProperty");
+
+        JLabel data_valueLabel = new JLabel("Value");
+
+        JLabel data_typeLabel = new JLabel("Type");
+
+
+        data_typeCmbox.setModel(new DefaultComboBoxModel(new String[] {"integer", "string", "double", "boolean"}));
+
+        if( selectedInfo.get( 0).isEmpty())
 			tmp = "";
 		else tmp = selectedInfo.get( 0).get( 2).replace( "xsd:", "");
 		data_typeCmbox.setSelectedItem( tmp);
-		
-		JButton data_addBnt = new JButton("Add");
+
+        JButton data_addBnt = new JButton("Add");
 		data_addBnt.setEnabled( replaceFlag);
 		data_addBnt.addMouseListener(new MouseAdapter() {
 			// adding data type belong to an individual
@@ -251,9 +215,9 @@ class EditorRun extends JFrame implements Runnable{
 				//}else doit_dataAdd = true;
 			}
 		});
-		
-		
-		JButton data_removeBnt = new JButton("Remove");
+
+
+        JButton data_removeBnt = new JButton("Remove");
 		data_removeBnt.setEnabled( replaceFlag);
 		data_removeBnt.addMouseListener(new MouseAdapter() {
 			@Override
@@ -261,8 +225,8 @@ class EditorRun extends JFrame implements Runnable{
 				//if( doit_dataRem){
 					ChangeApplied changes = ontoRef.getOWLManager().removeAxiom(ontoRef.getOWLOntology(), getDataTypeAxiom());
 					//ontoRef.getOWLManager().applyChanges(changes);
-					//ClassExchange.getReasoner().flush();
-					///doit_dataRem = false;
+                //ClassExchange.getOWLReasoner().flush();
+                ///doit_dataRem = false;
 					JOptionPane a = new JOptionPane();
 					JOptionPane.showMessageDialog(a, " data Property removed from Individual", "operation successful", JOptionPane.INFORMATION_MESSAGE);
 				//} else doit_dataRem = true;
@@ -336,16 +300,16 @@ class EditorRun extends JFrame implements Runnable{
 					.addContainerGap(33, Short.MAX_VALUE))
 		);
 		data_pane.setLayout(gl_data_pane);
-		
-		/////////////////////////////////////////////////////////////
+
+        /////////////////////////////////////////////////////////////
 		JPanel obj_pane = new JPanel();
 		tabbedPane.addTab("Object Prop", null, obj_pane, null);
-		
-		JLabel data_valueTxt = new JLabel("individual");
-		
-		JLabel obj_hasPropLabel = new JLabel("hasObjectProperty");
-		
-		JButton obj_addBnt = new JButton("Add");
+
+        JLabel data_valueTxt = new JLabel("individual");
+
+        JLabel obj_hasPropLabel = new JLabel("hasObjectProperty");
+
+        JButton obj_addBnt = new JButton("Add");
 		obj_addBnt.setEnabled( replaceFlag);
 		obj_addBnt.addMouseListener(new MouseAdapter() {
 			@Override
@@ -359,12 +323,12 @@ class EditorRun extends JFrame implements Runnable{
 				//} else doit_objAdd = true;
 			}
 		});
-		
-		
-		obj_indTxt.setText( individualName);
+
+
+        obj_indTxt.setText( individualName);
 		obj_indTxt.setColumns(10);
-		
-		JButton obj_removeBnt = new JButton("Remove");
+
+        JButton obj_removeBnt = new JButton("Remove");
 		obj_removeBnt.setEnabled(replaceFlag);
 		obj_removeBnt.addMouseListener(new MouseAdapter() {
 			@Override
@@ -372,29 +336,29 @@ class EditorRun extends JFrame implements Runnable{
 				//if( doit_objRem){
 					ChangeApplied changes = ontoRef.getOWLManager().removeAxiom( ontoRef.getOWLOntology(), getObjPropAxiom());
 					//ontoRef.getOWLManager().applyChanges(changes);
-					
-					//doit_objRem = false;
+
+                //doit_objRem = false;
 					JOptionPane a = new JOptionPane();
 					JOptionPane.showMessageDialog(a, " data Property removed from Individual", "operation successful", JOptionPane.INFORMATION_MESSAGE);
 				//} else doit_objRem = true;
 			}
 		});
-		
 
-		if( selectedInfo.get( 1).isEmpty())
+
+        if( selectedInfo.get( 1).isEmpty())
 			tmp = "";
 		else tmp = selectedInfo.get( 1).get( 0);
 		obj_hasPropTxt.setText( tmp);
 		obj_hasPropTxt.setColumns(10);
-		
-		JLabel obj_valueLabel = new JLabel("Value");
-		
-		if( selectedInfo.get( 1).isEmpty())
+
+        JLabel obj_valueLabel = new JLabel("Value");
+
+        if( selectedInfo.get( 1).isEmpty())
 			tmp = "";
 		else tmp = selectedInfo.get( 1).get( 1);
 		obj_valueTxt.setText( tmp);
-		
-		obj_valueTxt.setColumns(10);
+
+        obj_valueTxt.setColumns(10);
 		GroupLayout gl_obj_pane = new GroupLayout(obj_pane);
 		gl_obj_pane.setHorizontalGroup(
 			gl_obj_pane.createParallelGroup(Alignment.LEADING)
@@ -443,16 +407,16 @@ class EditorRun extends JFrame implements Runnable{
 					.addContainerGap(33, Short.MAX_VALUE))
 		);
 		obj_pane.setLayout(gl_obj_pane);
-		
-		JPanel ind_pane = new JPanel();
+
+        JPanel ind_pane = new JPanel();
 		tabbedPane.addTab("Individual", null, ind_pane, null);
-		
-		individual_indTxt.setText( individualName);
+
+        individual_indTxt.setText( individualName);
 		individual_indTxt.setColumns(10);
-		
-		JLabel individual_IndLabel = new JLabel("individual");
-		
-		JButton individual_addBnt = new JButton("Add");
+
+        JLabel individual_IndLabel = new JLabel("individual");
+
+        JButton individual_addBnt = new JButton("Add");
 		individual_addBnt.setEnabled( false); //replaceFlag
 		individual_addBnt.addMouseListener(new MouseAdapter() {
 			@Override
@@ -463,16 +427,16 @@ class EditorRun extends JFrame implements Runnable{
 				// check double firing "doit" flag
 			}
 		});
-		
-		
-		JButton individual_removeBnt = new JButton("Remove");
+
+
+        JButton individual_removeBnt = new JButton("Remove");
 		individual_removeBnt.setEnabled(false); //replaceFlag
 		individual_removeBnt.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				removeIndividual();
-				//ClassExchange.getReasoner().flush();
-			}
+                //ClassExchange.getOWLReasoner().flush();
+            }
 		});
 		GroupLayout gl_ind_pane = new GroupLayout(ind_pane);
 		gl_ind_pane.setHorizontalGroup(
@@ -506,14 +470,29 @@ class EditorRun extends JFrame implements Runnable{
 					.addContainerGap(33, Short.MAX_VALUE))
 		);
 		ind_pane.setLayout(gl_ind_pane);
-		
-		
-		if( replacing >= 0)
+
+
+        if( replacing >= 0)
 			tabbedPane.setSelectedIndex( replacing);
-		
-	}
-	
-	private synchronized OWLObjectPropertyAssertionAxiom getObjPropAxiom(){
+
+    }
+
+    public void setCaller(EditorRunner r) {
+        caller = r;
+    }
+
+    @Override
+    public void run() {
+        // TODO Auto-generated method stub
+        try {
+            EditorRun frame = this;//new EditorRunner( individualName);
+            frame.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private synchronized OWLObjectPropertyAssertionAxiom getObjPropAxiom(){
 		
 		String individualname = obj_indTxt.getText(); 
 		String propertyName = obj_hasPropTxt.getText();

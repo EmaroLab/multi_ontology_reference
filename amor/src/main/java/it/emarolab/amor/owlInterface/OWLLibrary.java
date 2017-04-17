@@ -1,30 +1,19 @@
 package it.emarolab.amor.owlInterface;
 
+import it.emarolab.amor.owlDebugger.Logger;
+import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
+import it.emarolab.amor.owlDebugger.ReasonerMonitor;
+import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContainer;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLDatatype;
-import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerConfiguration;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
 import org.semanticweb.owlapi.util.SimpleIRIMapper;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
-//import org.semanticweb.owlapi.vocab.PrefixOWLOntologyFormat;
 
-import it.emarolab.amor.owlDebugger.Logger;
-import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
-import it.emarolab.amor.owlDebugger.ReasonerMonitor;
-import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContainer;
+//import org.semanticweb.owlapi.vocab.PrefixOWLOntologyFormat;
 
 /**
  * <div style="text-align:center;"><small>
@@ -144,23 +133,7 @@ public class OWLLibrary {
 
 	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   FIELD SETTERS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 	// those two must be called before doing anything else !!!!!!!!!.
-	/**
-	 * @param iriFilePath the ontology IRI path.
-	 * IRI is supposed to be set before using other methods of this class.
-	 */
-	protected synchronized void setIriFilePath(IRI iriFilePath) {
-		this.iriFilePath = iriFilePath;
-	}
-	/**
-	 * @param iriOntologyPath the semantic IRI path of the ontology.
-	 * semantic IRI is supposed to be set before using other methods of this class.
-	 */
-	protected synchronized void setIriOntologyPath(IRI iriOntologyPath) {
-		this.iriOntologyPath = iriOntologyPath;
-	}
 
-	// [[[[[[[[[[[[[[[[[[[[[[[[   FIELD SETTERS (CLASS INITIALIZERS)   ]]]]]]]]]]]]]]]]]]]]]]]]]]
-	// those methods use tha bove set fields to create and initialise References to an ontology.
 	/**
 	 * Creates a new OWL Ontology Manager and sets it to the relative field (see {@link #getOWLManager()}).<br>
 	 * This method requires that the following values are not {@code null}:
@@ -173,7 +146,7 @@ public class OWLLibrary {
 		if( iriOnto != null){
 			if( iriFile != null){
 				SimpleIRIMapper mapper = new SimpleIRIMapper( iriOnto, iriFile);
-				manager.addIRIMapper( mapper); // load from file
+				manager.getIRIMappers().add(mapper); // load from file
 				this.manager = manager;
 				logger.addDebugString( "Ontology OWL manager created for References: " + this);
 				return;
@@ -182,6 +155,7 @@ public class OWLLibrary {
 		logger.addDebugString( "Cannot create ontology manager for References: " + this, true);
 		this.manager = null;
 	}
+
 	/**
 	 * Creates and sets a new empty ontology in accordance with {@link OWLReferencesInterface#getIriOntologyPath()}.<br>
 	 * It sets the field to {@code null} if the ontology path associated to the parameter is not correct.
@@ -204,6 +178,10 @@ public class OWLLibrary {
 		}
 		this.ontology = null;
 	}
+
+	// [[[[[[[[[[[[[[[[[[[[[[[[   FIELD SETTERS (CLASS INITIALIZERS)   ]]]]]]]]]]]]]]]]]]]]]]]]]]
+	// those methods use tha bove set fields to create and initialise References to an ontology.
+
 	/**
 	 * It loads an ontology from file in accord with the given parameter.<br>
 	 * Ontology IRI path: {@link #getIriOntologyPath()} must not be {@code null} nor badly formatted.
@@ -224,6 +202,7 @@ public class OWLLibrary {
 		}
 		this.ontology = null;
 	}
+
 	/**
 	 * It loads an ontology from WEB in accordance with the given parameter.<br>
 	 * Ontology IRI path: {@link #getIriOntologyPath()} must not be {@code null} nor badly formatted.
@@ -244,6 +223,7 @@ public class OWLLibrary {
 		}
 		this.ontology = null;
 	}
+
 	/**
 	 * Creates and sets the OWLDataFactory.<br>
 	 * It requires that the {@link OWLReferencesInterface#getOWLManager()} is not {@code null}.
@@ -253,6 +233,7 @@ public class OWLLibrary {
 		logger.addDebugString( "Create a OWL Data Factory for References: " + this);
 		this.factory = out;
 	}
+
 	/**
 	 * Creates and sets a prefix manager to be attached to the given ontology references,
 	 * in order to simplify IRI definitions and usage.<br>
@@ -264,20 +245,11 @@ public class OWLLibrary {
 		pm.setDefaultPrefix( this.getIriOntologyPath() + "#");
 		logger.addDebugString( "Create a new prefix manager for References: " + this);
 		this.pm = pm;*/
-		
+
 		this.prefix = this.getIriOntologyPath() + "#";
 		logger.addDebugString( "Create a new prefix manager for References: " + this);
 	}
 
-
-    /**
-     * Set the reasoner that should be correctly initialised.
-     * @param reasoner the instance to set.
-     */
-    protected void setOWLReasoner(OWLReasoner reasoner) {
-        this.reasoner = reasoner;
-    }
-	// methods to create the reasoner from java reflection
 	/**
 	 * It creates and sets a Reasoner instance.
 	 * The type of the reasoner is defined by the reasoner name factory, which could be:
@@ -287,7 +259,7 @@ public class OWLLibrary {
 	 * state only if {@link OWLReferencesInterface#synchronizeReasoner()} is called.
 	 * Otherwise, the reasoner will synchronise itself after every change in the ontology.
 	 * The system will return {@code null} if a java reflection error occurs while instancing the
-	 * class defined by the parameter {@code reasonerFactoryName}. 
+	 * class defined by the parameter {@code reasonerFactoryName}.
 	 * Field {@link #getOWLOntology()} has not to be {@code null}.
 	 * @param reasonerFactoryName full java qualifier of the reasoner factory class to be initialised.
 	 * @param buffering if {@code true} the reasoner buffers changes.
@@ -326,40 +298,45 @@ public class OWLLibrary {
 		logger.addDebugString( "Error on creating Reasoner (" + reasonerFactoryName + ") for the References: " + this , true);
 		this.reasoner = null;
 	}
+
 	/**
 	 * Creates and sets an instance of the Pellet reasoner by calling
 	 * {@link #setOWLReasoner(String, boolean, String)} with input parameter set to:
-	 * {@link #REASONER_QUALIFIER_PELLET}, {@code buffering} and {@code loggingName} respectively. 
+	 * {@link #REASONER_QUALIFIER_PELLET}, {@code buffering} and {@code loggingName} respectively.
 	 * @param buffering if {@code true} the reasoner must be synchronized manually. Else, sync is automatic.
 	 * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
 	 */
 	protected synchronized void setPelletReasoner( boolean buffering, String loggingName){
 		setOWLReasoner( REASONER_QUALIFIER_PELLET, buffering, loggingName);
 	}
+
 	/**
 	 * Creates and sets an instance of the Snorocket reasoner by calling
 	 * {@link #setOWLReasoner(String, boolean, String)} with input parameter set to:
-	 * {@link #REASONER_QUALIFIER_SNOROCKET}, {@code buffering} and {@code loggingName} respectively. 
+	 * {@link #REASONER_QUALIFIER_SNOROCKET}, {@code buffering} and {@code loggingName} respectively.
 	 * @param buffering if {@code true} the reasoner must be synchronized manually. Else, sync is automatic.
      * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
 	 */
 	protected synchronized void setSnorocketReasoner(boolean buffering, String loggingName){
 		setOWLReasoner( REASONER_QUALIFIER_SNOROCKET, buffering, loggingName);
 	}
+	// methods to create the reasoner from java reflection
+
 	/**
 	 * Creates and sets an instance of the Hermit reasoner by calling
 	 * {@link #setOWLReasoner(String, boolean, String)} with input parameter set to:
-	 * {@link #REASONER_QUALIFIER_HERMIT}, {@code buffering} and {@code loggingName} respectively. 
+	 * {@link #REASONER_QUALIFIER_HERMIT}, {@code buffering} and {@code loggingName} respectively.
 	 * @param buffering if {@code true} the reasoner must be synchronized manually. Else, sync is automatic.
      * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
 	 */
 	protected synchronized void setHermitReasoner(boolean buffering, String loggingName){
 		setOWLReasoner( REASONER_QUALIFIER_HERMIT, buffering, loggingName);
 	}
+
 	/**
 	 * Creates and sets an instance of the Fact reasoner by calling
 	 * {@link #setOWLReasoner(String, boolean, String)} with input parameter set to:
-	 * {@link #REASONER_QUALIFIER_FACT}, {@code buffering} and {@code loggingName} respectively. 
+	 * {@link #REASONER_QUALIFIER_FACT}, {@code buffering} and {@code loggingName} respectively.
 	 * @param buffering if {@code true} the reasoner must be synchronized manually. Else, sync is automatic.
      * @param loggingName for debugging. Evocative name given to the {@link ReasonerMonitor} assigned to this reasoner.
 	 */
@@ -367,46 +344,71 @@ public class OWLLibrary {
 		setOWLReasoner( REASONER_QUALIFIER_FACT, buffering, loggingName);
 	}
 
-
-	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   FIELD GETTERS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 	/**
 	 * @return the OWL Ontology Manager associated to this reference instance.
 	 */
 	public synchronized OWLOntologyManager getOWLManager() {
 		return manager;
 	}
+
 	/**
 	 * @return the OWL Data Factory associated to this reference instance.
 	 */
 	public synchronized OWLDataFactory getOWLFactory() {
 		return factory;
 	}
+
 	/**
 	 * @return the OWL Ontology associated to this reference instance.
 	 */
 	public synchronized OWLOntology getOWLOntology() {
 		return ontology;
 	}
+
+
+	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   FIELD GETTERS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
 	//@return the OWL Ontology prefix which depends from the ontology IRI.
 	//This is initialised using OWL API during constructor.
 	public synchronized String getPrefix() {
 		return prefix;
 	}
+
 	public synchronized IRI getPrefixFormat( String name) {
 		return IRI.create( prefix + name);
 	}
+
 	/**
 	 * @return the OWL reasoner.
 	 */
-	public synchronized OWLReasoner getReasoner() {
+	public synchronized OWLReasoner getOWLReasoner() {
 		return reasoner;
 	}
+
+	/**
+	 * Set the reasoner that should be correctly initialised.
+	 *
+	 * @param reasoner the instance to set.
+	 */
+	protected void setOWLReasoner(OWLReasoner reasoner) {
+		this.reasoner = reasoner;
+	}
+
 	/**
 	 * @return the file path (or URL) formatted as an IRI address.
 	 */
 	public synchronized IRI getIriFilePath() {
 		return iriFilePath;
 	}
+
+	/**
+	 * @param iriFilePath the ontology IRI path.
+	 *                    IRI is supposed to be set before using other methods of this class.
+	 */
+	protected synchronized void setIriFilePath(IRI iriFilePath) {
+		this.iriFilePath = iriFilePath;
+	}
+
 	/**
 	 * @return the ontology semantic path formatted as an IRI address.
 	 */
@@ -414,8 +416,17 @@ public class OWLLibrary {
 		return iriOntologyPath;
 	}
 
+	/**
+	 * @param iriOntologyPath the semantic IRI path of the ontology.
+	 *                        semantic IRI is supposed to be set before using other methods of this class.
+	 */
+	protected synchronized void setIriOntologyPath(IRI iriOntologyPath) {
+		this.iriOntologyPath = iriOntologyPath;
+	}
+
 
 	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[   BASIC OWL OBJECT GETTERS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
 	/**
 	 * Returns an Object which represents an ontological class
 	 * with a given name and specific IRI paths. If the entity
@@ -518,9 +529,9 @@ public class OWLLibrary {
 			liter = getOWLFactory().getOWLLiteral( (Boolean) value);
 		else if( value instanceof Float)
 			liter = getOWLFactory().getOWLLiteral( (Float) value);
-		else if( value instanceof Double){
+		else if( value instanceof Double) {
 			Float tmp = ((Double) value).floatValue();
-			liter = getOWLFactory().getOWLLiteral( (Float) tmp);
+			liter = getOWLFactory().getOWLLiteral(tmp);
 		}else if( value instanceof Long)
 			liter = getOWLFactory().getOWLLiteral( String.valueOf( value), getOWLFactory().getOWLDatatype( OWL2Datatype.XSD_LONG.getIRI()));
 		else if( value instanceof OWLLiteral)
@@ -564,7 +575,7 @@ public class OWLLibrary {
 		return "OWLLibrary [getOWLManager()=" + getOWLManager() + ", getOWLFactory()="
 				+ getOWLFactory() + ", getOWLOntology()=" + getOWLOntology()
 				+ ", getPrefix()=" + getPrefix()
-				+ ", getReasoner()=" + getReasoner() + ", getIriFilePath()="
+				+ ", getOWLReasoner()=" + getOWLReasoner() + ", getIriFilePath()="
 				+ getIriFilePath() + ", getIriOntologyPath()="
 				+ getIriOntologyPath() + "]";
 	}
