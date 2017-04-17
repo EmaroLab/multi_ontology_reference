@@ -887,7 +887,7 @@ public class OWLEnquirer {
     }
 
     /**
-     * Return all the inverse object properties of a given property.
+     * Returns all the inverse object properties of a given property.
      *
      * @param propertyName the name of the property from which retrieve its inverses.
      * @return the inverse properties of the given property.
@@ -897,7 +897,7 @@ public class OWLEnquirer {
     }
 
     /**
-     * Return all the inverse object properties of a given property.
+     * Returns all the inverse object properties of a given property.
      *
      * @param property the property from which retrieve its inverses.
      * @return the inverse properties of the given property.
@@ -905,17 +905,26 @@ public class OWLEnquirer {
     public Set<OWLObjectProperty> getInverseProperty(OWLObjectProperty property) {
         final Set<OWLObjectProperty> prInverse = new HashSet<>();
         Stream<OWLInverseObjectPropertiesAxiom> st = ontoRef.getOWLOntology().inverseObjectPropertyAxioms(property);
-        st.forEach(e -> prInverse.add(e.getSecondProperty().asOWLObjectProperty()));
+        st.forEach(e -> addInverseProperty( prInverse, e, property));
 
         if (includesInferences) {
-            Stream<OWLObjectPropertyExpression> a = ontoRef.getOWLReasoner().getInverseObjectProperties(property).entities();
-            a.forEach(e -> prInverse.add(e.asOWLObjectProperty()));
+            Stream<OWLObjectPropertyExpression> reasoned = ontoRef.getOWLReasoner().getInverseObjectProperties(property).entities();
+            reasoned.forEach(e -> prInverse.add(e.asOWLObjectProperty()));
         }
+
+        if (prInverse.isEmpty())
+            prInverse.add( property);
+
         return prInverse;
+    }
+    private void addInverseProperty(Set<OWLObjectProperty> set, OWLInverseObjectPropertiesAxiom e, OWLObjectProperty property){
+        if ( e.getSecondProperty() == null)
+            set.add( property);
+        else set.add( e.getSecondProperty().asOWLObjectProperty());
     }
 
     /**
-     * Return an inverse object property of a given property.
+     * Returns an inverse object property of a given property.
      *
      * @param propertyName the name of the property from which retrieve an inverse.
      * @return an inverse property of the given property.
@@ -925,7 +934,7 @@ public class OWLEnquirer {
     }
 
     /**
-     * Return an inverse object property of a given property.
+     * Returns an inverse object property of a given property.
      *
      * @param property the property from which retrieve an inverse.
      * @return an inverse property of the given property.
@@ -933,6 +942,67 @@ public class OWLEnquirer {
     public OWLObjectProperty getOnlyInverseProperty(OWLObjectProperty property) {
         return ((OWLObjectProperty) ontoRef.getOnlyElement(getInverseProperty(property)));
     }
+
+    /**
+     * Returns only the classes, in which the given individual (by name) is classified,
+     * that are leafs in the class tree.
+     * @param individualName the name of the individual for which find the bottom types.
+     * @return the classes in which the individual in classified that are a bottom type in the class hierarchy.
+     * It returns an empty set if no such a classes are found.
+     */
+    public Set<OWLClass> getBottomType(String individualName){
+        return getBottomType( ontoRef.getOWLIndividual( individualName));
+    }
+    /**
+     * Returns only the classes, in which the given individual is classified,
+     * that are leafs in the class tree.
+     * @param individual the individual for which find the bottom types.
+     * @return the classes in which the individual in classified that are a bottom type in the class hierarchy.
+     * It returns an empty set if no such a classes are found.
+     */
+    public Set<OWLClass> getBottomType(OWLNamedIndividual individual){
+        Set<OWLClass> types = getIndividualClasses(individual);
+        Set<OWLClass> out = new HashSet<>();
+        for ( OWLClass cl : types) {
+            Set<OWLClass> subCl = getSubClassOf(cl);
+            if ( subCl.size() == 1)
+                for ( OWLClass sub : subCl)
+                    if ( sub.isOWLNothing())
+                        out.add( cl);
+        }
+        return out;
+    }
+
+    /**
+     * Returns only one class, in which the given individual (by name) is classified,
+     * that is a leaf in the class tree.
+     * @param individualName the name of the individual for which find a bottom type.
+     * @return a class in which the individual in classified that is a bottom type in the class hierarchy.
+     * It returns {@code null} if no such a classes are found.
+     */
+    public OWLClass getOnlyBottomType(String individualName){
+        return getOnlyBottomType( ontoRef.getOWLIndividual( individualName));
+    }
+
+    /**
+     * Returns only one class, in which the given individual is classified,
+     * that is a leaf in the class tree.
+     * @param individual the individual for which find a bottom type.
+     * @return a class in which the individual in classified that is a bottom type in the class hierarchy.
+     * It returns {@code null} if no such a classes are found.
+     */
+    public OWLClass getOnlyBottomType(OWLNamedIndividual individual){
+        Set<OWLClass> types = getIndividualClasses(individual);
+        for ( OWLClass cl : types) {
+            Set<OWLClass> subCl = getSubClassOf(cl);
+            if ( subCl.size() == 1)
+                for ( OWLClass sub : subCl)
+                    if ( sub.isOWLNothing())
+                        return cl;
+        }
+        return null;
+    }
+
 
     /**
      * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.

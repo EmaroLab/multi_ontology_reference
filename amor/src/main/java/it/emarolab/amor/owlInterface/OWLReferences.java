@@ -66,6 +66,7 @@ public class OWLReferences extends OWLReferencesInterface{
     private Lock mutexSPARQL = new ReentrantLock();
     private Lock mutexClassDefinition = new ReentrantLock();
     private Lock mutexInverseProperty = new ReentrantLock();
+    private Lock mutexBottomType = new ReentrantLock();
     // ##################################   to ontology manipulator !!!!!!!!!!!!!
     // mutex for assure thread safe behaviour
     private Lock mutexReasoner = new ReentrantLock();
@@ -863,6 +864,80 @@ public class OWLReferences extends OWLReferencesInterface{
             }
         }.call();
     }
+
+
+    /**
+     * This methods returns the classes in which the given individual (by name) is classified,
+     * that are leafs in the class hierarchy.
+     * It relies on {@link OWLEnquirer#getBottomType(String)}.
+     * @param individualName the name of the individual to lock for bottom types.
+     * @return all the bottom types of the given individual.
+     * It returns an empty set if such classes are not found.
+     */
+    public Set<OWLClass> getBottomType(String individualName){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexBottomType, mutexSubClass, mutexIndivClasses);
+        return new OWLReferencesCaller<Set<OWLClass>>(mutexes, this) {
+            @Override
+            protected Set<OWLClass> performSynchronisedCall() {
+                return getEnquirer().getBottomType( individualName);
+            }
+        }.call();
+    }
+
+    /**
+     * This methods returns the classes in which the given individual is classified,
+     * that are leafs in the class hierarchy.
+     * It relies on {@link OWLEnquirer#getBottomType(OWLNamedIndividual)}.
+     * @param individual the individual to lock for bottom types.
+     * @return all the bottom types of the given individual.
+     * It returns an empty set if such classes are not found.
+     */
+    public Set<OWLClass> getBottomType(OWLNamedIndividual individual){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexBottomType, mutexSubClass, mutexIndivClasses);
+        return new OWLReferencesCaller<Set<OWLClass>>(mutexes, this) {
+            @Override
+            protected Set<OWLClass> performSynchronisedCall() {
+                return getEnquirer().getBottomType( individual);
+            }
+        }.call();
+    }
+
+    /**
+     * This methods returns a class in which the given individual (by name) is classified,
+     * that is a leaf in the class hierarchy.
+     * It relies on {@link OWLEnquirer#getOnlyBottomType(String)}.
+     * @param individualName the name of the individual to lock for a bottom type.
+     * @return a bottom type of the given individual.
+     * It returns {@code null} if such a class is not found.
+     */
+    public OWLClass getOnlyBottomType(String individualName){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexBottomType, mutexSubClass, mutexIndivClasses);
+        return new OWLReferencesCaller<OWLClass>(mutexes, this) {
+            @Override
+            protected OWLClass performSynchronisedCall() {
+                return getEnquirer().getOnlyBottomType( individualName);
+            }
+        }.call();
+    }
+
+    /**
+     * This methods returns a class in which the given individual is classified,
+     * that is a leaf in the class hierarchy.
+     * It relies on {@link OWLEnquirer#getOnlyBottomType(OWLNamedIndividual)}.
+     * @param individual  the individual to lock for a bottom type.
+     * @return a bottom type of the given individual.
+     * It returns {@code null} if such a class is not found.
+     */
+    public OWLClass getOnlyBottomType(OWLNamedIndividual individual){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexBottomType, mutexSubClass, mutexIndivClasses);
+        return new OWLReferencesCaller<OWLClass>(mutexes, this) {
+            @Override
+            protected OWLClass performSynchronisedCall() {
+                return getEnquirer().getOnlyBottomType( individual);
+            }
+        }.call();
+    }
+
 
     /**
      * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
@@ -2825,6 +2900,23 @@ public class OWLReferences extends OWLReferencesInterface{
         List<Lock> mutexes = new ArrayList<>();
         mutexes.add(mutex1);
         mutexes.add(mutex2);
+        return mutexes;
+    }
+
+    private List<Lock> getMutexes(Lock mutex1, Lock mutex2, Lock mutex3) {
+        List<Lock> mutexes = new ArrayList<>();
+        mutexes.add(mutex1);
+        mutexes.add(mutex2);
+        mutexes.add(mutex3);
+        return mutexes;
+    }
+
+    private List<Lock> getMutexes(Lock mutex1, Lock mutex2, Lock mutex3, Lock mutex4) {
+        List<Lock> mutexes = new ArrayList<>();
+        mutexes.add(mutex1);
+        mutexes.add(mutex2);
+        mutexes.add(mutex3);
+        mutexes.add(mutex4);
         return mutexes;
     }
 
