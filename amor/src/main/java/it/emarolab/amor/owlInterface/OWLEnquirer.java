@@ -888,6 +888,7 @@ public class OWLEnquirer {
 
     /**
      * Returns all the inverse object properties of a given property.
+     * If no inverse property are fount it returns the given property.
      *
      * @param propertyName the name of the property from which retrieve its inverses.
      * @return the inverse properties of the given property.
@@ -898,6 +899,7 @@ public class OWLEnquirer {
 
     /**
      * Returns all the inverse object properties of a given property.
+     * If no inverse property are fount it returns the given property.
      *
      * @param property the property from which retrieve its inverses.
      * @return the inverse properties of the given property.
@@ -905,26 +907,26 @@ public class OWLEnquirer {
     public Set<OWLObjectProperty> getInverseProperty(OWLObjectProperty property) {
         final Set<OWLObjectProperty> prInverse = new HashSet<>();
         Stream<OWLInverseObjectPropertiesAxiom> st = ontoRef.getOWLOntology().inverseObjectPropertyAxioms(property);
-        st.forEach(e -> addInverseProperty( prInverse, e, property));
+        st.forEach((e) -> {
+            if ( e.getSecondProperty().equals( property))
+                prInverse.add( e.getFirstProperty().asOWLObjectProperty());
+            else prInverse.add( e.getSecondProperty().asOWLObjectProperty());
+        });
 
         if (includesInferences) {
             Stream<OWLObjectPropertyExpression> reasoned = ontoRef.getOWLReasoner().getInverseObjectProperties(property).entities();
             reasoned.forEach(e -> prInverse.add(e.asOWLObjectProperty()));
         }
 
-        if (prInverse.isEmpty())
+        if (prInverse.isEmpty()) // if no any inverse property return the given property
             prInverse.add( property);
 
         return prInverse;
     }
-    private void addInverseProperty(Set<OWLObjectProperty> set, OWLInverseObjectPropertiesAxiom e, OWLObjectProperty property){
-        if ( e.getSecondProperty() == null)
-            set.add( property);
-        else set.add( e.getSecondProperty().asOWLObjectProperty());
-    }
 
     /**
      * Returns an inverse object property of a given property.
+     * If no inverse property are fount it returns the given property.
      *
      * @param propertyName the name of the property from which retrieve an inverse.
      * @return an inverse property of the given property.
@@ -935,6 +937,7 @@ public class OWLEnquirer {
 
     /**
      * Returns an inverse object property of a given property.
+     * If no inverse property are fount it returns the given property.
      *
      * @param property the property from which retrieve an inverse.
      * @return an inverse property of the given property.
