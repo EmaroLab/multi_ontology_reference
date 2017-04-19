@@ -30,7 +30,7 @@ repositories {
 
 dependencies {
 
-    //AMOR
+    //compile group: 'org.openrdf.sesame', name: 'sesame-model', version: '2.7.0'
 
     compile group: 'com.github.galigator.openllet', name: 'openllet-owlapi', version: '2.5.1'
     compile group: 'net.sourceforge.owlapi', name: 'owlapi-distribution', version: '5.0.2'

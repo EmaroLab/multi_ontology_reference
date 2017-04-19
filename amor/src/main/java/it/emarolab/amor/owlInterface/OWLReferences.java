@@ -20,11 +20,6 @@ import java.util.concurrent.locks.ReentrantLock;
 // TODO : make an abstract class interface to be implemented
 
 /**
- *     This class is the top layer, multi thread safe, interface for:
- *     loading, opening or create and initialise an ontology (see {@link OWLLibrary} and {@link OWLReferencesInterface}).
- *     As well as mainpulating the structure (see {@link OWLManipulator}) and quering the resoner.
- *     (see {@link OWLManipulator}).
- *
  * <div style="text-align:center;"><small>
  * <b>Project</b>:    aMOR <br>
  * <b>File</b>:       it.emarolab.amor.owlInterface.OWLReferences <br>
@@ -33,6 +28,13 @@ import java.util.concurrent.locks.ReentrantLock;
  * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
  * <b>date</b>:       Feb 10, 2016 <br>
  * </small></div>
+ *
+ * <p>
+ *     This class is the top layer, multi thread safe, interface for:
+ *     loading, opening or create and initialise an ontology (see {@link OWLLibrary} and {@link OWLReferencesInterface}).
+ *     As well as mainpulating the structure (see {@link OWLManipulator}) and quering the resoner.
+ *     (see {@link OWLManipulator}).
+ * </p>
  *
  * @version 2.1
  */
@@ -45,64 +47,65 @@ public class OWLReferences extends OWLReferencesInterface{
 	private Logger logger = new Logger( this, LoggerFlag.getLogOntologyReference());
 
 	//  [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ SUPER CLASS CONSTRUCTORS ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-	// ##################################   to ontology enquirer !!!!!!!!!!!!!
-	// mutex for assure thread safe behaviour
-	private Lock mutexIndividualB2Class = new ReentrantLock();
-	private Lock mutexDataPropB2Ind = new ReentrantLock();
+    // ##################################   to ontology enquirer !!!!!!!!!!!!!
+    // mutex for assure thread safe behaviour
+    private Lock mutexIndividualB2Class = new ReentrantLock();
+    private Lock mutexDataPropB2Ind = new ReentrantLock();
 
-	// [[[[[[[[[[[[[[[[[[[[[[   METHODS TO QUERY THE ONTOLOGY   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-	private Lock mutexObjPropB2Ind = new ReentrantLock();
-	private Lock mutexSubClass = new ReentrantLock();
-	private Lock mutexSuperClass = new ReentrantLock();
-	private Lock mutexAllObjPropB2Ind = new ReentrantLock();
-	private Lock mutexAllDataPropB2Ind = new ReentrantLock();
-	private Lock mutexIndivClasses = new ReentrantLock();
-	private Lock mutexSubDataProp = new ReentrantLock();
-	private Lock mutexSubObjProp = new ReentrantLock();
-	private Lock mutexSuperDataProp = new ReentrantLock();
-	private Lock mutexSuperObjProp = new ReentrantLock();
-	private Lock mutexSPARQL = new ReentrantLock();
-	private Lock mutexClassDefinition = new ReentrantLock();
-	// ##################################   to ontology manipulator !!!!!!!!!!!!!
-	// mutex for assure thread safe behaviour
-	private Lock mutexReasoner = new ReentrantLock();
-	private Lock mutexAddObjPropB2Ind = new ReentrantLock();
-	private Lock mutexAddDataPropB2Ind = new ReentrantLock();
-	private Lock mutexAddIndB2Class = new ReentrantLock();
-	private Lock mutexAddInd = new ReentrantLock();
-	private Lock mutexAddClass = new ReentrantLock();
-	private Lock mutexAddSubClass = new ReentrantLock();
-	private Lock mutexAddSubDataProperty = new ReentrantLock();
-	private Lock mutexAddSubObjectProperty = new ReentrantLock();
-	private Lock mutexAddRemovingClassDefinition = new ReentrantLock();
-	private Lock mutexAddCardinalityData = new ReentrantLock();
-	private Lock mutexConvertEquivalentClass = new ReentrantLock();
-	private Lock mutexRemoveClass = new ReentrantLock();
-	private Lock mutexRemoveSubClass = new ReentrantLock();
-	private Lock mutexRemoveSubDataProperty = new ReentrantLock();
-	private Lock mutexRemoveSubObjectProperty = new ReentrantLock();
-	private Lock mutexRemoveObjPropB2Ind = new ReentrantLock();
-	private Lock mutexRemoveDataPropB2Ind = new ReentrantLock();
-	private Lock mutexRemoveIndB2Class = new ReentrantLock();
-	private Lock mutexRemoveInd = new ReentrantLock();
-	private Lock mutexReplaceDataProp = new ReentrantLock();
-	private Lock mutexRename = new ReentrantLock();
-	private Lock mutexAddDisjointedInd = new ReentrantLock();
-	private Lock mutexRemoveDisjointedInd = new ReentrantLock();
-	private Lock mutexAddDisjointedCls = new ReentrantLock();
-	private Lock mutexRemoveDisjointedCls = new ReentrantLock();
+    // [[[[[[[[[[[[[[[[[[[[[[   METHODS TO QUERY THE ONTOLOGY   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+    private Lock mutexObjPropB2Ind = new ReentrantLock();
+    private Lock mutexSubClass = new ReentrantLock();
+    private Lock mutexSuperClass = new ReentrantLock();
+    private Lock mutexAllObjPropB2Ind = new ReentrantLock();
+    private Lock mutexAllDataPropB2Ind = new ReentrantLock();
+    private Lock mutexIndivClasses = new ReentrantLock();
+    private Lock mutexSubDataProp = new ReentrantLock();
+    private Lock mutexSubObjProp = new ReentrantLock();
+    private Lock mutexSuperDataProp = new ReentrantLock();
+    private Lock mutexSuperObjProp = new ReentrantLock();
+    private Lock mutexSPARQL = new ReentrantLock();
+    private Lock mutexClassDefinition = new ReentrantLock();
+    private Lock mutexInverseProperty = new ReentrantLock();
+    // ##################################   to ontology manipulator !!!!!!!!!!!!!
+    // mutex for assure thread safe behaviour
+    private Lock mutexReasoner = new ReentrantLock();
+    private Lock mutexAddObjPropB2Ind = new ReentrantLock();
+    private Lock mutexAddDataPropB2Ind = new ReentrantLock();
+    private Lock mutexAddIndB2Class = new ReentrantLock();
+    private Lock mutexAddInd = new ReentrantLock();
+    private Lock mutexAddClass = new ReentrantLock();
+    private Lock mutexAddSubClass = new ReentrantLock();
+    private Lock mutexAddSubDataProperty = new ReentrantLock();
+    private Lock mutexAddSubObjectProperty = new ReentrantLock();
+    private Lock mutexAddRemovingClassDefinition = new ReentrantLock();
+    private Lock mutexAddCardinalityData = new ReentrantLock();
+    private Lock mutexConvertEquivalentClass = new ReentrantLock();
+    private Lock mutexRemoveClass = new ReentrantLock();
+    private Lock mutexRemoveSubClass = new ReentrantLock();
+    private Lock mutexRemoveSubDataProperty = new ReentrantLock();
+    private Lock mutexRemoveSubObjectProperty = new ReentrantLock();
+    private Lock mutexRemoveObjPropB2Ind = new ReentrantLock();
+    private Lock mutexRemoveDataPropB2Ind = new ReentrantLock();
+    private Lock mutexRemoveIndB2Class = new ReentrantLock();
+    private Lock mutexRemoveInd = new ReentrantLock();
+    private Lock mutexReplaceDataProp = new ReentrantLock();
+    private Lock mutexRename = new ReentrantLock();
+    private Lock mutexAddDisjointedInd = new ReentrantLock();
+    private Lock mutexRemoveDisjointedInd = new ReentrantLock();
+    private Lock mutexAddDisjointedCls = new ReentrantLock();
+    private Lock mutexRemoveDisjointedCls = new ReentrantLock();
 
 	/**
 	 * This constructor just calls the super class constructor: {@link OWLReferencesInterface#OWLReferencesInterface(String, String, String, Boolean, Integer)}
 	 * @param referenceName the unique identifier of this ontology references. This is the key with which this instance
 	 * is stored in the system map {@link OWLReferencesContainer#allReferences}
 	 * @param filePath the file path (or URL) to the ontology.
-	 * @param ontologyPath the IRI path of the ontology.
-	 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
+     * @param ontologyPath the IRI path of the ontology.
+     * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
 	 * {@code false} if the reasoner should evaluate all the changes of the ontology only if the method {@link #synchronizeReasoner()} gets called.
 	 * @param command specifying if the ontology should be created, loaded from file or from web. Possible value of {@code commands} are:
-	 * {@link OWLReferencesContainer#COMMAND_CREATE}, {@link OWLReferencesContainer#COMMAND_LOAD_FILE} or
-	 * {@link OWLReferencesContainer#COMMAND_LOAD_WEB}.
+     * {@link OWLReferencesContainer#COMMAND_CREATE}, {@link OWLReferencesContainer#COMMAND_LOAD_FILE} or
+     * {@link OWLReferencesContainer#COMMAND_LOAD_WEB}.
 	 */
 	protected OWLReferences(String referenceName, String filePath, String ontologyPath, Boolean bufferingReasoner, Integer command) {
 		super(referenceName, filePath, ontologyPath, bufferingReasoner, command);
@@ -113,24 +116,24 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * is stored in the system map {@link OWLReferencesContainer#allReferences}
 	 * @param filePath the file path (or URL) to the ontology.
 	 * @param ontologyPath the IRI path of the ontology.
-	 * @param reasonerFactory the reasoner factory qualifier used to instance the reasoner assigned to the ontology refereed by this class.
-	 * If this parameter is {@code null}, default reasoner value {@link #REASONER_DEFAULT} is used.
+     * @param reasonerFactory the reasoner factory qualifier used to instance the reasoner assigned to the ontology refereed by this class.
+     * If this parameter is {@code null}, default reasoner value {@link #REASONER_DEFAULT} is used.
 	 * The values of this parameter have to be in the range: [{@link OWLLibrary#REASONER_QUALIFIER_PELLET},
-	 * {@link OWLLibrary#REASONER_QUALIFIER_HERMIT}, {@link OWLLibrary#REASONER_QUALIFIER_SNOROCKET} or {@link OWLLibrary#REASONER_QUALIFIER_FACT}].
-	 * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
+     * {@link OWLLibrary#REASONER_QUALIFIER_HERMIT}, {@link OWLLibrary#REASONER_QUALIFIER_SNOROCKET} or {@link OWLLibrary#REASONER_QUALIFIER_FACT}].
+     * @param bufferingReasoner {@code true} if the reasoner have to evaluate changes to the ontology as soon as their have been performed.
 	 * {@code false} if the reasoner should evaluate all the changes of the ontology only if the method {@link #synchronizeReasoner()} gets called.
 	 * @param command specifying if the ontology should be created, loaded from file or from web. Possible value of {@code commands} are:
-	 * {@link OWLReferencesContainer#COMMAND_CREATE}, {@link OWLReferencesContainer#COMMAND_LOAD_FILE} or
-	 * {@link OWLReferencesContainer#COMMAND_LOAD_WEB}.
+     * {@link OWLReferencesContainer#COMMAND_CREATE}, {@link OWLReferencesContainer#COMMAND_LOAD_FILE} or
+     * {@link OWLReferencesContainer#COMMAND_LOAD_WEB}.
 	 */
 	protected OWLReferences(String referenceName, String filePath, String ontologyPath, String reasonerFactory, Boolean bufferingReasoner, Integer command) {
 		super(referenceName, filePath, ontologyPath, reasonerFactory, bufferingReasoner, command);
 	}
 	
 	/**
-	 * This method searches for all the individuals in the root class {@link OWLDataFactory#getOWLThing()}.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for all the individuals in the root class {@link OWLDataFactory#getOWLThing()}.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getIndividualB2Thing()}
 	 * @return the set of all the individuals into the root ontology class.
 	 */
@@ -145,9 +148,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for one individual in the root class {@link OWLDataFactory#getOWLThing()}.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for one individual in the root class {@link OWLDataFactory#getOWLThing()}.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getOnlyIndividualB2Thing()}
 	 * @return one individual into the root ontology class.
 	 */
@@ -162,9 +165,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 	
 	/**
-	 * This method searches for individuals in a specified class.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for individuals in a specified class.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getIndividualB2Class(String)}
 	 * @param className the name of the class from which to retrieve the individuals
 	 * @return the set of individuals into the given class.
@@ -180,15 +183,15 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for individuals in a specified class.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for individuals in a specified class.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getIndividualB2Class(OWLClass)}
 	 * @param ontoClass the class from which to retrieve the individuals
 	 * @return the set of individuals into the given class.
 	 */
-	public Set<OWLNamedIndividual> getIndividualB2Class(OWLClass ontoClass) {
-		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
+    public Set<OWLNamedIndividual> getIndividualB2Class(OWLClass ontoClass) {
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
 		return new OWLReferencesCaller< Set< OWLNamedIndividual>>(  mutexes, this) {
 			@Override
 			protected Set< OWLNamedIndividual> performSynchronisedCall() {
@@ -197,16 +200,16 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 
-	/**
-	 * This method searches for individuals in a specified class.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+    /**
+     * This method searches for individuals in a specified class.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getOnlyIndividualB2Class(String)};
 	 * @param className the name of the class from which to retrieve the individuals
 	 * @return an individuals into the given class.
 	 */
-	public OWLNamedIndividual getOnlyIndividualB2Class(String className) {
-		List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
+    public OWLNamedIndividual getOnlyIndividualB2Class(String className) {
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexIndividualB2Class);
 		return new OWLReferencesCaller< OWLNamedIndividual>(  mutexes, this) {
 			@Override
 			protected OWLNamedIndividual performSynchronisedCall() {
@@ -216,9 +219,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for individuals in a specified class.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for individuals in a specified class.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getOnlyIndividualB2Class(OWLClass)};
 	 * @param ontoClass the class from which to retrieve the individuals
 	 * @return an individuals into the given class.
@@ -234,9 +237,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for the classes in which an individuals is belonging to.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for the classes in which an individuals is belonging to.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getIndividualClasses(OWLNamedIndividual)};
 	 * @param individual the individual from which query its types.
 	 * @return the set of classes in which the given individual is belonging to.
@@ -252,9 +255,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for the classes in which an individuals is belonging to.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for the classes in which an individuals is belonging to.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getIndividualClasses( String)};
 	 * @param individual the individual from which query its types.
 	 * @return the set of classes in which the given individual is belonging to.
@@ -270,9 +273,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for a class in which an individuals is belonging to.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for a class in which an individuals is belonging to.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getOnlyIndividualClasses(OWLNamedIndividual)};
 	 * @param individual the individual from which query its types.
 	 * @return the set of classes in which the given individual is belonging to.
@@ -288,9 +291,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for a class in which an individuals is belonging to.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for a class in which an individuals is belonging to.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getOnlyIndividualClasses( String)};
 	 * @param individual the individual from which query its types.
 	 * @return the set of classes in which the given individual is belonging to.
@@ -306,9 +309,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for the data properties assigned to a specified individual.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for the data properties assigned to a specified individual.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getDataPropertyB2Individual(String, String)};
 	 * @param individualName the name of the individual from which query its types.
 	 * @param propertyName the name of the property to search in the individual properties.
@@ -325,9 +328,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for the data properties assigned to a specified individual.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for the data properties assigned to a specified individual.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getDataPropertyB2Individual(OWLNamedIndividual, OWLDataProperty)};
 	 * @param individual the individual from which query its types.
 	 * @param property the property to search in the individual properties.
@@ -344,9 +347,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for a data property assigned to a specified individual.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for a data property assigned to a specified individual.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getOnlyDataPropertyB2Individual(String, String)};
 	 * @param individualName the name of the individual from which query its types.
 	 * @param propertyName the name of the property to search in the individual properties.
@@ -363,9 +366,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for a data property assigned to a specified individual.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for a data property assigned to a specified individual.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getOnlyDataPropertyB2Individual(OWLNamedIndividual, OWLDataProperty)};
 	 * @param individual the individual from which query its types.
 	 * @param property the property to search in the individual properties.
@@ -382,9 +385,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for the all the data properties assigned to a specified individual.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for the all the data properties assigned to a specified individual.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getDataPropertyB2Individual(OWLNamedIndividual)}
 	 * @param individual the individual from which query its data properties.
 	 * @return the set of a container of all the data properties with relative values.
@@ -400,9 +403,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for the all the data properties assigned to a specified individual.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for the all the data properties assigned to a specified individual.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getDataPropertyB2Individual(String)}
 	 * @param individualName the name of the individual from which query its data properties.
 	 * @return the set of a container of all the data properties with relative values.
@@ -418,9 +421,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for the object properties assigned to a specified individual.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for the object properties assigned to a specified individual.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getObjectPropertyB2Individual(String, String)};
 	 * @param individualName the name of the individual from which query its types.
 	 * @param propertyName the name of the property to search in the individual properties.
@@ -437,9 +440,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for the object properties assigned to a specified individual.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for the object properties assigned to a specified individual.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getObjectPropertyB2Individual(OWLNamedIndividual, OWLObjectProperty)};
 	 * @param individual the individual from which query its types.
 	 * @param property the property to search in the individual properties.
@@ -455,16 +458,10 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 
-
-	// [[[[[[[[[[[[[[[[[[[[   METHODS TO MANIPULATE THE ONTOLOGY   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-	// it uses default ontology manipulator (not buffering)!!!!
-	// you can change this by calling: "this.setManipulatorChangeBuffering( true);"
-	// but then remember to call "this.applyManipulatorChanges();" to actually perform the ontology changes
-
 	/**
-	 * This method searches for the object properties assigned to a specified individual.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for the object properties assigned to a specified individual.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getOnlyObjectPropertyB2Individual(String, String)};
 	 * @param individualName the name of the individual from which query its types.
 	 * @param propertyName the name of the property to search in the individual properties.
@@ -481,9 +478,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for the object properties assigned to a specified individual.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for the object properties assigned to a specified individual.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getOnlyObjectPropertyB2Individual(OWLNamedIndividual, OWLObjectProperty)};
 	 * @param individual the individual from which query its types.
 	 * @param property the property to search in the individual properties.
@@ -500,9 +497,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for the all the object properties assigned to a specified individual.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for the all the object properties assigned to a specified individual.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getObjectPropertyB2Individual(OWLNamedIndividual)}
 	 * @param individual the individual from which query its object properties.
 	 * @return the set of a container of all the object properties with relative values.
@@ -518,9 +515,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for the all the object properties assigned to a specified individual.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for the all the object properties assigned to a specified individual.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getObjectPropertyB2Individual(String)}
 	 * @param individualName the name of the individual from which query its object properties.
 	 * @return the set of a container of all the object properties with relative values.
@@ -535,10 +532,16 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 
+
+    // [[[[[[[[[[[[[[[[[[[[   METHODS TO MANIPULATE THE ONTOLOGY   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+    // it uses default ontology manipulator (not buffering)!!!!
+    // you can change this by calling: "this.setManipulatorChangeBuffering( true);"
+    // but then remember to call "this.applyManipulatorChanges();" to actually perform the ontology changes
+
 	/**
-	 * This method searches for the sub data properties of a specified property.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for the sub data properties of a specified property.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getSubDataPropertyOf(String)};
 	 * @param propName the name of the data property from which to retrieve its sub-properties.
 	 * @return the set of all the data properties that are sub-properties of the specified parameter.
@@ -553,10 +556,10 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 
-	/**
-	 * This method searches for the sub data properties of a specified property.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+    /**
+     * This method searches for the sub data properties of a specified property.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getSubDataPropertyOf(OWLDataProperty)};
 	 * @param prop the data property from which to retrieve its sub-properties.
 	 * @return the set of all the data properties that are sub-properties of the specified parameter.
@@ -571,9 +574,9 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 
-	/** This method searches for the super data properties of a specified property.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+    /** This method searches for the super data properties of a specified property.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getSuperDataPropertyOf(String)};
 	 * @param propName the name of the data property from which to retrieve its super-properties.
 	 * @return the set of all the data properties that are super-properties of the specified parameter.
@@ -588,10 +591,10 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 
-	/**
-	 * This method searches for the super data properties of a specified property.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+    /**
+     * This method searches for the super data properties of a specified property.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getSuperDataPropertyOf(OWLDataProperty)};
 	 * @param prop the data property from which to retrieve its super-properties.
 	 * @return the set of all the data properties that are super-properties of the specified parameter.
@@ -606,10 +609,10 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 
-	/**
-	 * This method searches for the sub object properties of a specified property.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+    /**
+     * This method searches for the sub object properties of a specified property.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getSubObjectPropertyOf(String)};
 	 * @param propName the name of the data property from which to retrieve its sub-properties.
 	 * @return the set of all the object properties that are sub-properties of the specified parameter.
@@ -624,10 +627,10 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 
-	/**
-	 * This method searches for the sub object properties of a specified property.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+    /**
+     * This method searches for the sub object properties of a specified property.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getSubObjectPropertyOf(OWLObjectProperty)};
 	 * @param prop the data property from which to retrieve its sub-properties.
 	 * @return the set of all the object properties that are sub-properties of the specified parameter.
@@ -640,11 +643,11 @@ public class OWLReferences extends OWLReferencesInterface{
 				return getEnquirer().getSubObjectPropertyOf( prop);
 			}
 		}.call();
-	}
+    }
 
-	/** This method searches for the super object properties of a specified property.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+    /** This method searches for the super object properties of a specified property.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getSuperObjectPropertyOf(String)};
 	 * @param propName the name of the data property from which to retrieve its super-properties.
 	 * @return the set of all the object properties that are super-properties of the specified parameter.
@@ -659,10 +662,10 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 
-	/**
-	 * This method searches for the super object properties of a specified property.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+    /**
+     * This method searches for the super object properties of a specified property.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getSuperObjectPropertyOf(OWLObjectProperty)};
 	 * @param prop the data property from which to retrieve its super-properties.
 	 * @return the set of all the object properties that are super-properties of the specified parameter.
@@ -675,12 +678,12 @@ public class OWLReferences extends OWLReferencesInterface{
 				return getEnquirer().getSuperObjectPropertyOf( prop);
 			}
 		}.call();
-	}
+    }
 
 	/**
-	 * This method searches for the sub classes of a specified class.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for the sub classes of a specified class.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getSubClassOf(String)};
 	 * @param className the name of the class from which to retrieve its sub-classes.
 	 * @return the set of all the classes that are sub-classes of the specified parameter.
@@ -695,10 +698,10 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 
-	/**
-	 * This method searches for the sub classes of a specified class.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+    /**
+     * This method searches for the sub classes of a specified class.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getSubClassOf(OWLClass)};
 	 * @param cl the class from which to retrieve its sub-classes.
 	 * @return the set of all the classes that are sub-classes of the specified parameter.
@@ -714,9 +717,9 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
 	/**
-	 * This method searches for the super classes of a specified class.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+     * This method searches for the super classes of a specified class.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getSuperClassOf(String)};
 	 * @param className the name of the class from which to retrieve its super-classes.
 	 * @return the set of all the classes that are super-classes of the specified parameter.
@@ -731,10 +734,10 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 
-	/**
-	 * This method searches for the super classes of a specified class.
-	 * It looks for defined semantic entities as well as for inferred
-	 * axioms (given by the reasoner). In order to do so it calls:
+    /**
+     * This method searches for the super classes of a specified class.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
 	 * {@link OWLEnquirer#getSuperClassOf(OWLClass)};
 	 * @param cl the class from which to retrieve its super-classes.
 	 * @return the set of all the classes that are super-classes of the specified parameter.
@@ -767,7 +770,7 @@ public class OWLReferences extends OWLReferencesInterface{
         }.call();
     }
 
-	/**
+    /**
      * Returns the set of restrictions of the given class it terms
      * of: &forall; and &exist; quantifier, as well as: minimal, exact and maximal cardinality;
      * with respect to data and object properties.
@@ -781,6 +784,82 @@ public class OWLReferences extends OWLReferencesInterface{
             @Override
             protected Set<OWLEnquirer.ClassRestriction> performSynchronisedCall() {
                 return getEnquirer().getClassRestrictions( className);
+            }
+        }.call();
+    }
+
+    /**
+     * This method searches for the inverse properties of the specified property by name.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
+     * {@link OWLEnquirer#getInverseProperty(String)};
+     *
+     * @param propertyName the name of the object property from which to retrieve all its inverse properties.
+     * @return the set of all the inverse object properties of the given property.
+     */
+    public Set<OWLObjectProperty> getInverseProperty(String propertyName) {
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexInverseProperty);
+        return new OWLReferencesCaller<Set<OWLObjectProperty>>(mutexes, this) {
+            @Override
+            protected Set<OWLObjectProperty> performSynchronisedCall() {
+                return getEnquirer().getInverseProperty(propertyName);
+            }
+        }.call();
+    }
+
+    /**
+     * This method searches for the inverse properties of the specified property.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
+     * {@link OWLEnquirer#getInverseProperty(OWLObjectProperty)} )};
+     *
+     * @param property the object property from which to retrieve all its inverse properties.
+     * @return the set of all the inverse object properties of the given property.
+     */
+    public Set<OWLObjectProperty> getInverseProperty(OWLObjectProperty property) {
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexInverseProperty);
+        return new OWLReferencesCaller<Set<OWLObjectProperty>>(mutexes, this) {
+            @Override
+            protected Set<OWLObjectProperty> performSynchronisedCall() {
+                return getEnquirer().getInverseProperty(property);
+            }
+        }.call();
+    }
+
+    /**
+     * This method searches for an inverse property of the specified property by name.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
+     * {@link OWLEnquirer#getOnlyInverseProperty(String)};
+     *
+     * @param propertyName the name of the object property from which to retrieve one of its inverse properties.
+     * @return an inverse object properties of the given property.
+     */
+    public OWLObjectProperty getOnlyInverseProperty(String propertyName) {
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexInverseProperty);
+        return new OWLReferencesCaller<OWLObjectProperty>(mutexes, this) {
+            @Override
+            protected OWLObjectProperty performSynchronisedCall() {
+                return getEnquirer().getOnlyInverseProperty(propertyName);
+            }
+        }.call();
+    }
+
+    /**
+     * This method searches for an inverse property of the specified property.
+     * It looks for defined semantic entities as well as for inferred
+     * axioms (given by the reasoner). In order to do so it calls:
+     * {@link OWLEnquirer#getOnlyInverseProperty(OWLObjectProperty)};
+     *
+     * @param property the object property from which to retrieve one of its inverse properties.
+     * @return an inverse object properties of the given property.
+     */
+    public OWLObjectProperty getOnlyInverseProperty(OWLObjectProperty property) {
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexInverseProperty);
+        return new OWLReferencesCaller<OWLObjectProperty>(mutexes, this) {
+            @Override
+            protected OWLObjectProperty performSynchronisedCall() {
+                return getEnquirer().getOnlyInverseProperty(property);
             }
         }.call();
     }
@@ -803,7 +882,7 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 
-	/**
+    /**
      * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
      * Works only with the Pellet reasoner.
      * @param query a string defining the query in SPARQL query syntax.
@@ -814,12 +893,12 @@ public class OWLReferences extends OWLReferencesInterface{
 		return new OWLReferencesCaller< List< QuerySolution>>(  mutexes, this) {
 			@Override
 			protected List< QuerySolution> performSynchronisedCall() {
-				return getEnquirer().sparql( query);
+				return getEnquirer().sparql(query);
 			}
 		}.call();
 	}
 
-	/**
+    /**
      * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
      * Works only with the Pellet reasoner. {@code timeOut} parameter sets the query timeout, no timeout is set if
      * {@code timeOut &lt;= 0}. Once timeout is reached, all solutions found up to that point are returned.
@@ -839,7 +918,7 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 
-	/**
+    /**
      * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
      * Works only with the Pellet reasoner.
      * @param prefix a string defining the query prefix field in SPARQL query syntax.
@@ -875,7 +954,7 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 
-	/**
+    /**
      * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
 	 * This call do not apply any time out.
      * Used to share the results with other code and processes.
@@ -887,12 +966,12 @@ public class OWLReferences extends OWLReferencesInterface{
 		return new OWLReferencesCaller< List< Map< String, String>>>(  mutexes, this) {
 			@Override
 			protected List< Map< String, String>> performSynchronisedCall() {
-				return getEnquirer().sparqlMsg( query);
+				return getEnquirer().sparqlMsg(query);
 			}
 		}.call();
 	}
 
-	/**
+    /**
      * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
      * Used to share the results with other code and processes. {@code timeOut} parameter sets the query timeout,
      * no timeout is set if {@code timeOut &lt;= 0}. Once timeout is reached, all solutions found up to that point are returned.
@@ -912,7 +991,7 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 
-	/**
+    /**
      * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
      * Used to share the results with other code and processes.
      * @param prefix a string defining the query prefix field in SPARQL query syntax.
@@ -2724,30 +2803,30 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * Otherwise it just call {@link #saveOntology(String)}
 	 * @param filePath directory in which save the ontology.
 	 */
-	public synchronized void saveOntology( boolean exportInf, String filePath) {
-		OWLReferences ontoRef = this;
-		try {
-			if( exportInf)
-				ontoRef = InferredAxiomExporter.exportOntology( ontoRef);
-			ontoRef.saveOntology( filePath);
-		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
-			this.logInconsistency();
-		}
-	}
+    public synchronized void saveOntology(boolean exportInf, String filePath) {
+        OWLReferences ontoRef = this;
+        try {
+            if( exportInf)
+                ontoRef = InferredAxiomExporter.exportOntology( ontoRef);
+            ontoRef.saveOntology( filePath);
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            this.logInconsistency();
+        }
+    }
 
-	// method to easy get object to initialise OWLReferencesCall
-	private List<Lock> getMutexes(Lock mutex) {
-		List<Lock> mutexes = new ArrayList<>();
-		mutexes.add(mutex);
-		return mutexes;
-	}
+    // method to easy get object to initialise OWLReferencesCall
+    private List<Lock> getMutexes(Lock mutex) {
+        List<Lock> mutexes = new ArrayList<>();
+        mutexes.add(mutex);
+        return mutexes;
+    }
 
-	private List<Lock> getMutexes(Lock mutex1, Lock mutex2) {
-		List<Lock> mutexes = new ArrayList<>();
-		mutexes.add(mutex1);
-		mutexes.add(mutex2);
-		return mutexes;
-	}
+    private List<Lock> getMutexes(Lock mutex1, Lock mutex2) {
+        List<Lock> mutexes = new ArrayList<>();
+        mutexes.add(mutex1);
+        mutexes.add(mutex2);
+        return mutexes;
+    }
 
 	// [[[[[[[[[[[[[[[[[[[[[[              INTERNAL CLASS               ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 	// use to manage logging and mutex for all the call to the OWLManipulator and OWLEnquirer
@@ -2799,7 +2878,7 @@ public class OWLReferences extends OWLReferencesInterface{
 			setWorkInitialTime();
 			T out = performSynchronisedCall();
 			loggLockTime( getSynchronisatedInitialTime(), getWorkInitialTime());
-			return out;
+            return out;
 		}
 		protected void unlockMutex(){
 			for( int i = getMutexes().size() - 1; i >= 0; i--)
@@ -2838,11 +2917,11 @@ public class OWLReferences extends OWLReferencesInterface{
 
 		protected Float getMinLoggingThreshould() {
 			return minLoggingThreshould;
-		}
+        }
 
-		protected void setMinLoggingThreshould(Float minLoggingThreshold) {
-			this.minLoggingThreshould = minLoggingThreshold;
-		}
+        protected void setMinLoggingThreshould(Float minLoggingThreshold) {
+            this.minLoggingThreshould = minLoggingThreshold;
+        }
 
 		//// setters
 		protected void setSynchronisatedInitialTime() {

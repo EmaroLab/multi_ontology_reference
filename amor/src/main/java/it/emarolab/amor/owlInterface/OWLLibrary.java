@@ -13,12 +13,19 @@ import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
 import org.semanticweb.owlapi.util.SimpleIRIMapper;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 
-import java.util.HashSet;
-import java.util.Set;
-
 //import org.semanticweb.owlapi.vocab.PrefixOWLOntologyFormat;
 
 /**
+ * <div style="text-align:center;"><small>
+ * <b>Project</b>:    aMOR <br>
+ * <b>File</b>:       it.emarolab.amor.owlInterface.OWLLibrary <br>
+ * <b>Licence</b>:    GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
+ * <b>Author</b>:     Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
+ * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
+ * <b>date</b>:       Feb 10, 2016 <br>
+ * </small></div>
+ *
+ * <p>
  * This class is the lowest interface level with the OWL API.
  * It contains all the basic structures to manipulate ontologies
  * but does not provide any initialization procedure.<br>
@@ -28,15 +35,7 @@ import java.util.Set;
  * {@link #setPrefixFormat()} and {@link #setOWLReasoner(String, boolean, String)}.<br>
  * WARNING: It is recommended not to interact directly twith this class,
  * use {@link OWLReferences} instead.<br>
- *
- * <div style="text-align:center;"><small>
- * <b>Project</b>:    aMOR <br>
- * <b>File</b>:       it.emarolab.amor.owlInterface.OWLLibrary <br>
- * <b>Licence</b>:    GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007 <br>
- * <b>Author</b>:     Buoncompagni Luca (luca.buoncompagni@edu.unige.it) <br>
- * <b>affiliation</b>: DIBRIS, EMAROLab, University of Genoa. <br>
- * <b>date</b>:       Feb 10, 2016 <br>
- * </small></div>
+ * </p>
  *
  * @version 2.0
  */
@@ -147,8 +146,8 @@ public class OWLLibrary {
 		if( iriOnto != null){
 			if( iriFile != null){
 				SimpleIRIMapper mapper = new SimpleIRIMapper( iriOnto, iriFile);
-                manager.getIRIMappers().add(mapper); // load from file
-                this.manager = manager;
+				manager.getIRIMappers().add(mapper); // load from file
+				this.manager = manager;
 				logger.addDebugString( "Ontology OWL manager created for References: " + this);
 				return;
 			}
@@ -251,14 +250,6 @@ public class OWLLibrary {
 		logger.addDebugString( "Create a new prefix manager for References: " + this);
 	}
 
-    /**
-     * Set the reasoner that should be correctly initialised.
-     * @param reasoner the instance to set.
-     */
-    protected void setOWLReasoner(OWLReasoner reasoner) {
-        this.reasoner = reasoner;
-    }
-
 	/**
 	 * It creates and sets a Reasoner instance.
 	 * The type of the reasoner is defined by the reasoner name factory, which could be:
@@ -318,7 +309,6 @@ public class OWLLibrary {
 	protected synchronized void setPelletReasoner( boolean buffering, String loggingName){
 		setOWLReasoner( REASONER_QUALIFIER_PELLET, buffering, loggingName);
 	}
-	// methods to create the reasoner from java reflection
 
 	/**
 	 * Creates and sets an instance of the Snorocket reasoner by calling
@@ -330,6 +320,7 @@ public class OWLLibrary {
 	protected synchronized void setSnorocketReasoner(boolean buffering, String loggingName){
 		setOWLReasoner( REASONER_QUALIFIER_SNOROCKET, buffering, loggingName);
 	}
+	// methods to create the reasoner from java reflection
 
 	/**
 	 * Creates and sets an instance of the Hermit reasoner by calling
@@ -367,15 +358,15 @@ public class OWLLibrary {
 		return factory;
 	}
 
-
-	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   FIELD GETTERS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-
 	/**
 	 * @return the OWL Ontology associated to this reference instance.
 	 */
 	public synchronized OWLOntology getOWLOntology() {
 		return ontology;
 	}
+
+
+	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[   FIELD GETTERS   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 
 	//@return the OWL Ontology prefix which depends from the ontology IRI.
 	//This is initialised using OWL API during constructor.
@@ -390,8 +381,17 @@ public class OWLLibrary {
 	/**
 	 * @return the OWL reasoner.
 	 */
-	public synchronized OWLReasoner getReasoner() {
+	public synchronized OWLReasoner getOWLReasoner() {
 		return reasoner;
+	}
+
+	/**
+	 * Set the reasoner that should be correctly initialised.
+	 *
+	 * @param reasoner the instance to set.
+	 */
+	protected void setOWLReasoner(OWLReasoner reasoner) {
+		this.reasoner = reasoner;
 	}
 
 	/**
@@ -445,27 +445,6 @@ public class OWLLibrary {
 		logger.addDebugString( "OWLClass given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return (classObj);
 	}
-
-    /**
-     * Returns a set of objects which represents an ontological set of classes
-     * with a given name and specific IRI paths. If the entity
-     * already exists in the ontology, then the object will refer to it,
-     * otherwise the method will create a new ontological entity
-     * (not automatically added to the ontology).
-     *
-     * @param classNames the set of names of the ontological class.
-     * @return the OWL class with the given name and IRI paths, in accordance with the OWLReference.
-     */
-    public Set<OWLClass> getOWLClass(Set<String> classNames) {
-        long initialTime = System.nanoTime();
-        Set<OWLClass> out = new HashSet<>();
-        for (String name : classNames)
-            if (name != null)
-                out.add(getOWLClass(name));
-        logger.addDebugString("Set of OWLClass given in: " + (System.nanoTime() - initialTime) + " [ns]");
-        return (out);
-    }
-
 	/**
 	 * Returns an Object which represents an ontological individual
 	 * with a given name and specific IRI paths. 
@@ -475,36 +454,15 @@ public class OWLLibrary {
 	 * @param individualName name of the ontological individual.
 	 * @return the OWL individual with the given name and IRI paths, in accordance to the OWLReference.
 	 */
-    public OWLNamedIndividual getOWLIndividual(String individualName){
-        long initialTime = System.nanoTime();
-
-        //OWLNamedIndividual individualObj = this.getOWLFactory().getOWLNamedIndividual( ":" + individualName, this.pm);
-        OWLNamedIndividual individualObj = this.getOWLFactory().getOWLNamedIndividual( getPrefixFormat( individualName));
-
-        logger.addDebugString( "OWLNamedIndividual given in: " + (System.nanoTime() - initialTime) + " [ns]");
-        return (individualObj);
-    }
-
-    /**
-     * Returns a set of objects which represents an ontological set of individuals
-     * with a given name and specific IRI paths.
-     * If the entity already exists in the ontology, then the object will refer to it,
-     * otherwise the method will create a new ontological entity
-     * (not automatically added to the ontology).
-     *
-     * @param individualNames the set of names of the ontological individual.
-     * @return the OWL individual with the given name and IRI paths, in accordance to the OWLReference.
-     */
-    public Set<OWLNamedIndividual> getOWLIndividual(Set<String> individualNames) {
-        long initialTime = System.nanoTime();
-        Set<OWLNamedIndividual> out = new HashSet<>();
-        for (String name : individualNames)
-            if (name != null)
-                out.add(getOWLIndividual(name));
-        logger.addDebugString("Set of OWLIndividual given in: " + (System.nanoTime() - initialTime) + " [ns]");
-        return (out);
-    }
-
+	public OWLNamedIndividual getOWLIndividual( String individualName){
+		long initialTime = System.nanoTime();
+		
+		//OWLNamedIndividual individualObj = this.getOWLFactory().getOWLNamedIndividual( ":" + individualName, this.pm);
+		OWLNamedIndividual individualObj = this.getOWLFactory().getOWLNamedIndividual( getPrefixFormat( individualName));
+				
+		logger.addDebugString( "OWLNamedIndividual given in: " + (System.nanoTime() - initialTime) + " [ns]");
+		return (individualObj);
+	}
 	/**
 	 * Returns an Object which represents an ontological data property
 	 * with a given name and specific IRI paths. If the entity
@@ -514,36 +472,15 @@ public class OWLLibrary {
 	 * @param dataPropertyName  name of the ontological data property.
 	 * @return the OWL data property with the given name and IRI paths, in accordance with the OWLReference
 	 */
-    public OWLDataProperty getOWLDataProperty(String dataPropertyName) {
-        long initialTime = System.nanoTime();
-
-        //OWLDataProperty property = this.getOWLFactory().getOWLDataProperty( ":" + dataPropertyName, this.pm);
-        OWLDataProperty property = this.getOWLFactory().getOWLDataProperty(  getPrefixFormat( dataPropertyName));
-
-        logger.addDebugString( "OWLDataProperty given in: " + (System.nanoTime() - initialTime) + " [ns]");
-        return (property);
-    }
-
-    /**
-     * Returns a set of objects which represents an ontological set of data properties
-     * with a given name and specific IRI paths. If the entity
-     * already exists in the ontology then the object will refer to it,
-     * otherwise the method will create a new ontological entity
-     * (not automatically added to the ontology).
-     *
-     * @param dataPropertyNames the set of names of the ontological data property.
-     * @return the OWL data property with the given name and IRI paths, in accordance with the OWLReference
-     */
-    public Set<OWLDataProperty> getOWLDataProperty(Set<String> dataPropertyNames) {
-        long initialTime = System.nanoTime();
-        Set<OWLDataProperty> out = new HashSet<>();
-        for (String name : dataPropertyNames)
-            if (name != null)
-                out.add(getOWLDataProperty(name));
-        logger.addDebugString("Set of OWLDataProperty given in: " + (System.nanoTime() - initialTime) + " [ns]");
-        return (out);
-    }
-
+	public OWLDataProperty getOWLDataProperty(String dataPropertyName) {
+		long initialTime = System.nanoTime();
+		
+		//OWLDataProperty property = this.getOWLFactory().getOWLDataProperty( ":" + dataPropertyName, this.pm);
+		OWLDataProperty property = this.getOWLFactory().getOWLDataProperty(  getPrefixFormat( dataPropertyName));
+				
+		logger.addDebugString( "OWLDataProperty given in: " + (System.nanoTime() - initialTime) + " [ns]");
+		return (property);
+	}
 	/**
 	 * Returns an Object which represents an ontological object property
 	 * with a given name and specific IRI paths. If the entity
@@ -553,36 +490,15 @@ public class OWLLibrary {
 	 * @param objPropertyName name of the ontological object property.
 	 * @return the OWL object property with the given name and IRI paths, in accordance with the OWLReference
 	 */
-    public OWLObjectProperty getOWLObjectProperty(String objPropertyName){
-        long initialTime = System.nanoTime();
-
-        //OWLObjectProperty property = this.getOWLFactory().getOWLObjectProperty( ":" + objPropertyName, this.pm());
-        OWLObjectProperty property = this.getOWLFactory().getOWLObjectProperty(  getPrefixFormat( objPropertyName));
-
-        logger.addDebugString( "OWLObjectProperty given in: " + (System.nanoTime() - initialTime) + " [ns]");
-        return (property);
-    }
-
-    /**
-     * Returns a set of objects which represents an ontological set of object properties
-     * with a given name and specific IRI paths. If the entity
-     * already exists in the ontology then the object will refer to it,
-     * otherwise the method will create a new ontological entity
-     * (not automatically added to the ontology).
-     *
-     * @param objPropertyNames the set of names of the ontological object property.
-     * @return the OWL object property with the given name and IRI paths, in accordance with the OWLReference
-     */
-    public Set<OWLObjectProperty> getOWLObjectProperty(Set<String> objPropertyNames) {
-        long initialTime = System.nanoTime();
-        Set<OWLObjectProperty> out = new HashSet<>();
-        for (String name : objPropertyNames)
-            if (name != null)
-                out.add(getOWLObjectProperty(name));
-        logger.addDebugString("Set of OWLObjectProperty given in: " + (System.nanoTime() - initialTime) + " [ns]");
-        return (out);
-    }
-
+	public OWLObjectProperty getOWLObjectProperty( String objPropertyName){
+		long initialTime = System.nanoTime();
+		
+		//OWLObjectProperty property = this.getOWLFactory().getOWLObjectProperty( ":" + objPropertyName, this.pm());
+		OWLObjectProperty property = this.getOWLFactory().getOWLObjectProperty(  getPrefixFormat( objPropertyName));
+		
+		logger.addDebugString( "OWLObjectProperty given in: " + (System.nanoTime() - initialTime) + " [ns]");
+		return (property);
+	}
 	/**
 	 * Returns an Object which represents an ontological literal
 	 * with a given value and specific IRI paths.
@@ -602,47 +518,30 @@ public class OWLLibrary {
 	 * @param type OWL data type of queried literal.
 	 * @return the OWL literal object with the given value, type and IRI paths, in accordance with the OWLReference.
 	 */
-    public OWLLiteral getOWLLiteral( Object value, OWLDatatype type){
-        long initialTime = System.nanoTime();
-        OWLLiteral liter = null;
-        if( value instanceof String)
-            liter = getOWLFactory().getOWLLiteral( (String) value);
-        else if( value instanceof Integer)
-            liter = getOWLFactory().getOWLLiteral( (Integer) value);
-        else if( value instanceof Boolean)
-            liter = getOWLFactory().getOWLLiteral( (Boolean) value);
-        else if( value instanceof Float)
-            liter = getOWLFactory().getOWLLiteral( (Float) value);
-        else if( value instanceof Double) {
-            Float tmp = ((Double) value).floatValue();
-            liter = getOWLFactory().getOWLLiteral(tmp);
-        }else if( value instanceof Long)
-            liter = getOWLFactory().getOWLLiteral( String.valueOf( value), getOWLFactory().getOWLDatatype( OWL2Datatype.XSD_LONG.getIRI()));
-        else if( value instanceof OWLLiteral)
-            liter = (OWLLiteral) value;
-        else if( type != null)
-            liter = getOWLFactory().getOWLLiteral( String.valueOf( value), type);
-        else logger.addDebugString( "EXCEPTION: type for literal not known", true);
-        logger.addDebugString("OWLLitteral given in: " + (System.nanoTime() - initialTime) + " [ns]");
-        return (liter);
-    }
-
-    /**
-     * Returns a set of objects which represents a set of ontological literal
-     * with a given value and specific IRI paths.
-     *
-     * @param values defines the set of values of the ontological literal to get.
-     * @return the OWL literal with the given value, type and IRI paths, in accordance with the OWLReference.
-     */
-    public Set<OWLLiteral> getOWLLiteral(Set<?> values) {
-        long initialTime = System.nanoTime();
-        Set<OWLLiteral> out = new HashSet<>();
-        for (Object v : values)
-            if (v != null)
-                out.add(getOWLLiteral(v));
-        logger.addDebugString( "Set of OWLLiteral given in: " + (System.nanoTime() - initialTime) + " [ns]");
-        return (out);
-    }
+	public OWLLiteral getOWLLiteral( Object value, OWLDatatype type){
+		long initialTime = System.nanoTime();
+		OWLLiteral liter = null;
+		if( value instanceof String)
+			liter = getOWLFactory().getOWLLiteral( (String) value);
+		else if( value instanceof Integer)
+			liter = getOWLFactory().getOWLLiteral( (Integer) value);
+		else if( value instanceof Boolean)
+			liter = getOWLFactory().getOWLLiteral( (Boolean) value);
+		else if( value instanceof Float)
+			liter = getOWLFactory().getOWLLiteral( (Float) value);
+		else if( value instanceof Double) {
+			Float tmp = ((Double) value).floatValue();
+			liter = getOWLFactory().getOWLLiteral(tmp);
+		}else if( value instanceof Long)
+			liter = getOWLFactory().getOWLLiteral( String.valueOf( value), getOWLFactory().getOWLDatatype( OWL2Datatype.XSD_LONG.getIRI()));
+		else if( value instanceof OWLLiteral)
+			liter = (OWLLiteral) value;
+		else if( type != null)
+			liter = getOWLFactory().getOWLLiteral( String.valueOf( value), type);
+		else logger.addDebugString( "EXCEPTION: type for literal not known", true);
+		logger.addDebugString( "OWLLitteral given in: " + (System.nanoTime() - initialTime) + " [ns]");
+		return (liter);
+	}
 
 
 	// [[[[[[[[[[[[[[[[[[[[[[[[[[[[   METHODS USED FOR REASONING   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
@@ -676,7 +575,7 @@ public class OWLLibrary {
 		return "OWLLibrary [getOWLManager()=" + getOWLManager() + ", getOWLFactory()="
 				+ getOWLFactory() + ", getOWLOntology()=" + getOWLOntology()
 				+ ", getPrefix()=" + getPrefix()
-				+ ", getReasoner()=" + getReasoner() + ", getIriFilePath()="
+				+ ", getOWLReasoner()=" + getOWLReasoner() + ", getIriFilePath()="
 				+ getIriFilePath() + ", getIriOntologyPath()="
 				+ getIriOntologyPath() + "]";
 	}

@@ -3,10 +3,10 @@ package it.emarolab.amor.owlDebugger.OFGUI;
 import it.emarolab.amor.owlDebugger.FileManager;
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContainer;
-import org.semanticweb.owlapi.io.StreamDocumentTarget;
 
 import javax.swing.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class LoadOntology {
@@ -26,7 +26,7 @@ public class LoadOntology {
 		OWLReferences ontoRef = (OWLReferences) OWLReferencesContainer.getOWLReferences( ontoName);
 		if( ontoRef != null){
 			//ClassExchange.setOntoName( ontoName);
-	    	/*ClassExchange.setReasoner( ontoRef.getReasoner());
+			/*ClassExchange.setReasoner( ontoRef.getOWLReasoner());
 	    	ClassExchange.setFactory( ontoRef.getFactory());
 	    	ClassExchange.setPm( ontoRef.getPm());
 	    	ClassExchange.setOntology( ontoRef.getOntology());
@@ -118,16 +118,16 @@ public class LoadOntology {
 	}
 	
 	// print ontology and return the string
+	@Deprecated
 	public static synchronized BufferedReader getOntologyTokens(){
-		OWLReferences ontoRef = ClassExchange.getOntoRef();
+	/*	OWLReferences ontoRef = ClassExchange.getOntoRef();
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    PrintStream ps = new PrintStream(baos);
 		
 		StreamDocumentTarget print = new StreamDocumentTarget( ps);// new SystemOutDocumentTarget();
-
-		/*
-        try {
+		
+		try {
 			ManchesterOWLSyntaxOntologyFormat manSyntaxFormat = new ManchesterOWLSyntaxOntologyFormat();
 			OWLOntologyFormat format =  ontoRef.getManager().getOntologyFormat(ontoRef.getOntology());
 			if (format.isPrefixOWLOntologyFormat())
@@ -136,12 +136,13 @@ public class LoadOntology {
 		} catch (OWLOntologyStorageException e) {	
 			e.printStackTrace();
 		}
-		*/
-
-        StringBuilder buffer = new StringBuilder();
+		
+		StringBuilder buffer = new StringBuilder();
 		buffer.append( baos.toString());
 		BufferedReader br = new BufferedReader(new StringReader(buffer.toString()));
 		
 		return( br);
+		*/
+		return null;
 	}	
 }
