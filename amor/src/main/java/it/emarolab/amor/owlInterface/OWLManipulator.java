@@ -983,8 +983,6 @@ public class OWLManipulator{
      * Given a class {@code C}, it uses {@link org.semanticweb.owlapi.change.ConvertEquivalentClassesToSuperClasses}
      * to convert all the sub class axioms of {@code C} into a conjunctions of expressions
      * in the definition of the class itself.
-     * <b>REMARK:</b> remember to apply all changes to be sure that this method
-     * behaves correctly.
      * @param className the name of the class to be converted from sub classing to equivalent expression.
      * @return the changes to be applied in order to make all the sub axioms of a class being
      * the conjunction of its equivalent expression.
@@ -996,8 +994,6 @@ public class OWLManipulator{
      * Given a class {@code C}, it uses {@link org.semanticweb.owlapi.change.ConvertEquivalentClassesToSuperClasses}
      * to convert all the sub class axioms of {@code C} into a conjunctions of expressions
      * in the definition of the class itself.
-     * <b>REMARK:</b> remember to apply all changes to be sure that this method
-     * behaves correctly.
      * @param cl the class to be converted from sub classing to equivalent expression.
      * @return the changes to be applied in order to make all the sub axioms of a class being
      * the conjunction of its equivalent expression.
