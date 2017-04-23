@@ -231,7 +231,7 @@ public class OWLManipulator{
 	 * It applies a change stored in {@code addAxiom} to the ontology.
 	 * @param addAxiom a change to be applied.
 	 */
-	public synchronized void applyChanges( OWLOntologyChange addAxiom){
+	public synchronized <T extends OWLOntologyChange> void applyChanges( T addAxiom){
 		long initialTime = System.nanoTime();
 		try{
 			ontoRef.getOWLManager().applyChange( addAxiom);
@@ -244,7 +244,7 @@ public class OWLManipulator{
 	 * It applies all changes stored in {@code addAxiom} to the ontology.
 	 * @param addAxiom a the changes to be applied.
 	 */
-	public synchronized void applyChanges( List< OWLOntologyChange> addAxiom){
+	public synchronized void applyChanges( List< ? extends OWLOntologyChange> addAxiom){
 		long initialTime = System.nanoTime();
 		try{
 			ontoRef.getOWLManager().applyChanges( addAxiom);
@@ -1162,7 +1162,7 @@ public class OWLManipulator{
 		long initialTime = System.nanoTime();
 		List<RemoveAxiom> remove = remover.getChanges();
 		if( !manipulationBuffering)
-			applyChanges((OWLOntologyChange) remove);
+			applyChanges( remove);
 		else changeList.addAll( remove);
 		logger.addDebugString( "remove individual (" + ontoRef.getOWLObjectName( individual) + ") in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( remove);
