@@ -705,6 +705,7 @@ public class OWLManipulator{
         OWLClass value = ontoRef.getOWLClass( valueName);
         return addExactObjectClassExpression( cl, property, cardinality, value);
     }
+
     private OWLOntologyChange addObjectClassExpression(OWLClass cl, OWLObjectProperty property, int cardinality, OWLClass value, int directive){
         try{
             long initialTime = System.nanoTime();
@@ -923,13 +924,15 @@ public class OWLManipulator{
 		return addExactDataClassExpression( cl, property, cardinality, type);
 	}
 	private OWLOntologyChange addDataClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, Class c, int directive){
+        return addDataClassExpression( cl, property, cardinality, getDataType( c), directive);
+    }
+    private OWLOntologyChange addDataClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, OWLDatatype value, int directive){
 		try{
 			long initialTime = System.nanoTime();
             if( cardinality < 0){
                 logger.addDebugString( "cannot assign a negative cardinality to " + ontoRef.getOWLObjectName( cl), true);
                 return null;
             }
-            OWLDatatype value = getDataType( c);
             if( value == null)
                 return null;
             OWLDataRestriction cardinalityAxiom = getDataCardinalityAxioms(cardinality, property, value, directive);
@@ -977,6 +980,23 @@ public class OWLManipulator{
                     + c.getSimpleName() + " found instead.", true);
             return null;
         }
+    }
+
+    /**
+     * Returns the changes to make a class for being a sub class of a data or object property expression,
+     * exactly identified by a given cardinality class restriction and type.
+     * @param restriction the object describing the class restriction
+     * @return the change to be applied
+     */
+    public OWLOntologyChange addClassExpression( ClassRestriction restriction){
+        if ( restriction.restrictsOverDataProperty())
+            return addDataClassExpression( restriction.isDefinitionOf(),
+                    restriction.getDataProperty(), restriction.getCardinality(),
+                    restriction.getDataTypeRestriction().asOWLDatatype(), restriction.getExpressiontType());
+        else // object property
+            return addObjectClassExpression( restriction.isDefinitionOf(),
+                    restriction.getObjectProperty(), restriction.getCardinality(),
+                    restriction.getObjectRestriction(), restriction.getExpressiontType());
     }
 
     /**
@@ -1743,13 +1763,15 @@ public class OWLManipulator{
         return removeExactClassExpression( cl, property, cardinality, type);
     }
     private OWLOntologyChange removeDataClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, Class c, int directive){
+        return removeDataClassExpression( cl, property, cardinality, getDataType( c), directive);
+    }
+    private OWLOntologyChange removeDataClassExpression(OWLClass cl, OWLDataProperty property, int cardinality, OWLDatatype value, int directive){
         try{
             long initialTime = System.nanoTime();
             if( cardinality < 0){
                 logger.addDebugString( "cannot assign a negative cardinality to " + ontoRef.getOWLObjectName( cl), true);
                 return null;
             }
-            OWLDatatype value = getDataType( c);
             if( value == null)
                 return null;
             OWLDataRestriction cardinalityAxiom = getDataCardinalityAxioms(cardinality, property, value, directive);
@@ -1767,6 +1789,22 @@ public class OWLManipulator{
         }
     }
 
+    /**
+     * Returns the changes to make a class not being a sub class of a data or object property expression,
+     * exactly identified by a given cardinality class restriction and type, anymore.
+     * @param restriction the object describing the class restriction
+     * @return the change to be applied
+     */
+    public OWLOntologyChange removeClassExpression( ClassRestriction restriction){
+        if ( restriction.restrictsOverDataProperty())
+            return removeDataClassExpression( restriction.isDefinitionOf(),
+                    restriction.getDataProperty(), restriction.getCardinality(),
+                    restriction.getDataTypeRestriction().asOWLDatatype(), restriction.getExpressiontType());
+        else // object property
+            return removeObjectClassExpression( restriction.isDefinitionOf(),
+                    restriction.getObjectProperty(), restriction.getCardinality(),
+                    restriction.getObjectRestriction(), restriction.getExpressiontType());
+    }
 
     // ---------------------------   methods for replace entities to the ontology
 	/*

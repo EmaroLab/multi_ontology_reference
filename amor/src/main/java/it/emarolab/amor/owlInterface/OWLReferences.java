@@ -761,11 +761,11 @@ public class OWLReferences extends OWLReferencesInterface{
      * @return the container of all the class restrictions and cardinality, for
      * the given class.
      */
-    public Set<OWLEnquirer.ClassRestriction> getClassRestrictions(OWLClass cl){
+    public Set<ClassRestriction> getClassRestrictions(OWLClass cl){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexClassDefinition);
-        return new OWLReferencesCaller< Set<OWLEnquirer.ClassRestriction>>(  mutexes, this) {
+        return new OWLReferencesCaller< Set<ClassRestriction>>(  mutexes, this) {
             @Override
-            protected Set<OWLEnquirer.ClassRestriction> performSynchronisedCall() {
+            protected Set<ClassRestriction> performSynchronisedCall() {
                 return getEnquirer().getClassRestrictions( cl);
             }
         }.call();
@@ -779,11 +779,11 @@ public class OWLReferences extends OWLReferencesInterface{
      * @return the container of all the class restrictions and cardinality, for
      * the given class.
      */
-    public Set<OWLEnquirer.ClassRestriction> getClassRestrictions(String className){
+    public Set<ClassRestriction> getClassRestrictions(String className){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexClassDefinition);
-        return new OWLReferencesCaller<Set<OWLEnquirer.ClassRestriction>>(  mutexes, this) {
+        return new OWLReferencesCaller<Set<ClassRestriction>>(  mutexes, this) {
             @Override
-            protected Set<OWLEnquirer.ClassRestriction> performSynchronisedCall() {
+            protected Set<ClassRestriction> performSynchronisedCall() {
                 return getEnquirer().getClassRestrictions( className);
             }
         }.call();
@@ -1780,6 +1780,25 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
+    /**
+     * Returns the changes to make a class be a sub class of a data property expression.
+     * In symbols: {@code C &sub; p(=<sub>d</sub> D)}, where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param restriction the definition of the class expression restriction.
+     * @return the changes to be applied in order to make a class being a sub-set of an exact number of
+     * properties restricted to a data type.
+     */
+    public OWLOntologyChange addClassExpression( ClassRestriction restriction){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddCardinalityData);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addClassExpression( restriction);
+            }
+        }.call();
+    }
 
     /**
      * Given a class {@code C}, it uses {@link org.semanticweb.owlapi.change.ConvertEquivalentClassesToSuperClasses}
@@ -2573,9 +2592,30 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
+    /**
+     * Returns the changes to make a class not being a sub class of a data property expression, anymore.
+     * In symbols, it will not true that: {@code C &sub; p(=<sub>d</sub> D)},
+     * where: {@code C} is the class, {@code p} the object property,
+     * {@code V} is the class value, {@code d} the cardinality and {@code D}, the type of data (supported {@link String}, {@link Integer}, {@link Double},
+     * {@link Float} and {@link Long}).
+     * Changes will be buffered if {@link OWLManipulator#isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param restriction the definition of the class expression restriction.
+     * @return the changes to be applied in order to remove the fact that a class
+     * is sub-set of a exact number of properties restricted to a data type.
+     */
+    public OWLOntologyChange removeClassExpression( ClassRestriction restriction){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddCardinalityData);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeClassExpression( restriction);
+            }
+        }.call();
+    }
 
 
-	// ------------------------------------------------------------   methods for REPLACE entities
+
+    // ------------------------------------------------------------   methods for REPLACE entities
 	/*
 	 * This method calls {@link OWLManipulator#replaceDataPropertyB2Individual(OWLNamedIndividual, OWLDataProperty, Set, OWLLiteral)}
 	 * in order to replace a data property of an individual with a new value.
