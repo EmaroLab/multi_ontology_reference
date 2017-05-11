@@ -5,6 +5,8 @@ import org.semanticweb.owlapi.model.*;
 
 import static it.emarolab.amor.owlInterface.OWLManipulator.*;
 
+// todo check documentation
+
 /**
  * This is a container for quantify class restrictions.
  * Also, it can be produced fom {@link OWLEnquirer#getClassRestrictions(OWLClass)} and
@@ -55,11 +57,14 @@ public class ClassRestriction {
 
     /**
      * Initialise to describe universal data property restriction over
-     * a data type (supported: {@link String}, {@link Double}, {@link Float}, {@link Integer} and {@link Long}).
+     * a data type (supported: {@link OWLDataFactory#getStringOWLDatatype()},
+     * {@link OWLDataFactory#getDoubleOWLDatatype()}, {@link OWLDataFactory#getFloatOWLDatatype()},
+     * {@link OWLDataFactory#getIntegerOWLDatatype()} and
+     * {@code ontoRef.getOWLFactory().getOWLDatatype( OWL2Datatype.XSD_LONG.getIRI())}).
      * In symbols: {@code class &forall; hasDataProperty dataType}.
      * @param dataType the range of data of the universal restriction.
      */
-    protected void setDataOnlyRestriction( OWLDataRange dataType){
+    public void setDataOnlyRestriction( OWLDataRange dataType){
         if( isDataProperty) {
             this.expressioneType = RESTRICTION_ONLY;
             this.data = dataType;
@@ -67,11 +72,14 @@ public class ClassRestriction {
     }
     /**
      * Initialise to describe existential data property restriction over
-     * a data type (supported: {@link String}, {@link Double}, {@link Float}, {@link Integer} and {@link Long}).
+     * a data type (supported: {@link OWLDataFactory#getStringOWLDatatype()},
+     * {@link OWLDataFactory#getDoubleOWLDatatype()}, {@link OWLDataFactory#getFloatOWLDatatype()},
+     * {@link OWLDataFactory#getIntegerOWLDatatype()} and
+     * {@code ontoRef.getOWLFactory().getOWLDatatype( OWL2Datatype.XSD_LONG.getIRI())}).
      * In symbols: {@code class &exists; hasDataProperty dataType}.
      * @param dataType the range of data of the existential restriction.
      */
-    protected void setDataSomeRestriction( OWLDataRange dataType){
+    public void setDataSomeRestriction( OWLDataRange dataType){
         if( isDataProperty) {
             this.expressioneType = RESTRICTION_SOME;
             this.data = dataType;
@@ -79,12 +87,15 @@ public class ClassRestriction {
     }
     /**
      * Initialise to describe a data property with a minimal cardinality restriction over
-     * a data type (supported: {@link String}, {@link Double}, {@link Float}, {@link Integer} and {@link Long}).
+     * a data type (supported: {@link OWLDataFactory#getStringOWLDatatype()},
+     * {@link OWLDataFactory#getDoubleOWLDatatype()}, {@link OWLDataFactory#getFloatOWLDatatype()},
+     * {@link OWLDataFactory#getIntegerOWLDatatype()} and
+     * {@code ontoRef.getOWLFactory().getOWLDatatype( OWL2Datatype.XSD_LONG.getIRI())}).
      * In symbols: {@code class &lt;<sub>d</sub> hasDataProperty dataType}.
      * @param cardinality the cardinality of the restriction {@code d}.
      * @param dataType the range of data of the minimal cardinality restriction.
      */
-    protected void setDataMinRestriction( int cardinality, OWLDataRange dataType){
+    public void setDataMinRestriction( int cardinality, OWLDataRange dataType){
         if( isDataProperty) {
             this.expressioneType = RESTRICTION_MIN;
             this.cardinality = cardinality;
@@ -93,12 +104,15 @@ public class ClassRestriction {
     }
     /**
      * Initialise to describe a data property with a maximal cardinality restriction over
-     * a data type (supported: {@link String}, {@link Double}, {@link Float}, {@link Integer} and {@link Long}).
+     * a data type (supported: {@link OWLDataFactory#getStringOWLDatatype()},
+     * {@link OWLDataFactory#getDoubleOWLDatatype()}, {@link OWLDataFactory#getFloatOWLDatatype()},
+     * {@link OWLDataFactory#getIntegerOWLDatatype()} and
+     * {@code ontoRef.getOWLFactory().getOWLDatatype( OWL2Datatype.XSD_LONG.getIRI())}).
      * In symbols: {@code class &gt;<sub>d</sub> hasDataProperty dataType}.
      * @param cardinality the cardinality of the restriction {@code d}.
      * @param dataType the range of data of the maximal cardinality restriction.
      */
-    protected void setDataMaxRestriction(int cardinality, OWLDataRange dataType){
+    public void setDataMaxRestriction(int cardinality, OWLDataRange dataType){
         if( isDataProperty) {
             this.expressioneType = RESTRICTION_MAX;
             this.cardinality = cardinality;
@@ -107,12 +121,15 @@ public class ClassRestriction {
     }
     /**
      * Initialise to describe a data property with an exact cardinality restriction over
-     * a data type (supported: {@link String}, {@link Double}, {@link Float}, {@link Integer} and {@link Long}).
+     * a data type (supported: {@link OWLDataFactory#getStringOWLDatatype()},
+     * {@link OWLDataFactory#getDoubleOWLDatatype()}, {@link OWLDataFactory#getFloatOWLDatatype()},
+     * {@link OWLDataFactory#getIntegerOWLDatatype()} and
+     * {@code ontoRef.getOWLFactory().getOWLDatatype( OWL2Datatype.XSD_LONG.getIRI())}).
      * In symbols: {@code class =<sub>d</sub> hasDataProperty dataType}.
      * @param cardinality the cardinality of the restriction {@code d}.
      * @param dataType the range of data of the exact cardinality restriction.
      */
-    protected void setDataExactRestriction( int cardinality, OWLDataRange dataType){
+    public void setDataExactRestriction( int cardinality, OWLDataRange dataType){
         if( isDataProperty) {
             this.expressioneType = RESTRICTION_EXACT;
             this.cardinality = cardinality;
@@ -126,7 +143,7 @@ public class ClassRestriction {
      * In symbols: {@code classSubject &forall; hasObjectProperty classObject}.
      * @param object the class domain of the universal property restriction.
      */
-    protected void setObjectOnlyRestriction( OWLClass object){
+    public void setObjectOnlyRestriction( OWLClass object){
         if( ! isDataProperty) {
             this.expressioneType = RESTRICTION_ONLY;
             this.object = object;
@@ -138,7 +155,7 @@ public class ClassRestriction {
      * In symbols: {@code classSubject &exists; hasObjectProperty classObject}.
      * @param object the class domain of the existential property restriction.
      */
-    protected void setObjectSomeRestriction( OWLClass object){
+    public void setObjectSomeRestriction( OWLClass object){
         if( ! isDataProperty) {
             this.expressioneType = RESTRICTION_SOME;
             this.object = object;
@@ -151,7 +168,7 @@ public class ClassRestriction {
      * @param cardinality the cardinality of the restriction {@code d}.
      * @param object the class domain of the minimal cardinality restriction over the property.
      */
-    protected void setObjectMinRestriction(int cardinality, OWLClass object){
+    public void setObjectMinRestriction(int cardinality, OWLClass object){
         if( ! isDataProperty) {
             this.expressioneType = RESTRICTION_MIN;
             this.cardinality = cardinality;
@@ -165,7 +182,7 @@ public class ClassRestriction {
      * @param cardinality the cardinality of the restriction {@code d}.
      * @param object the class domain of the maximal cardinality restriction over the property.
      */
-    protected void setObjectMaxRestriction(int cardinality, OWLClass object){
+    public void setObjectMaxRestriction(int cardinality, OWLClass object){
         if( ! isDataProperty) {
             this.expressioneType = RESTRICTION_MAX;
             this.cardinality = cardinality;
@@ -179,7 +196,7 @@ public class ClassRestriction {
      * @param cardinality the cardinality of the restriction {@code d}.
      * @param object the class domain of the exact cardinality restriction over the property.
      */
-    protected void setObjectExactRestriction(int cardinality, OWLClass object){
+    public void setObjectExactRestriction(int cardinality, OWLClass object){
         if( ! isDataProperty) {
             this.expressioneType = RESTRICTION_EXACT;
             this.cardinality = cardinality;
