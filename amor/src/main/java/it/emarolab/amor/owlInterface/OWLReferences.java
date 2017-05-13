@@ -72,7 +72,10 @@ public class OWLReferences extends OWLReferencesInterface{
 	private Lock mutexDisjointIndividual = new ReentrantLock();
 	private Lock mutexDisjointDataProperty = new ReentrantLock();
 	private Lock mutexDisjointObjectProperty = new ReentrantLock();
-    private Lock mutexSameAsIndividual = new ReentrantLock();
+    private Lock mutexEquivalentIndividual = new ReentrantLock();
+    private Lock mutexEquivalentClass = new ReentrantLock();
+    private Lock mutexEquivalentDataPorperty = new ReentrantLock();
+    private Lock mutexEquivalentObjectProperty = new ReentrantLock();
     // ##################################   to manipulate the ontology !!!!!!!!!!!!!
     private Lock mutexReasoner = new ReentrantLock();
     private Lock mutexAddObjPropB2Ind = new ReentrantLock();
@@ -104,8 +107,14 @@ public class OWLReferences extends OWLReferencesInterface{
     private Lock mutexRemoveDisjointedDataProp = new ReentrantLock();
     private Lock mutexAddDisjointedObjectProp = new ReentrantLock();
     private Lock mutexRemoveDisjointedObjectProp = new ReentrantLock();
-    private Lock mutexAddSameAsInd = new ReentrantLock();
-    private Lock mutexRemoveSameAsInd = new ReentrantLock();
+    private Lock mutexAddEquivalentInd = new ReentrantLock();
+    private Lock mutexRemoveEquivalentInd = new ReentrantLock();
+    private Lock mutexAddEquivalentClass = new ReentrantLock();
+    private Lock mutexRemoveEquivalentClass = new ReentrantLock();
+    private Lock mutexAddEquivalentDataProp = new ReentrantLock();
+    private Lock mutexRemoveEquivalentDataProp = new ReentrantLock();
+    private Lock mutexAddEquivalentObjProp = new ReentrantLock();
+    private Lock mutexRemoveEquivalentObjProp = new ReentrantLock();
 
     /**
 	 * This constructor just calls the super class constructor: {@link OWLReferencesInterface#OWLReferencesInterface(String, String, String, Boolean, Integer)}
@@ -959,37 +968,6 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 
     /**
-     * This methods returns all the 'same as' individuals.
-     * It relies on {@link OWLEnquirer#getSameAsIndividuals(String)}
-     * @param individualName the name of the individual to search for 'same as' individuals.
-     * @return all the 'same as' individuals.
-     */
-    public Set<OWLNamedIndividual> getSameAsIndividuals(String individualName){
-        List<Lock> mutexes = getMutexes(mutexReasoner, mutexSameAsIndividual);
-        return new OWLReferencesCaller<Set<OWLNamedIndividual>>(mutexes, this) {
-            @Override
-            protected Set<OWLNamedIndividual> performSynchronisedCall() {
-                return getEnquirer().getSameAsIndividuals( individualName);
-            }
-        }.call();
-    }
-    /**
-     * This methods returns all the 'same as' individuals.
-     * It relies on {@link OWLEnquirer#getSameAsIndividuals(OWLNamedIndividual)}
-     * @param individual the individual to search for 'same as' individuals.
-     * @return all the 'same as' individuals.
-     */
-    public Set<OWLNamedIndividual> getSameAsIndividuals(OWLNamedIndividual individual){
-        List<Lock> mutexes = getMutexes(mutexReasoner, mutexSameAsIndividual);
-        return new OWLReferencesCaller<Set<OWLNamedIndividual>>(mutexes, this) {
-            @Override
-            protected Set<OWLNamedIndividual> performSynchronisedCall() {
-                return getEnquirer().getSameAsIndividuals( individual);
-            }
-        }.call();
-    }
-
-    /**
      * This methods returns all the different individuals.
      * It relies on {@link OWLEnquirer#getDisjointIndividuals(String)}.
      * @param individualName the name of the individual to search for disjointed individuals.
@@ -1082,7 +1060,129 @@ public class OWLReferences extends OWLReferencesInterface{
         }.call();
     }
 
+    /**
+     * This methods returns all the equivalent individuals.
+     * It relies on {@link OWLEnquirer#getEquivalentIndividuals(String)}
+     * @param individualName the name of the individual to search for equivalent individuals.
+     * @return all the equivalent individuals.
+     */
+    public Set<OWLNamedIndividual> getEquivalentIndividuals(String individualName){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexEquivalentIndividual);
+        return new OWLReferencesCaller<Set<OWLNamedIndividual>>(mutexes, this) {
+            @Override
+            protected Set<OWLNamedIndividual> performSynchronisedCall() {
+                return getEnquirer().getEquivalentIndividuals( individualName);
+            }
+        }.call();
+    }
+    /**
+     * This methods returns all the equivalent individuals.
+     * It relies on {@link OWLEnquirer#getEquivalentIndividuals(OWLNamedIndividual)}
+     * @param individual the individual to search for equivalent individuals.
+     * @return all the equivalent individuals.
+     */
+    public Set<OWLNamedIndividual> getEquivalentIndividuals(OWLNamedIndividual individual){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexEquivalentIndividual);
+        return new OWLReferencesCaller<Set<OWLNamedIndividual>>(mutexes, this) {
+            @Override
+            protected Set<OWLNamedIndividual> performSynchronisedCall() {
+                return getEnquirer().getEquivalentIndividuals( individual);
+            }
+        }.call();
+    }
 
+    /**
+     * This methods returns all the equivalent classes.
+     * It relies on {@link OWLEnquirer#getEquivalentClasses(String)}.
+     * @param className the name of the class to search for equivalent classes.
+     * @return all the equivalent classes.
+     */
+    public Set<OWLClass> getEquivalentClasses(String className){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexEquivalentClass);
+        return new OWLReferencesCaller<Set<OWLClass>>(mutexes, this) {
+            @Override
+            protected Set<OWLClass> performSynchronisedCall() {
+                return getEnquirer().getEquivalentClasses( className);
+            }
+        }.call();
+    }
+    /**
+     * This methods returns all the equivalent classes.
+     * It relies on {@link OWLEnquirer#getEquivalentClasses(OWLClass)}.
+     * @param cl the OWL class to search for equivalent classes.
+     * @return all the equivalent classes.
+     */
+    public Set<OWLClass> getEquivalentClasses(OWLClass cl){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexEquivalentClass);
+        return new OWLReferencesCaller<Set<OWLClass>>(mutexes, this) {
+            @Override
+            protected Set<OWLClass> performSynchronisedCall() {
+                return getEnquirer().getEquivalentClasses( cl);
+            }
+        }.call();
+    }
+
+    /**
+     * This methods returns all the equivalent data properties.
+     * It relies on {@link OWLEnquirer#getDisjointDataProperties(String)}.
+     * @param propertyName the name of the data property to search for equivalent data properties.
+     * @return all the equivalent data properties.
+     */
+    public Set<OWLDataProperty> getEquivalentDataProperty(String propertyName){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexEquivalentDataPorperty);
+        return new OWLReferencesCaller<Set<OWLDataProperty>>(mutexes, this) {
+            @Override
+            protected Set<OWLDataProperty> performSynchronisedCall() {
+                return getEnquirer().getEquivalentDataProperties( propertyName);
+            }
+        }.call();
+    }
+    /**
+     * This methods returns all the equivalent data properties.
+     * It relies on {@link OWLEnquirer#getEquivalentDataProperties(OWLDataProperty)}.
+     * @param property the data property to search for equivalent data properties.
+     * @return all the equivalent data properties.
+     */
+    public Set<OWLDataProperty> getEquivalentDataProperty(OWLDataProperty property){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexEquivalentDataPorperty);
+        return new OWLReferencesCaller<Set<OWLDataProperty>>(mutexes, this) {
+            @Override
+            protected Set<OWLDataProperty> performSynchronisedCall() {
+                return getEnquirer().getEquivalentDataProperties( property);
+            }
+        }.call();
+    }
+
+    /**
+     * This methods returns all the equivalent object properties.
+     * It relies on {@link OWLEnquirer#getEquivalentObjectProperties(String)}.
+     * @param propertyName the name of the object property to search for equivalent object properties.
+     * @return all the equivalent object properties.
+     */
+    public Set<OWLObjectProperty> getEquivalentObjectProperty(String propertyName){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexEquivalentObjectProperty);
+        return new OWLReferencesCaller<Set<OWLObjectProperty>>(mutexes, this) {
+            @Override
+            protected Set<OWLObjectProperty> performSynchronisedCall() {
+                return getEnquirer().getEquivalentObjectProperties( propertyName);
+            }
+        }.call();
+    }
+    /**
+     * This methods returns all the equivalent object properties.
+     * It relies on {@link OWLEnquirer#getEquivalentObjectProperties(OWLObjectProperty)}.
+     * @param property the object property to search for equivalent object properties.
+     * @return all the equivalent object properties.
+     */
+    public Set<OWLObjectProperty> getEquivalentObjectProperty(OWLObjectProperty property){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexEquivalentObjectProperty);
+        return new OWLReferencesCaller<Set<OWLObjectProperty>>(mutexes, this) {
+            @Override
+            protected Set<OWLObjectProperty> performSynchronisedCall() {
+                return getEnquirer().getEquivalentObjectProperties( property);
+            }
+        }.call();
+    }
 
     /**
      * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
@@ -2865,75 +2965,7 @@ public class OWLReferences extends OWLReferencesInterface{
 		}.call();
 	}
 	
-	// ------------------------------------------------------------   methods for DISJOINT individuals
-    /**
-     * This method calls {@link OWLManipulator#makeSameAsIndividualName(Set)}
-     * in order to create (buffers and/or add) the 'same as' axiom with respect to the individuals
-     * specified as input though their name.
-     * @param individualNames the set of names of individuals to make 'same as'.
-     * @return the changes to be done in order to add the 'same as' individual axiom for all the inputs.
-     * (see {@link OWLManipulator} for more info)
-     */
-    public OWLOntologyChange makeSameAsIndividualNames(Set< String> individualNames){
-        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddSameAsInd);
-        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
-            @Override
-            protected OWLOntologyChange performSynchronisedCall() {
-                return getManipulator().makeSameAsIndividualName( individualNames);
-            }
-        }.call();
-    }
-    /**
-     * This method calls {@link OWLManipulator#makeSameAsIndividuals(Set)}
-     * in order to create (buffers and/or add) the 'same as' axiom with respect to the
-     * individuals set specified as input.
-     * @param individuals the set of individuals to make 'same as'.
-     * @return the changes to be done in order to add the 'same as' individual axiom for all the inputs.
-     * (see {@link OWLManipulator} for more info)
-     */
-    public OWLOntologyChange makeSameAsIndividuals( Set< OWLNamedIndividual> individuals){
-        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddSameAsInd);
-        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
-            @Override
-            protected OWLOntologyChange performSynchronisedCall() {
-                return getManipulator().makeSameAsIndividuals( individuals);
-            }
-        }.call();
-    }
-
-    /**
-     * This method calls {@link OWLManipulator#removeSameAsIndividualName(Set)}
-     * in order to create (buffers and/or remove) the 'same as' axioms (if their exists) with respect to the individuals
-     * specified as input though their name.
-     * @param individualNames the set of names of individuals to make not 'same as' anymore.
-     * @return the changes to be done in order to remove the 'same as' individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
-     */
-    public OWLOntologyChange removeSameAsIndividualNames(Set< String> individualNames){
-        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveSameAsInd);
-        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
-            @Override
-            protected OWLOntologyChange performSynchronisedCall() {
-                return  getManipulator().removeSameAsIndividualName( individualNames);
-            }
-        }.call();
-    }
-    /**
-     * This method calls {@link OWLManipulator#removeSameAsIndividuals(Set)}
-     * in order to create (buffers and/or remove) the 'same as' axiom (if their exists) with respect to the
-     * individuals set specified as input.
-     * @param individuals the set of individuals to make not 'same as' anymore.
-     * @return the changes to be done in order to remove the 'same as' individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
-     */
-    public OWLOntologyChange removeSameAsIndividuals( Set< OWLNamedIndividual> individuals){
-        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveSameAsInd);
-        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
-            @Override
-            protected OWLOntologyChange performSynchronisedCall() {
-                return  getManipulator().removeSameAsIndividuals( individuals);
-            }
-        }.call();
-    }
-
+	// ------------------------------------------------------------   methods for DISJOINT individuals, class and properties
     /**
 	 * This method calls {@link OWLManipulator#makeDisjointIndividualName(Set)}
 	 * in order to create (buffers and/or add) the disjoint axiom with respect to the individuals
@@ -3207,10 +3239,291 @@ public class OWLReferences extends OWLReferencesInterface{
     }
 
 
+    // ------------------------------------------------------------   methods for EQUIVALENT individuals, class and properties
+    /**
+     * This method calls {@link OWLManipulator#makeEquivalentIndividualName(Set)}
+     * in order to create (buffers and/or add) the 'same as' axiom with respect to the individuals
+     * specified as input though their name.
+     * @param individualNames the set of names of individuals to make 'same as'.
+     * @return the changes to be done in order to add the 'same as' individual axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange makeEquivalentIndividualNames(Set< String> individualNames){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddEquivalentInd);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().makeEquivalentIndividualName( individualNames);
+            }
+        }.call();
+    }
+    /**
+     * This method calls {@link OWLManipulator#makeEquivalentIndividuals(Set)}
+     * in order to create (buffers and/or add) the 'same as' axiom with respect to the
+     * individuals set specified as input.
+     * @param individuals the set of individuals to make 'same as'.
+     * @return the changes to be done in order to add the 'same as' individual axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange makeEquivalentIndividuals(Set< OWLNamedIndividual> individuals){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddEquivalentInd);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().makeEquivalentIndividuals( individuals);
+            }
+        }.call();
+    }
+
+    /**
+     * This method calls {@link OWLManipulator#removeEquivalentIndividualName(Set)}
+     * in order to create (buffers and/or remove) the 'same as' axioms (if their exists) with respect to the individuals
+     * specified as input though their name.
+     * @param individualNames the set of names of individuals to make not 'same as' anymore.
+     * @return the changes to be done in order to remove the 'same as' individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange removeEquivalentIndividualNames(Set< String> individualNames){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveEquivalentInd);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return  getManipulator().removeEquivalentIndividualName( individualNames);
+            }
+        }.call();
+    }
+    /**
+     * This method calls {@link OWLManipulator#removeEquivalentIndividuals(Set)}
+     * in order to create (buffers and/or remove) the 'same as' axiom (if their exists) with respect to the
+     * individuals set specified as input.
+     * @param individuals the set of individuals to make not 'same as' anymore.
+     * @return the changes to be done in order to remove the 'same as' individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange removeEquivalentIndividuals(Set< OWLNamedIndividual> individuals){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveEquivalentInd);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return  getManipulator().removeEquivalentIndividuals( individuals);
+            }
+        }.call();
+    }
+
+    /**
+     * This method calls {@link OWLManipulator#makeEquivalentClassName(Set)}
+     * in order to create (buffers and/or add) the equivalent axiom with respect to the classes
+     * specified as input though their name.
+     * @param classesName the set of names of class to make equivalented.
+     * @return the changes to be done in order to add the equivalent classes axiom for all the inputs. (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange makeEquivalentClassNames(Set< String> classesName){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddEquivalentClass);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().makeEquivalentClassName( classesName);
+            }
+        }.call();
+    }
+    /**
+     * This method calls {@link OWLManipulator#makeEquivalentClasses(Set)}
+     * in order to create (buffers and/or add) the equivalent axiom with respect to the
+     * classes set specified as input.
+     * @param classes the set of classes to make equivalented.
+     * @return the changes to be done in order to add the equivalent classes axiom for all the inputs. (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange makeEquivalentClasses( Set< OWLClass> classes){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddEquivalentClass);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().makeEquivalentClasses( classes);
+            }
+        }.call();
+    }
+
+    /**
+     * This method calls {@link OWLManipulator#removeEquivalentClassName(Set)}
+     * in order to create (buffers and/or remove) the equivalent axioms (if their exists) with respect to the classes
+     * specified as input though their name.
+     * @param classesName the set of names of class to make not equivalented anymore.
+     * @return the changes to be done in order to remove the equivalent class axiom for all the inputs. (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange removeEquivalentClassNames(Set< String> classesName){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveEquivalentClass);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeEquivalentClassName( classesName);
+            }
+        }.call();
+    }
+    /**
+     * This method calls {@link OWLManipulator#removeEquivalentClasses(Set)}
+     * in order to create (buffers and/or remove) the equivalent axiom (if their exists) with respect to the
+     * classes set specified as input.
+     * @param classes the set of class to make not equivalented anymore.
+     * @return the changes to be done in order to remove the equivalent class axiom for all the inputs. (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange removeEquivalentClasses( Set< OWLClass> classes){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveEquivalentClass);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeEquivalentClasses( classes);
+            }
+        }.call();
+    }
+
+    /**
+     * This method calls {@link OWLManipulator#makeEquivalentDataPropertiesName(Set)}
+     * in order to create (buffers and/or add) the equivalent axiom with respect to the data properties
+     * specified as input though their name.
+     * @param propertiesName the set of names of data properties to make equivalented.
+     * @return the changes to be done in order to add the equivalent data property axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange makeEquivalentDataPropertiesNames(Set< String> propertiesName){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddEquivalentDataProp);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().makeEquivalentDataPropertiesName( propertiesName);
+            }
+        }.call();
+    }
+    /**
+     * This method calls {@link OWLManipulator#makeEquivalentDataProperties(Set)}
+     * in order to create (buffers and/or add) the equivalent axiom with respect to the
+     * data property set specified as input.
+     * @param properties the set of data properties to make equivalented.
+     * @return the changes to be done in order to add the equivalent data property axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange makeEquivalentDataProperties( Set< OWLDataProperty> properties){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddEquivalentDataProp);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().makeEquivalentDataProperties( properties);
+            }
+        }.call();
+    }
+
+    /**
+     * This method calls {@link OWLManipulator#removeEquivalentDataPropertyName(Set)}
+     * in order to create (buffers and/or remove) the equivalent axioms (if their exists) with respect to the
+     * data properties specified as input though their name.
+     * @param propertiesName the set of names of data properties to make not equivalented anymore.
+     * @return the changes to be done in order to remove the equivalent data properties axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange removeEquivalentDataPropertyNames(Set< String> propertiesName){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveEquivalentDataProp);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeEquivalentDataPropertyName( propertiesName);
+            }
+        }.call();
+    }
+    /**
+     * This method calls {@link OWLManipulator#removeEquivalentDataProperty(Set)}
+     * in order to create (buffers and/or remove) the equivalent axiom (if their exists) with respect to the
+     * data properties set specified as input.
+     * @param properties the set of data properties to make not equivalented anymore.
+     * @return the changes to be done in order to remove the equivalent data property axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange removeEquivalentDataProperties( Set< OWLDataProperty> properties){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveEquivalentDataProp);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeEquivalentDataProperty( properties);
+            }
+        }.call();
+    }
+
+    /**
+     * This method calls {@link OWLManipulator#makeEquivalentObjectPropertyNames(Set)}
+     * in order to create (buffers and/or add) the equivalent axiom with respect to the object properties
+     * specified as input though their name.
+     * @param propertiesName the set of names of object properties to make equivalented.
+     * @return the changes to be done in order to add the equivalent object property axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange makeEquivalentObjectPropertyNames(Set< String> propertiesName){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddEquivalentObjProp);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().makeEquivalentObjectPropertyNames( propertiesName);
+            }
+        }.call();
+    }
+    /**
+     * This method calls {@link OWLManipulator#makeEquivalentObjectProperties(Set)}
+     * in order to create (buffers and/or add) the equivalent axiom with respect to the
+     * object property set specified as input.
+     * @param properties the set of object properties to make equivalented.
+     * @return the changes to be done in order to add the equivalent object property axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange makeEquivalentObjectProperties( Set< OWLObjectProperty> properties){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddEquivalentObjProp);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().makeEquivalentObjectProperties( properties);
+            }
+        }.call();
+    }
+
+    /**
+     * This method calls {@link OWLManipulator#removeEquivalentObjectPropertyNames(Set)}
+     * in order to create (buffers and/or remove) the equivalent axioms (if their exists) with respect to the
+     * object properties specified as input though their name.
+     * @param propertiesName the set of names of object properties to make not equivalented anymore.
+     * @return the changes to be done in order to remove the equivalent object properties axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange removeEquivalentObjectPropertyNames(Set< String> propertiesName){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveEquivalentObjProp);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeEquivalentObjectPropertyNames( propertiesName);
+            }
+        }.call();
+    }
+    /**
+     * This method calls {@link OWLManipulator#removeEquivalentObjectProperties(Set)}
+     * in order to create (buffers and/or remove) the equivalent axiom (if their exists) with respect to the
+     * object properties set specified as input.
+     * @param properties the set of object properties to make not equivalented anymore.
+     * @return the changes to be done in order to remove the equivalent object property axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange removeEquivalentObjectProperties( Set< OWLObjectProperty> properties){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveEquivalentObjProp);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeEquivalentObjectProperties( properties);
+            }
+        }.call();
+    }
 
 
 
-	// [[[[[[[[[[[[[[[[[[[[[[   METHOD TO CALL REASONING (thread safe)   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
+
+
+
+
+
+
+    // [[[[[[[[[[[[[[[[[[[[[[   METHOD TO CALL REASONING (thread safe)   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 	/** 
 	 * This method just synchronises the call to the reasoner (performed by {@link OWLReferences}) with respect to 
 	 * {@link #mutexReasoner} by making this call thread safe with respect to 

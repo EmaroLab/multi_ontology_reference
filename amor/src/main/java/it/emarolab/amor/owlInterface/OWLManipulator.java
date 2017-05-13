@@ -2239,28 +2239,28 @@ public class OWLManipulator{
 
 
 
-    // ---------------------------   methods to set individuals, classes and properties 'same as'
+    // ---------------------------   methods to set individuals, classes and properties equivalent
     /**
-     * Returns the changes required to set some individuals 'same as' among themselves.
+     * Returns the changes required to set some individuals equivalent among themselves.
      * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
-     * @param individualNames names of the individuals to set 'same as'.
-     * @return changes required to set some individual 'same as'.
+     * @param individualNames names of the individuals to set equivalent.
+     * @return changes required to set some individual equivalent.
      * Returned object can be ignored while working in buffering mode.
      */
-    public OWLOntologyChange makeSameAsIndividualName(Set< String> individualNames){
+    public OWLOntologyChange makeEquivalentIndividualName(Set< String> individualNames){
         Set< OWLNamedIndividual> inds = new HashSet< OWLNamedIndividual>();
         for( String i : individualNames)
             inds.add( ontoRef.getOWLIndividual( i));
-        return makeSameAsIndividuals( inds);
+        return makeEquivalentIndividuals( inds);
     }
     /**
-     * Returns the changes required to set some individuals 'same as' among themselves.
+     * Returns the changes required to set some individuals equivalent among themselves.
      * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
-     * @param individuals set of individuals to set as 'same as'.
-     * @return changes required to set some individual 'same as'.
+     * @param individuals set of individuals to set as equivalent.
+     * @return changes required to set some individual equivalent.
      * Returned object can be ignored while working in buffering mode.
      */
-    public OWLOntologyChange makeSameAsIndividuals(Set< OWLNamedIndividual> individuals){
+    public OWLOntologyChange makeEquivalentIndividuals(Set< OWLNamedIndividual> individuals){
         try{
             long initialTime = System.nanoTime();
             OWLSameIndividualAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLSameIndividualAxiom(individuals);
@@ -2268,7 +2268,7 @@ public class OWLManipulator{
 
             if( !manipulationBuffering)
                 applyChanges( adding);
-            logger.addDebugString( "make 'same as' individuals: " + ontoRef.getOWLObjectName(individuals) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
+            logger.addDebugString( "make equivalent individuals: " + ontoRef.getOWLObjectName(individuals) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
             return( adding);
         } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
             ontoRef.logInconsistency();
@@ -2277,26 +2277,26 @@ public class OWLManipulator{
     }
 
     /**
-     * Returns the changes required to unset 'same as' axiom among some individuals.
+     * Returns the changes required to unset equivalent axiom among some individuals.
      * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
-     * @param individualNames names of the individuals to unset 'same as' axiom among.
-     * @return changes required to unset some individual 'same as'.
+     * @param individualNames names of the individuals to unset equivalent axiom among.
+     * @return changes required to unset some individual equivalent.
      * Returned object can be ignored while working in buffering mode.
      */
-    public OWLOntologyChange removeSameAsIndividualName( Set< String> individualNames){
+    public OWLOntologyChange removeEquivalentIndividualName(Set< String> individualNames){
         Set< OWLNamedIndividual> inds = new HashSet< OWLNamedIndividual>();
         for( String i : individualNames)
             inds.add( ontoRef.getOWLIndividual( i));
-        return removeSameAsIndividuals( inds);
+        return removeEquivalentIndividuals( inds);
     }
     /**
-     * Returns the changes required to unset 'same as' axiom among some individuals.
+     * Returns the changes required to unset equivalent axiom among some individuals.
      * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
-     * @param individuals set of individuals to unset 'same as' axiom among.
-     * @return changes required to unset some individual 'same as'.
+     * @param individuals set of individuals to unset equivalent axiom among.
+     * @return changes required to unset some individual equivalent.
      * Returned object can be ignored while working in buffering mode.
      */
-    public OWLOntologyChange removeSameAsIndividuals( Set< OWLNamedIndividual> individuals){
+    public OWLOntologyChange removeEquivalentIndividuals(Set< OWLNamedIndividual> individuals){
         try{
             long initialTime = System.nanoTime();
             OWLSameIndividualAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLSameIndividualAxiom(individuals);
@@ -2304,11 +2304,229 @@ public class OWLManipulator{
 
             if( !manipulationBuffering)
                 applyChanges( adding);
-            logger.addDebugString( "make 'same as' individuals: " + ontoRef.getOWLObjectName(individuals) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
+            logger.addDebugString( "make equivalent individuals: " + ontoRef.getOWLObjectName(individuals) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
             return( adding);
         } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
             ontoRef.logInconsistency();
         }
         return( null);
     }
+
+    /**
+     * Returns the changes required to set some classes equivalent among themselves.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param classesName names of the classes to set as equivalent.
+     * @return changes required to set some classes equivalent.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange makeEquivalentClassName( Set< String> classesName){
+        Set< OWLClass> inds = new HashSet< OWLClass>();
+        for( String i : classesName)
+            inds.add( ontoRef.getOWLClass( i));
+        return makeEquivalentClasses( inds);
+    }
+    /**
+     * Returns the changes required to set some classes equivalent among themselves.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param classes set of classes to set as equivalent.
+     * @return changes required to set some classes equivalent.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange makeEquivalentClasses( Set< OWLClass> classes){
+        try{
+            long initialTime = System.nanoTime();
+            OWLEquivalentClassesAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLEquivalentClassesAxiom(classes);
+            OWLOntologyChange adding = getAddAxiom( differentIndAxiom, manipulationBuffering);
+
+            if( !manipulationBuffering)
+                applyChanges( adding);
+            logger.addDebugString( "remove equivalent class: " + ontoRef.getOWLObjectName(classes) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
+            return( adding);
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+        }
+        return( null);
+    }
+
+    /**
+     * Returns the changes required to unset equivalent axiom among some classes.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param classesName names of the classes to unset equivalent axiom among.
+     * @return changes required to unset equivalent axiom among some classes.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange removeEquivalentClassName( Set< String> classesName){
+        Set< OWLClass> inds = new HashSet< OWLClass>();
+        for( String i : classesName)
+            inds.add( ontoRef.getOWLClass( i));
+        return removeEquivalentClasses( inds);
+    }
+    /**
+     * Returns the changes required to unset equivalent axiom among some classes.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param classes set of classes to unset equivalent axiom among.
+     * @return changes required to unset equivalent axiom among some classes.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange removeEquivalentClasses( Set< OWLClass> classes){
+        try{
+            long initialTime = System.nanoTime();
+            OWLEquivalentClassesAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLEquivalentClassesAxiom(classes);
+            OWLOntologyChange adding = getRemoveAxiom( differentIndAxiom, manipulationBuffering);
+
+            if( !manipulationBuffering)
+                applyChanges( adding);
+            logger.addDebugString( "remove equivalent class: " + ontoRef.getOWLObjectName(classes) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
+            return( adding);
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+        }
+        return null;
+    }
+
+    /**
+     * Returns the changes required to set some data properties equivalent among themselves.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param propertyNames names of the data properties to set equivalent.
+     * @return changes required to set some data properties equivalent.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange makeEquivalentDataPropertiesName(Set< String> propertyNames){
+        Set< OWLDataProperty> prop = new HashSet<>();
+        for( String i : propertyNames)
+            prop.add( ontoRef.getOWLDataProperty( i));
+        return makeEquivalentDataProperties( prop);
+    }
+    /**
+     * Returns the changes required to set some data property equivalent among themselves.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param properties set of data properties to set as equivalent.
+     * @return changes required to set some data properties equivalent.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange makeEquivalentDataProperties(Set< OWLDataProperty> properties){
+        try{
+            long initialTime = System.nanoTime();
+            OWLEquivalentDataPropertiesAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLEquivalentDataPropertiesAxiom(properties);
+            OWLOntologyChange adding = getAddAxiom( differentIndAxiom, manipulationBuffering);
+
+            if( !manipulationBuffering)
+                applyChanges( adding);
+            logger.addDebugString( "make equivalent data property: " + ontoRef.getOWLObjectName(properties) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
+            return( adding);
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+        }
+        return( null);
+    }
+
+    /**
+     * Returns the changes required to unset equivalent axiom among some data properties.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param propertyName names of the data properties to unset equivalent axiom among.
+     * @return changes required to unset some data properties equivalent.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange removeEquivalentDataPropertyName( Set< String> propertyName){
+        Set< OWLDataProperty> prop = new HashSet<>();
+        for( String i : propertyName)
+            prop.add( ontoRef.getOWLDataProperty( i));
+        return removeEquivalentDataProperty( prop);
+    }
+    /**
+     * Returns the changes required to unset equivalent axiom among some data properties.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param properties set of data properties to unset equivalent axiom among.
+     * @return changes required to unset some data properties equivalent.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange removeEquivalentDataProperty( Set< OWLDataProperty> properties){
+        try{
+            long initialTime = System.nanoTime();
+            OWLEquivalentDataPropertiesAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLEquivalentDataPropertiesAxiom(properties);
+            OWLOntologyChange adding = getRemoveAxiom( differentIndAxiom, manipulationBuffering);
+
+            if( !manipulationBuffering)
+                applyChanges( adding);
+            logger.addDebugString( "make equivalent data property: " + ontoRef.getOWLObjectName(properties) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
+            return( adding);
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+        }
+        return( null);
+    }
+
+    /**
+     * Returns the changes required to set some object properties equivalent among themselves.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param propertyNames names of the object properties to set equivalent.
+     * @return changes required to set some object properties equivalent.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange makeEquivalentObjectPropertyNames(Set< String> propertyNames){
+        Set< OWLObjectProperty> prop = new HashSet<>();
+        for( String i : propertyNames)
+            prop.add( ontoRef.getOWLObjectProperty( i));
+        return makeEquivalentObjectProperties( prop);
+    }
+    /**
+     * Returns the changes required to set some object properties equivalent among themselves.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param properties set of object properties to set as equivalent.
+     * @return changes required to set some object properties equivalent.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange makeEquivalentObjectProperties(Set< OWLObjectProperty> properties){
+        try{
+            long initialTime = System.nanoTime();
+            OWLEquivalentObjectPropertiesAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLEquivalentObjectPropertiesAxiom(properties);
+            OWLOntologyChange adding = getAddAxiom( differentIndAxiom, manipulationBuffering);
+
+            if( !manipulationBuffering)
+                applyChanges( adding);
+            logger.addDebugString( "make equivalent Object property: " + ontoRef.getOWLObjectName(properties) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
+            return( adding);
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+        }
+        return( null);
+    }
+
+    /**
+     * Returns the changes required to unset equivalent axiom among some object properties.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param propertyName names of the object properties to unset equivalent axiom among.
+     * @return changes required to unset some object properties equivalent.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange removeEquivalentObjectPropertyNames(Set< String> propertyName){
+        Set< OWLObjectProperty> prop = new HashSet<>();
+        for( String i : propertyName)
+            prop.add( ontoRef.getOWLObjectProperty( i));
+        return removeEquivalentObjectProperties( prop);
+    }
+    /**
+     * Returns the changes required to unset equivalent axiom among some object properties.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param properties set of object properties to unset equivalent axiom among.
+     * @return changes required to unset some object property equivalent.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange removeEquivalentObjectProperties(Set< OWLObjectProperty> properties){
+        try{
+            long initialTime = System.nanoTime();
+            OWLEquivalentObjectPropertiesAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLEquivalentObjectPropertiesAxiom(properties);
+            OWLOntologyChange adding = getRemoveAxiom( differentIndAxiom, manipulationBuffering);
+
+            if( !manipulationBuffering)
+                applyChanges( adding);
+            logger.addDebugString( "make equivalent Object properties: " + ontoRef.getOWLObjectName(properties) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
+            return( adding);
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+        }
+        return( null);
+    }
+
+
 }

@@ -917,45 +917,6 @@ public class OWLEnquirer {
     }
 
     /**
-     * Returns all the 'same as' individuals of the given one, given by name.
-     *
-     * @param individualName the name of the individual to search for 'same as' instances.
-     * @return all the 'same as' individuals.
-     */
-    public Set<OWLNamedIndividual> getSameAsIndividuals(String individualName){
-	    return getSameAsIndividuals( ontoRef.getOWLIndividual( individualName));
-    }
-    /**
-     * Returns all the 'same as' individuals of the given one.
-     *
-     * @param individual the OWL individual to search for 'same as' instances.
-     * @return all the 'same as' individuals.
-     */
-    public Set<OWLNamedIndividual> getSameAsIndividuals(OWLNamedIndividual individual){
-        long initialTime = System.nanoTime();
-        Set<OWLNamedIndividual> individuals = new HashSet<>();
-
-        Stream<OWLIndividual> stream = EntitySearcher.getSameIndividuals(individual, ontoRef.getOWLOntology());
-        Set<OWLIndividual> set = stream.collect(Collectors.toSet());
-
-        if( set != null)
-            individuals.addAll(set.stream().map(AsOWLNamedIndividual::asOWLNamedIndividual).collect(Collectors.toList()));
-
-        if( isIncludingInferences()) {
-            try {
-                Stream<OWLNamedIndividual> streamReasoned = ontoRef.getOWLReasoner().getSameIndividuals(individual).entities();
-                Set<OWLNamedIndividual> reasoned = streamReasoned.collect(Collectors.toSet());
-                if (reasoned != null)
-                    individuals.addAll(reasoned.stream().map(AsOWLNamedIndividual::asOWLNamedIndividual).collect(Collectors.toList()));
-            } catch (InconsistentOntologyException e) {
-                ontoRef.logInconsistency();
-            }
-        }
-        logger.addDebugString( "get 'same as' individuals given in: " + (System.nanoTime() - initialTime) + " [ns]");
-        return individuals;
-    }
-
-    /**
      * Returns all the different individuals of the given one, given by name.
      *
      * @param individualName the name of the individual to search for different instances.
@@ -1040,7 +1001,7 @@ public class OWLEnquirer {
      * @return all the disjointed object properties.
      */
     public Set<OWLObjectProperty> getDisjointObjectProperties(String propertyName){
-        return getDisjointObjectProperties( propertyName);
+        return getDisjointObjectProperties( ontoRef.getOWLObjectProperty( propertyName));
     }
     /**
      * Returns all the disjointed object property of the given one.
@@ -1071,6 +1032,166 @@ public class OWLEnquirer {
         logger.addDebugString( "get disjoint object property given in: " + (System.nanoTime() - initialTime) + " [ns]");
         return properties;
     }
+
+
+    /**
+     * Returns all the equivalent individuals of the given one, given by name.
+     *
+     * @param individualName the name of the individual to search for equivalent instances.
+     * @return all the equivalent individuals.
+     */
+    public Set<OWLNamedIndividual> getEquivalentIndividuals(String individualName){
+        return getEquivalentIndividuals( ontoRef.getOWLIndividual( individualName));
+    }
+    /**
+     * Returns all the equivalent individuals of the given one.
+     *
+     * @param individual the OWL individual to search for equivalent instances.
+     * @return all the equivalent individuals.
+     */
+    public Set<OWLNamedIndividual> getEquivalentIndividuals(OWLNamedIndividual individual){
+        long initialTime = System.nanoTime();
+        Set<OWLNamedIndividual> individuals = new HashSet<>();
+
+        Stream<OWLIndividual> stream = EntitySearcher.getSameIndividuals(individual, ontoRef.getOWLOntology());
+        Set<OWLIndividual> set = stream.collect(Collectors.toSet());
+
+        if( set != null)
+            individuals.addAll(set.stream().map(AsOWLNamedIndividual::asOWLNamedIndividual).collect(Collectors.toList()));
+
+        if( isIncludingInferences()) {
+            try {
+                Stream<OWLNamedIndividual> streamReasoned = ontoRef.getOWLReasoner().getSameIndividuals(individual).entities();
+                Set<OWLNamedIndividual> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    individuals.addAll(reasoned.stream().map(AsOWLNamedIndividual::asOWLNamedIndividual).collect(Collectors.toList()));
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
+        logger.addDebugString( "get equivalent individuals given in: " + (System.nanoTime() - initialTime) + " [ns]");
+        return individuals;
+    }
+
+    /**
+     * Returns all the equivalent class of the given class given by name.
+     *
+     * @param className the name of the class to search for equivalent classes.
+     * @return all the equivalent classes.
+     */
+    public Set<OWLClass> getEquivalentClasses( String className){
+        return getEquivalentClasses( ontoRef.getOWLClass( className));
+    }
+    /**
+     * Returns all the equivalent class of the given class.
+     *
+     * @param cl the OWL class to search for equivalent classes.
+     * @return all the equivalent classes.
+     */
+    public Set<OWLClass> getEquivalentClasses(OWLClass cl){
+        long initialTime = System.nanoTime();
+        Set<OWLClass> classes = new HashSet<>();
+
+        Stream<OWLClassExpression> stream = EntitySearcher.getEquivalentClasses( cl, ontoRef.getOWLOntology());
+        Set<OWLClassExpression> set = stream.collect( Collectors.toSet());
+
+        if( set != null)
+            classes.addAll(set.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
+
+        if( isIncludingInferences()) {
+            try {
+                Stream<OWLClass> streamReasoned = ontoRef.getOWLReasoner().getEquivalentClasses(cl).entities();
+                Set<OWLClass> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    classes.addAll(reasoned.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
+        classes.remove( ontoRef.getOWLFactory().getOWLThing());
+        logger.addDebugString( "get equivalent classes given in: " + (System.nanoTime() - initialTime) + " [ns]");
+        return classes;
+    }
+
+    /**
+     * Returns all the equivalent data property of the given one, given by name.
+     *
+     * @param propertyName the name of the data property to search for different data properties.
+     * @return all the equivalent data properties.
+     */
+    public Set<OWLDataProperty> getEquivalentDataProperties(String propertyName){
+        return getEquivalentDataProperties( ontoRef.getOWLDataProperty( propertyName));
+    }
+    /**
+     * Returns all the equivalent data property of the given one.
+     *
+     * @param property the OWL data property to search for different data properties.
+     * @return all the equivalent data properties.
+     */
+    public Set<OWLDataProperty> getEquivalentDataProperties(OWLDataProperty property){
+        long initialTime = System.nanoTime();
+        Set<OWLDataProperty> properties = new HashSet<>();
+
+        Stream<OWLDataPropertyExpression> stream = EntitySearcher.getEquivalentProperties(property, ontoRef.getOWLOntology());
+        Set<OWLDataPropertyExpression> set = stream.collect(Collectors.toSet());
+
+        if( set != null)
+            properties.addAll(set.stream().map(AsOWLDataProperty::asOWLDataProperty).collect(Collectors.toList()));
+
+        if( isIncludingInferences()) {
+            try {
+                Stream<OWLDataProperty> streamReasoned = ontoRef.getOWLReasoner().getEquivalentDataProperties(property).entities();
+                Set<OWLDataProperty> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    properties.addAll(reasoned.stream().map(AsOWLDataProperty::asOWLDataProperty).collect(Collectors.toList()));
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
+        logger.addDebugString( "get equivalent data property given in: " + (System.nanoTime() - initialTime) + " [ns]");
+        return properties;
+    }
+
+    /**
+     * Returns all the equivalent object property of the given one, given by name.
+     *
+     * @param propertyName the name of the object property to search for different object properties.
+     * @return all the equivalent object properties.
+     */
+    public Set<OWLObjectProperty> getEquivalentObjectProperties(String propertyName){
+        return getEquivalentObjectProperties( ontoRef.getOWLObjectProperty( propertyName));
+    }
+    /**
+     * Returns all the equivalent object property of the given one.
+     *
+     * @param property the OWL object property to search for different object properties.
+     * @return all the equivalent object properties.
+     */
+    public Set<OWLObjectProperty> getEquivalentObjectProperties(OWLObjectProperty property){
+        long initialTime = System.nanoTime();
+        Set<OWLObjectProperty> properties = new HashSet<>();
+
+        Stream<OWLObjectPropertyExpression> stream = EntitySearcher.getEquivalentProperties(property, ontoRef.getOWLOntology());
+        Set<OWLObjectPropertyExpression> set = stream.collect(Collectors.toSet());
+
+        if( set != null)
+            properties.addAll(set.stream().map(AsOWLObjectProperty::asOWLObjectProperty).collect(Collectors.toList()));
+
+        if( isIncludingInferences()) {
+            try {
+                Stream<OWLObjectPropertyExpression> streamReasoned = ontoRef.getOWLReasoner().getEquivalentObjectProperties(property).entities();
+                Set<OWLObjectPropertyExpression> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    properties.addAll(reasoned.stream().map(AsOWLObjectProperty::asOWLObjectProperty).collect(Collectors.toList()));
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
+        logger.addDebugString( "get equivalent object property given in: " + (System.nanoTime() - initialTime) + " [ns]");
+        return properties;
+    }
+
+
 
 
     /**
