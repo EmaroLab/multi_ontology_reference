@@ -705,7 +705,6 @@ public class OWLManipulator{
         OWLClass value = ontoRef.getOWLClass( valueName);
         return addExactObjectClassExpression( cl, property, cardinality, value);
     }
-
     private OWLOntologyChange addObjectClassExpression(OWLClass cl, OWLObjectProperty property, int cardinality, OWLClass value, int directive){
         try{
             long initialTime = System.nanoTime();
@@ -1949,7 +1948,7 @@ public class OWLManipulator{
 	}
 
 
-	// ---------------------------   methods to set individuals and classes disjoint
+	// ---------------------------   methods to set individuals classes and properties disjoint
 	/**
 	 * Returns the changes required to set some individuals disjoint among themselves.
 	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
@@ -2239,4 +2238,77 @@ public class OWLManipulator{
     }
 
 
+
+    // ---------------------------   methods to set individuals, classes and properties 'same as'
+    /**
+     * Returns the changes required to set some individuals 'same as' among themselves.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param individualNames names of the individuals to set 'same as'.
+     * @return changes required to set some individual 'same as'.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange makeSameAsIndividualName(Set< String> individualNames){
+        Set< OWLNamedIndividual> inds = new HashSet< OWLNamedIndividual>();
+        for( String i : individualNames)
+            inds.add( ontoRef.getOWLIndividual( i));
+        return makeSameAsIndividuals( inds);
+    }
+    /**
+     * Returns the changes required to set some individuals 'same as' among themselves.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param individuals set of individuals to set as 'same as'.
+     * @return changes required to set some individual 'same as'.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange makeSameAsIndividuals(Set< OWLNamedIndividual> individuals){
+        try{
+            long initialTime = System.nanoTime();
+            OWLSameIndividualAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLSameIndividualAxiom(individuals);
+            OWLOntologyChange adding = getAddAxiom( differentIndAxiom, manipulationBuffering);
+
+            if( !manipulationBuffering)
+                applyChanges( adding);
+            logger.addDebugString( "make 'same as' individuals: " + ontoRef.getOWLObjectName(individuals) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
+            return( adding);
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+        }
+        return( null);
+    }
+
+    /**
+     * Returns the changes required to unset 'same as' axiom among some individuals.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param individualNames names of the individuals to unset 'same as' axiom among.
+     * @return changes required to unset some individual 'same as'.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange removeSameAsIndividualName( Set< String> individualNames){
+        Set< OWLNamedIndividual> inds = new HashSet< OWLNamedIndividual>();
+        for( String i : individualNames)
+            inds.add( ontoRef.getOWLIndividual( i));
+        return removeSameAsIndividuals( inds);
+    }
+    /**
+     * Returns the changes required to unset 'same as' axiom among some individuals.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param individuals set of individuals to unset 'same as' axiom among.
+     * @return changes required to unset some individual 'same as'.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange removeSameAsIndividuals( Set< OWLNamedIndividual> individuals){
+        try{
+            long initialTime = System.nanoTime();
+            OWLSameIndividualAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLSameIndividualAxiom(individuals);
+            OWLOntologyChange adding = getRemoveAxiom( differentIndAxiom, manipulationBuffering);
+
+            if( !manipulationBuffering)
+                applyChanges( adding);
+            logger.addDebugString( "make 'same as' individuals: " + ontoRef.getOWLObjectName(individuals) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
+            return( adding);
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+        }
+        return( null);
+    }
 }

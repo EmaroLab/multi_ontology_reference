@@ -494,7 +494,6 @@ public class OWLEnquirer {
         }
         return out;
     }
-
     /**
 	 * Returns all data properties and relative value entities relative to an individual.
      * Note that this implementation may be not efficient since it iterate over all
@@ -542,7 +541,6 @@ public class OWLEnquirer {
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
-
 	/**
 	 * Returns all sub-properties of a given object property fetched by {@link #getSubObjectPropertyOf(OWLObjectProperty)}.
 	 * It checks axioms in the ontology first, then reasoner inferred axioms.
@@ -587,7 +585,6 @@ public class OWLEnquirer {
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
-
 	/**
 	 * Returns all sub-properties of a given object property fetched by {@link #getSuperObjectPropertyOf(OWLObjectProperty)}.
      * It checks axioms in the ontology first, then reasoner inferred axioms.
@@ -632,7 +629,6 @@ public class OWLEnquirer {
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
-
 	/**
 	 * Returns all sub-properties of a given data property fetched by {@link #getSubDataPropertyOf(OWLDataProperty)}.
      * It checks axioms in the ontology first, then reasoner inferred axioms.
@@ -677,7 +673,6 @@ public class OWLEnquirer {
 		logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
 		return( out);
 	}
-
 	/**
 	 * Returns all super-properties of a given data property fetched by {@link #getSuperDataPropertyOf(OWLDataProperty)}.
      * It checks axioms in the ontology first, then reasoner inferred axioms.
@@ -701,7 +696,6 @@ public class OWLEnquirer {
 		OWLClass cl = ontoRef.getOWLClass( className);
 		return( getSubClassOf(cl));
 	}
-
 	/**
 	 * Returns all sub-classes of a given class (except for {@link OWLDataFactory#getOWLThing()}).
          * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
@@ -746,7 +740,6 @@ public class OWLEnquirer {
 		OWLClass cl = ontoRef.getOWLClass( className);
 		return( getSuperClassOf(cl));
 	}
-
 	/**
 	 * Returns all super-classes of a given class (except for {@link OWLDataFactory#getOWLThing()}).
      * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
@@ -871,6 +864,17 @@ public class OWLEnquirer {
 		}
 		return out;
 	}
+    /**
+     * Returns the set of restrictions of the given class it terms
+     * of: &forall; and &exist; quantifier, as well as: minimal, exact and maximal cardinality;
+     * with respect to data and object properties.
+     * @param className the name of the class from which get the restriction and cardinality limits.
+     * @return the container of all the class restrictions and cardinality, for
+     * the given class.
+     */
+    public Set<ClassRestriction> getClassRestrictions(String className){
+        return getClassRestrictions( ontoRef.getOWLClass( className));
+    }
 
     /**
      * Returns all the disjoint class of the given class given by name.
@@ -913,13 +917,52 @@ public class OWLEnquirer {
     }
 
     /**
+     * Returns all the 'same as' individuals of the given one, given by name.
+     *
+     * @param individualName the name of the individual to search for 'same as' instances.
+     * @return all the 'same as' individuals.
+     */
+    public Set<OWLNamedIndividual> getSameAsIndividuals(String individualName){
+	    return getSameAsIndividuals( ontoRef.getOWLIndividual( individualName));
+    }
+    /**
+     * Returns all the 'same as' individuals of the given one.
+     *
+     * @param individual the OWL individual to search for 'same as' instances.
+     * @return all the 'same as' individuals.
+     */
+    public Set<OWLNamedIndividual> getSameAsIndividuals(OWLNamedIndividual individual){
+        long initialTime = System.nanoTime();
+        Set<OWLNamedIndividual> individuals = new HashSet<>();
+
+        Stream<OWLIndividual> stream = EntitySearcher.getSameIndividuals(individual, ontoRef.getOWLOntology());
+        Set<OWLIndividual> set = stream.collect(Collectors.toSet());
+
+        if( set != null)
+            individuals.addAll(set.stream().map(AsOWLNamedIndividual::asOWLNamedIndividual).collect(Collectors.toList()));
+
+        if( isIncludingInferences()) {
+            try {
+                Stream<OWLNamedIndividual> streamReasoned = ontoRef.getOWLReasoner().getSameIndividuals(individual).entities();
+                Set<OWLNamedIndividual> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    individuals.addAll(reasoned.stream().map(AsOWLNamedIndividual::asOWLNamedIndividual).collect(Collectors.toList()));
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
+        logger.addDebugString( "get 'same as' individuals given in: " + (System.nanoTime() - initialTime) + " [ns]");
+        return individuals;
+    }
+
+    /**
      * Returns all the different individuals of the given one, given by name.
      *
      * @param individualName the name of the individual to search for different instances.
      * @return all the disjointed individuals.
      */
     public Set<OWLNamedIndividual> getDisjointIndividuals(String individualName){
-	    return getDisjointIndividuals( ontoRef.getOWLIndividual( individualName));
+        return getDisjointIndividuals( ontoRef.getOWLIndividual( individualName));
     }
     /**
      * Returns all the different individuals of the given one.
@@ -1031,18 +1074,6 @@ public class OWLEnquirer {
 
 
     /**
-     * Returns the set of restrictions of the given class it terms
-     * of: &forall; and &exist; quantifier, as well as: minimal, exact and maximal cardinality;
-     * with respect to data and object properties.
-     * @param className the name of the class from which get the restriction and cardinality limits.
-     * @return the container of all the class restrictions and cardinality, for
-     * the given class.
-     */
-    public Set<ClassRestriction> getClassRestrictions(String className){
-        return getClassRestrictions( ontoRef.getOWLClass( className));
-    }
-
-    /**
      * Returns all the inverse object properties of a given property.
      * If no inverse property are fount it returns the given property.
      *
@@ -1052,7 +1083,6 @@ public class OWLEnquirer {
     public Set<OWLObjectProperty> getInverseProperty(String propertyName) {
         return getInverseProperty(ontoRef.getOWLObjectProperty(propertyName));
     }
-
     /**
      * Returns all the inverse object properties of a given property.
      * If no inverse property are fount it returns the given property.
@@ -1090,7 +1120,6 @@ public class OWLEnquirer {
     public OWLObjectProperty getOnlyInverseProperty(String propertyName) {
         return getOnlyInverseProperty(ontoRef.getOWLObjectProperty(propertyName));
     }
-
     /**
      * Returns an inverse object property of a given property.
      * If no inverse property are fount it returns the given property.
@@ -1144,7 +1173,6 @@ public class OWLEnquirer {
     public OWLClass getOnlyBottomType(String individualName){
         return getOnlyBottomType( ontoRef.getOWLIndividual( individualName));
     }
-
     /**
      * Returns only one class, in which the given individual is classified,
      * that is a leaf in the class tree.
@@ -1205,7 +1233,6 @@ public class OWLEnquirer {
             return null;
         }
     }
-
     /**
      * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
      * Works only with the Pellet reasoner.
@@ -1216,7 +1243,6 @@ public class OWLEnquirer {
     public List<QuerySolution> sparql(String query) { // no time out
         return sparql(query, null);
     }
-
     /**
      * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
      * Works only with the Pellet reasoner. {@code timeOut} parameter sets the query timeout, no timeout is set if
@@ -1231,7 +1257,6 @@ public class OWLEnquirer {
     public List<QuerySolution> sparql(String prefix, String select, String where, Long timeOut) {
         return sparql(prefix + select + where, timeOut);
     }
-
 
     // works only for pellet
     // set time out to null or < 0 to do not apply any timing out
@@ -1248,7 +1273,6 @@ public class OWLEnquirer {
     public List<QuerySolution> sparql(String prefix, String select, String where) {
         return sparql(prefix + select + where);
     }
-
     /**
      * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
      * Used to share the results with other code and processes. {@code timeOut} parameter sets the query timeout,
@@ -1261,7 +1285,6 @@ public class OWLEnquirer {
     public List<Map<String, String>> sparqlMsg(String query, Long timeOut) {
         return sparql2Msg(sparql(query, timeOut));
     }
-
     /**
      * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
      * This call do not apply any time out.
@@ -1273,7 +1296,6 @@ public class OWLEnquirer {
     public List<Map<String, String>> sparqlMsg(String query) { // no time out
         return sparql2Msg(sparql(query, null));
     }
-
     /**
      * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
      * Used to share the results with other code and processes. {@code timeOut} parameter sets the query timeout,
@@ -1288,7 +1310,6 @@ public class OWLEnquirer {
     public List<Map<String, String>> sparqlMsg(String prefix, String select, String where, Long timeOut) {
         return sparql2Msg(sparql(prefix + select + where, timeOut));
     }
-
     /**
      * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
      * Used to share the results with other code and processes.
@@ -1301,7 +1322,6 @@ public class OWLEnquirer {
     public List<Map<String, String>> sparqlMsg(String prefix, String select, String where) {
         return sparql2Msg(sparql(prefix + select + where));
     }
-
     /**
      * Formats a list of {@link QuerySolution} into a list of maps among strings.
      *
@@ -1374,7 +1394,6 @@ public class OWLEnquirer {
             return "\"" + getIndividualName() + "." + getPropertyName() + "( " + getValuesName() + ")";
         }
     }
-
     /**
      * Class used to contain a data property relation  associated to an individuals and its literal values.
      * A {@link DataPropertyRelations} object is returned by
@@ -1425,5 +1444,4 @@ public class OWLEnquirer {
             return "\"" + getIndividualName() + "." + getPropertyName() + "( " + getValuesName() + ")";
         }
     }
-
 }

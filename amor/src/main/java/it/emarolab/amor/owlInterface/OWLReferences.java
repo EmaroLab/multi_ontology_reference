@@ -72,6 +72,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	private Lock mutexDisjointIndividual = new ReentrantLock();
 	private Lock mutexDisjointDataProperty = new ReentrantLock();
 	private Lock mutexDisjointObjectProperty = new ReentrantLock();
+    private Lock mutexSameAsIndividual = new ReentrantLock();
     // ##################################   to manipulate the ontology !!!!!!!!!!!!!
     private Lock mutexReasoner = new ReentrantLock();
     private Lock mutexAddObjPropB2Ind = new ReentrantLock();
@@ -103,8 +104,10 @@ public class OWLReferences extends OWLReferencesInterface{
     private Lock mutexRemoveDisjointedDataProp = new ReentrantLock();
     private Lock mutexAddDisjointedObjectProp = new ReentrantLock();
     private Lock mutexRemoveDisjointedObjectProp = new ReentrantLock();
+    private Lock mutexAddSameAsInd = new ReentrantLock();
+    private Lock mutexRemoveSameAsInd = new ReentrantLock();
 
-	/**
+    /**
 	 * This constructor just calls the super class constructor: {@link OWLReferencesInterface#OWLReferencesInterface(String, String, String, Boolean, Integer)}
 	 * @param referenceName the unique identifier of this ontology references. This is the key with which this instance
 	 * is stored in the system map {@link OWLReferencesContainer#allReferences}
@@ -155,7 +158,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
 	/**
      * This method searches for one individual in the root class {@link OWLDataFactory#getOWLThing()}.
      * It looks for defined semantic entities as well as for inferred
@@ -190,7 +192,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
 	/**
      * This method searches for individuals in a specified class.
      * It looks for defined semantic entities as well as for inferred
@@ -226,7 +227,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
 	/**
      * This method searches for individuals in a specified class.
      * It looks for defined semantic entities as well as for inferred
@@ -262,7 +262,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
 	/**
      * This method searches for the classes in which an individuals is belonging to.
      * It looks for defined semantic entities as well as for inferred
@@ -298,7 +297,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
 	/**
      * This method searches for a class in which an individuals is belonging to.
      * It looks for defined semantic entities as well as for inferred
@@ -335,7 +333,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
 	/**
      * This method searches for the data properties assigned to a specified individual.
      * It looks for defined semantic entities as well as for inferred
@@ -373,7 +370,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
 	/**
      * This method searches for a data property assigned to a specified individual.
      * It looks for defined semantic entities as well as for inferred
@@ -410,7 +406,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
 	/**
      * This method searches for the all the data properties assigned to a specified individual.
      * It looks for defined semantic entities as well as for inferred
@@ -447,7 +442,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
 	/**
      * This method searches for the object properties assigned to a specified individual.
      * It looks for defined semantic entities as well as for inferred
@@ -485,7 +479,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
 	/**
      * This method searches for the object properties assigned to a specified individual.
      * It looks for defined semantic entities as well as for inferred
@@ -522,7 +515,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
 	/**
      * This method searches for the all the object properties assigned to a specified individual.
      * It looks for defined semantic entities as well as for inferred
@@ -564,7 +556,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
     /**
      * This method searches for the sub data properties of a specified property.
      * It looks for defined semantic entities as well as for inferred
@@ -599,7 +590,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
     /**
      * This method searches for the super data properties of a specified property.
      * It looks for defined semantic entities as well as for inferred
@@ -635,7 +625,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
     /**
      * This method searches for the sub object properties of a specified property.
      * It looks for defined semantic entities as well as for inferred
@@ -670,7 +659,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
     /**
      * This method searches for the super object properties of a specified property.
      * It looks for defined semantic entities as well as for inferred
@@ -706,7 +694,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
     /**
      * This method searches for the sub classes of a specified class.
      * It looks for defined semantic entities as well as for inferred
@@ -742,7 +729,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
     /**
      * This method searches for the super classes of a specified class.
      * It looks for defined semantic entities as well as for inferred
@@ -778,7 +764,6 @@ public class OWLReferences extends OWLReferencesInterface{
             }
         }.call();
     }
-
     /**
      * Returns the set of restrictions of the given class it terms
      * of: &forall; and &exist; quantifier, as well as: minimal, exact and maximal cardinality;
@@ -815,7 +800,6 @@ public class OWLReferences extends OWLReferencesInterface{
             }
         }.call();
     }
-
     /**
      * This method searches for the inverse properties of the specified property.
      * It looks for defined semantic entities as well as for inferred
@@ -853,7 +837,6 @@ public class OWLReferences extends OWLReferencesInterface{
             }
         }.call();
     }
-
     /**
      * This method searches for an inverse property of the specified property.
      * It looks for defined semantic entities as well as for inferred
@@ -891,7 +874,6 @@ public class OWLReferences extends OWLReferencesInterface{
             }
         }.call();
     }
-
     /**
      * This methods returns the classes in which the given individual is classified,
      * that are leafs in the class hierarchy.
@@ -927,7 +909,6 @@ public class OWLReferences extends OWLReferencesInterface{
             }
         }.call();
     }
-
     /**
      * This methods returns a class in which the given individual is classified,
      * that is a leaf in the class hierarchy.
@@ -945,7 +926,6 @@ public class OWLReferences extends OWLReferencesInterface{
             }
         }.call();
     }
-
 
 	/**
 	 * This methods returns all the disjointed classes.
@@ -977,6 +957,37 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
+
+    /**
+     * This methods returns all the 'same as' individuals.
+     * It relies on {@link OWLEnquirer#getSameAsIndividuals(String)}
+     * @param individualName the name of the individual to search for 'same as' individuals.
+     * @return all the 'same as' individuals.
+     */
+    public Set<OWLNamedIndividual> getSameAsIndividuals(String individualName){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexSameAsIndividual);
+        return new OWLReferencesCaller<Set<OWLNamedIndividual>>(mutexes, this) {
+            @Override
+            protected Set<OWLNamedIndividual> performSynchronisedCall() {
+                return getEnquirer().getSameAsIndividuals( individualName);
+            }
+        }.call();
+    }
+    /**
+     * This methods returns all the 'same as' individuals.
+     * It relies on {@link OWLEnquirer#getSameAsIndividuals(OWLNamedIndividual)}
+     * @param individual the individual to search for 'same as' individuals.
+     * @return all the 'same as' individuals.
+     */
+    public Set<OWLNamedIndividual> getSameAsIndividuals(OWLNamedIndividual individual){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexSameAsIndividual);
+        return new OWLReferencesCaller<Set<OWLNamedIndividual>>(mutexes, this) {
+            @Override
+            protected Set<OWLNamedIndividual> performSynchronisedCall() {
+                return getEnquirer().getSameAsIndividuals( individual);
+            }
+        }.call();
+    }
 
     /**
      * This methods returns all the different individuals.
@@ -1090,7 +1101,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
     /**
      * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
      * Works only with the Pellet reasoner.
@@ -1106,7 +1116,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
     /**
      * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
      * Works only with the Pellet reasoner. {@code timeOut} parameter sets the query timeout, no timeout is set if
@@ -1126,7 +1135,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
     /**
      * Performs a SPARQL query on the ontology. Returns a list of {@link QuerySolution} or {@code null} if the query fails.
      * Works only with the Pellet reasoner.
@@ -1144,7 +1152,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
     /**
      * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
      * Used to share the results with other code and processes. {@code timeOut} parameter sets the query timeout,
@@ -1162,7 +1169,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
     /**
      * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
 	 * This call do not apply any time out.
@@ -1179,7 +1185,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
     /**
      * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
      * Used to share the results with other code and processes. {@code timeOut} parameter sets the query timeout,
@@ -1199,7 +1204,6 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
     /**
      * An utility method that call {@link #sparql(String, Long)} and translates the results to a list of maps among strings.
      * Used to share the results with other code and processes.
@@ -2862,7 +2866,75 @@ public class OWLReferences extends OWLReferencesInterface{
 	}
 	
 	// ------------------------------------------------------------   methods for DISJOINT individuals
-	/**
+    /**
+     * This method calls {@link OWLManipulator#makeSameAsIndividualName(Set)}
+     * in order to create (buffers and/or add) the 'same as' axiom with respect to the individuals
+     * specified as input though their name.
+     * @param individualNames the set of names of individuals to make 'same as'.
+     * @return the changes to be done in order to add the 'same as' individual axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange makeSameAsIndividualNames(Set< String> individualNames){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddSameAsInd);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().makeSameAsIndividualName( individualNames);
+            }
+        }.call();
+    }
+    /**
+     * This method calls {@link OWLManipulator#makeSameAsIndividuals(Set)}
+     * in order to create (buffers and/or add) the 'same as' axiom with respect to the
+     * individuals set specified as input.
+     * @param individuals the set of individuals to make 'same as'.
+     * @return the changes to be done in order to add the 'same as' individual axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange makeSameAsIndividuals( Set< OWLNamedIndividual> individuals){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddSameAsInd);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().makeSameAsIndividuals( individuals);
+            }
+        }.call();
+    }
+
+    /**
+     * This method calls {@link OWLManipulator#removeSameAsIndividualName(Set)}
+     * in order to create (buffers and/or remove) the 'same as' axioms (if their exists) with respect to the individuals
+     * specified as input though their name.
+     * @param individualNames the set of names of individuals to make not 'same as' anymore.
+     * @return the changes to be done in order to remove the 'same as' individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange removeSameAsIndividualNames(Set< String> individualNames){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveSameAsInd);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return  getManipulator().removeSameAsIndividualName( individualNames);
+            }
+        }.call();
+    }
+    /**
+     * This method calls {@link OWLManipulator#removeSameAsIndividuals(Set)}
+     * in order to create (buffers and/or remove) the 'same as' axiom (if their exists) with respect to the
+     * individuals set specified as input.
+     * @param individuals the set of individuals to make not 'same as' anymore.
+     * @return the changes to be done in order to remove the 'same as' individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange removeSameAsIndividuals( Set< OWLNamedIndividual> individuals){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveSameAsInd);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return  getManipulator().removeSameAsIndividuals( individuals);
+            }
+        }.call();
+    }
+
+    /**
 	 * This method calls {@link OWLManipulator#makeDisjointIndividualName(Set)}
 	 * in order to create (buffers and/or add) the disjoint axiom with respect to the individuals
 	 * specified as input though their name. 
@@ -3133,6 +3205,8 @@ public class OWLReferences extends OWLReferencesInterface{
             }
         }.call();
     }
+
+
 
 
 
