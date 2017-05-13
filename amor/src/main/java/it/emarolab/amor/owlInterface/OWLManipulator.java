@@ -230,7 +230,8 @@ public class OWLManipulator{
 	/**
 	 * It applies a change stored in {@code addAxiom} to the ontology.
 	 * @param addAxiom a change to be applied.
-	 */
+     * @param <T> a generic estionsion of {@link OWLOntologyChange}.
+     */
 	public synchronized <T extends OWLOntologyChange> void applyChanges( T addAxiom){
 		long initialTime = System.nanoTime();
 		try{
