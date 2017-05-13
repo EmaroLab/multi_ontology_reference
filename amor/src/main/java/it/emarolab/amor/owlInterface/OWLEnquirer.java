@@ -749,7 +749,7 @@ public class OWLEnquirer {
 
 	/**
 	 * Returns all super-classes of a given class (except for {@link OWLDataFactory#getOWLThing()}).
-         * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
+     * Results completeness is ensured only if {@link #returnsCompleteDescription} is set to {@code true}.
      *
 	 * @param cl an OWL class.
 	 * @return non-ordered set of sub-classes.
@@ -871,6 +871,164 @@ public class OWLEnquirer {
 		}
 		return out;
 	}
+
+    /**
+     * Returns all the disjoint class of the given class given by name.
+     *
+     * @param className the name of the class to search for disjointed classes.
+     * @return all the disjointed classes.
+     */
+    public Set<OWLClass> getDisjointClasses( String className){
+	    return getDisjointClasses( ontoRef.getOWLClass( className));
+    }
+    /**
+     * Returns all the disjoint class of the given class.
+     *
+     * @param cl the OWL class to search for disjointed classes.
+     * @return all the disjointed classes.
+     */
+	public Set<OWLClass> getDisjointClasses( OWLClass cl){
+        long initialTime = System.nanoTime();
+        Set<OWLClass> classes = new HashSet<>();
+
+        Stream<OWLClassExpression> stream = EntitySearcher.getDisjointClasses( cl, ontoRef.getOWLOntology());
+        Set<OWLClassExpression> set = stream.collect( Collectors.toSet());
+
+        if( set != null)
+            classes.addAll(set.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
+
+        if( isIncludingInferences()) {
+            try {
+                Stream<OWLClass> streamReasoned = ontoRef.getOWLReasoner().getDisjointClasses(cl).entities();
+                Set<OWLClass> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    classes.addAll(reasoned.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
+        classes.remove( ontoRef.getOWLFactory().getOWLThing());
+        logger.addDebugString( "get disjoint classes given in: " + (System.nanoTime() - initialTime) + " [ns]");
+        return classes;
+    }
+
+    /**
+     * Returns all the different individuals of the given one, given by name.
+     *
+     * @param individualName the name of the individual to search for different instances.
+     * @return all the disjointed individuals.
+     */
+    public Set<OWLNamedIndividual> getDisjointIndividuals(String individualName){
+	    return getDisjointIndividuals( ontoRef.getOWLIndividual( individualName));
+    }
+    /**
+     * Returns all the different individuals of the given one.
+     *
+     * @param individual the OWL individual to search for different instances.
+     * @return all the disjointed individuals.
+     */
+    public Set<OWLNamedIndividual> getDisjointIndividuals(OWLNamedIndividual individual){
+        long initialTime = System.nanoTime();
+        Set<OWLNamedIndividual> individuals = new HashSet<>();
+
+        Stream<OWLIndividual> stream = EntitySearcher.getDifferentIndividuals(individual, ontoRef.getOWLOntology());
+        Set<OWLIndividual> set = stream.collect(Collectors.toSet());
+
+        if( set != null)
+            individuals.addAll(set.stream().map(AsOWLNamedIndividual::asOWLNamedIndividual).collect(Collectors.toList()));
+
+        if( isIncludingInferences()) {
+            try {
+                Stream<OWLNamedIndividual> streamReasoned = ontoRef.getOWLReasoner().getDifferentIndividuals(individual).entities();
+                Set<OWLNamedIndividual> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    individuals.addAll(reasoned.stream().map(AsOWLNamedIndividual::asOWLNamedIndividual).collect(Collectors.toList()));
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
+        logger.addDebugString( "get disjoint individuals given in: " + (System.nanoTime() - initialTime) + " [ns]");
+        return individuals;
+    }
+
+    /**
+     * Returns all the disjointed data property of the given one, given by name.
+     *
+     * @param propertyName the name of the data property to search for different data properties.
+     * @return all the disjointed data properties.
+     */
+    public Set<OWLDataProperty> getDisjointDataProperties(String propertyName){
+        return getDisjointDataProperties( ontoRef.getOWLDataProperty( propertyName));
+    }
+    /**
+     * Returns all the disjointed data property of the given one.
+     *
+     * @param property the OWL data property to search for different data properties.
+     * @return all the disjointed data properties.
+     */
+    public Set<OWLDataProperty> getDisjointDataProperties(OWLDataProperty property){
+        long initialTime = System.nanoTime();
+        Set<OWLDataProperty> properties = new HashSet<>();
+
+        Stream<OWLDataProperty> stream = EntitySearcher.getDisjointProperties(property, ontoRef.getOWLOntology());
+        Set<OWLDataProperty> set = stream.collect(Collectors.toSet());
+
+        if( set != null)
+            properties.addAll(set.stream().map(AsOWLDataProperty::asOWLDataProperty).collect(Collectors.toList()));
+
+        if( isIncludingInferences()) {
+            try {
+                Stream<OWLDataProperty> streamReasoned = ontoRef.getOWLReasoner().getDisjointDataProperties(property).entities();
+                Set<OWLDataProperty> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    properties.addAll(reasoned.stream().map(AsOWLDataProperty::asOWLDataProperty).collect(Collectors.toList()));
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
+        logger.addDebugString( "get disjoint data property given in: " + (System.nanoTime() - initialTime) + " [ns]");
+        return properties;
+    }
+
+    /**
+     * Returns all the disjointed object property of the given one, given by name.
+     *
+     * @param propertyName the name of the object property to search for different object properties.
+     * @return all the disjointed object properties.
+     */
+    public Set<OWLObjectProperty> getDisjointObjectProperties(String propertyName){
+        return getDisjointObjectProperties( propertyName);
+    }
+    /**
+     * Returns all the disjointed object property of the given one.
+     *
+     * @param property the OWL object property to search for different object properties.
+     * @return all the disjointed object properties.
+     */
+    public Set<OWLObjectProperty> getDisjointObjectProperties(OWLObjectProperty property){
+        long initialTime = System.nanoTime();
+        Set<OWLObjectProperty> properties = new HashSet<>();
+
+        Stream<OWLObjectProperty> stream = EntitySearcher.getDisjointProperties(property, ontoRef.getOWLOntology());
+        Set<OWLObjectProperty> set = stream.collect(Collectors.toSet());
+
+        if( set != null)
+            properties.addAll(set.stream().map(AsOWLObjectProperty::asOWLObjectProperty).collect(Collectors.toList()));
+
+        if( isIncludingInferences()) {
+            try {
+                Stream<OWLObjectPropertyExpression> streamReasoned = ontoRef.getOWLReasoner().getDisjointObjectProperties(property).entities();
+                Set<OWLObjectPropertyExpression> reasoned = streamReasoned.collect(Collectors.toSet());
+                if (reasoned != null)
+                    properties.addAll(reasoned.stream().map(AsOWLObjectProperty::asOWLObjectProperty).collect(Collectors.toList()));
+            } catch (InconsistentOntologyException e) {
+                ontoRef.logInconsistency();
+            }
+        }
+        logger.addDebugString( "get disjoint object property given in: " + (System.nanoTime() - initialTime) + " [ns]");
+        return properties;
+    }
+
 
     /**
      * Returns the set of restrictions of the given class it terms

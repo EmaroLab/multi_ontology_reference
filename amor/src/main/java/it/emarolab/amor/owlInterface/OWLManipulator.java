@@ -1957,11 +1957,11 @@ public class OWLManipulator{
 	 * @return changes required to set some individual disjoint.
      * Returned object can be ignored while working in buffering mode.
 	 */
-	public OWLOntologyChange setDisjointIndividualName(Set< String> individualNames){
+	public OWLOntologyChange makeDisjointIndividualName(Set< String> individualNames){
 		Set< OWLNamedIndividual> inds = new HashSet< OWLNamedIndividual>();
 		for( String i : individualNames)
 			inds.add( ontoRef.getOWLIndividual( i));
-		return setDisjointIndividuals( inds);
+		return makeDisjointIndividuals( inds);
 	}
 	/**
 	 * Returns the changes required to set some individuals disjoint among themselves.
@@ -1970,7 +1970,7 @@ public class OWLManipulator{
 	 * @return changes required to set some individual disjoint.
      * Returned object can be ignored while working in buffering mode.
 	 */
-	public OWLOntologyChange setDisjointIndividuals(Set< OWLNamedIndividual> individuals){
+	public OWLOntologyChange makeDisjointIndividuals(Set< OWLNamedIndividual> individuals){
 		try{
 			long initialTime = System.nanoTime();
 			OWLDifferentIndividualsAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLDifferentIndividualsAxiom( individuals);
@@ -2093,4 +2093,150 @@ public class OWLManipulator{
 		}
 		return null;
 	}
+
+	/**
+	 * Returns the changes required to set some data properties disjoint among themselves.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param propertyNames names of the data properties to set disjoint.
+	 * @return changes required to set some data properties disjoint.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public OWLOntologyChange makeDisjointDataPropertiesName(Set< String> propertyNames){
+		Set< OWLDataProperty> prop = new HashSet<>();
+		for( String i : propertyNames)
+			prop.add( ontoRef.getOWLDataProperty( i));
+		return makeDisjointDataProperties( prop);
+	}
+	/**
+	 * Returns the changes required to set some data property disjoint among themselves.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param properties set of data properties to set as disjoint.
+	 * @return changes required to set some data properties disjoint.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public OWLOntologyChange makeDisjointDataProperties(Set< OWLDataProperty> properties){
+		try{
+			long initialTime = System.nanoTime();
+			OWLDisjointDataPropertiesAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLDisjointDataPropertiesAxiom(properties);
+			OWLOntologyChange adding = getAddAxiom( differentIndAxiom, manipulationBuffering);
+
+			if( !manipulationBuffering)
+				applyChanges( adding);
+			logger.addDebugString( "make disjoint data property: " + ontoRef.getOWLObjectName(properties) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
+			return( adding);
+		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+			ontoRef.logInconsistency();
+		}
+		return( null);
+	}
+
+	/**
+	 * Returns the changes required to unset disjoint axiom among some data properties.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param propertyName names of the data properties to unset disjoint axiom among.
+	 * @return changes required to unset some data properties disjoint.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public OWLOntologyChange removeDisjointDataPropertyName( Set< String> propertyName){
+		Set< OWLDataProperty> prop = new HashSet<>();
+		for( String i : propertyName)
+			prop.add( ontoRef.getOWLDataProperty( i));
+		return removeDisjointDataProperty( prop);
+	}
+	/**
+	 * Returns the changes required to unset disjoint axiom among some data properties.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param properties set of data properties to unset disjoint axiom among.
+	 * @return changes required to unset some data properties disjoint.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public OWLOntologyChange removeDisjointDataProperty( Set< OWLDataProperty> properties){
+		try{
+			long initialTime = System.nanoTime();
+            OWLDisjointDataPropertiesAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLDisjointDataPropertiesAxiom(properties);
+			OWLOntologyChange adding = getRemoveAxiom( differentIndAxiom, manipulationBuffering);
+
+			if( !manipulationBuffering)
+				applyChanges( adding);
+			logger.addDebugString( "make disjoint data property: " + ontoRef.getOWLObjectName(properties) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
+			return( adding);
+		} catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+			ontoRef.logInconsistency();
+		}
+		return( null);
+	}
+
+    /**
+     * Returns the changes required to set some object properties disjoint among themselves.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param propertyNames names of the object properties to set disjoint.
+     * @return changes required to set some object properties disjoint.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange makeDisjointObjectPropertyNames(Set< String> propertyNames){
+        Set< OWLObjectProperty> prop = new HashSet<>();
+        for( String i : propertyNames)
+            prop.add( ontoRef.getOWLObjectProperty( i));
+        return makeDisjointObjectProperties( prop);
+    }
+    /**
+     * Returns the changes required to set some object properties disjoint among themselves.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param properties set of object properties to set as disjoint.
+     * @return changes required to set some object properties disjoint.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange makeDisjointObjectProperties(Set< OWLObjectProperty> properties){
+        try{
+            long initialTime = System.nanoTime();
+            OWLDisjointObjectPropertiesAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLDisjointObjectPropertiesAxiom(properties);
+            OWLOntologyChange adding = getAddAxiom( differentIndAxiom, manipulationBuffering);
+
+            if( !manipulationBuffering)
+                applyChanges( adding);
+            logger.addDebugString( "make disjoint Object property: " + ontoRef.getOWLObjectName(properties) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
+            return( adding);
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+        }
+        return( null);
+    }
+
+    /**
+     * Returns the changes required to unset disjoint axiom among some object properties.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param propertyName names of the object properties to unset disjoint axiom among.
+     * @return changes required to unset some object properties disjoint.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange removeDisjointObjectPropertyNames(Set< String> propertyName){
+        Set< OWLObjectProperty> prop = new HashSet<>();
+        for( String i : propertyName)
+            prop.add( ontoRef.getOWLObjectProperty( i));
+        return removeDisjointObjectProperties( prop);
+    }
+    /**
+     * Returns the changes required to unset disjoint axiom among some object properties.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param properties set of object properties to unset disjoint axiom among.
+     * @return changes required to unset some object property disjoint.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public OWLOntologyChange removeDisjointObjectProperties(Set< OWLObjectProperty> properties){
+        try{
+            long initialTime = System.nanoTime();
+            OWLDisjointObjectPropertiesAxiom differentIndAxiom = ontoRef.getOWLFactory().getOWLDisjointObjectPropertiesAxiom(properties);
+            OWLOntologyChange adding = getRemoveAxiom( differentIndAxiom, manipulationBuffering);
+
+            if( !manipulationBuffering)
+                applyChanges( adding);
+            logger.addDebugString( "make disjoint Object properties: " + ontoRef.getOWLObjectName(properties) + ". in:" + (System.nanoTime() - initialTime) + " [ns]");
+            return( adding);
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+        }
+        return( null);
+    }
+
+
 }

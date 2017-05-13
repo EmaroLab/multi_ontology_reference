@@ -53,6 +53,7 @@ public class OWLReferences extends OWLReferencesInterface{
     private Lock mutexDataPropB2Ind = new ReentrantLock();
 
     // [[[[[[[[[[[[[[[[[[[[[[   METHODS TO QUERY THE ONTOLOGY   ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+	// mutex for assure thread safe behaviour
     private Lock mutexObjPropB2Ind = new ReentrantLock();
     private Lock mutexSubClass = new ReentrantLock();
     private Lock mutexSuperClass = new ReentrantLock();
@@ -67,8 +68,11 @@ public class OWLReferences extends OWLReferencesInterface{
     private Lock mutexClassDefinition = new ReentrantLock();
     private Lock mutexInverseProperty = new ReentrantLock();
     private Lock mutexBottomType = new ReentrantLock();
-    // ##################################   to ontology manipulator !!!!!!!!!!!!!
-    // mutex for assure thread safe behaviour
+	private Lock mutexDisjointClass = new ReentrantLock();
+	private Lock mutexDisjointIndividual = new ReentrantLock();
+	private Lock mutexDisjointDataProperty = new ReentrantLock();
+	private Lock mutexDisjointObjectProperty = new ReentrantLock();
+    // ##################################   to manipulate the ontology !!!!!!!!!!!!!
     private Lock mutexReasoner = new ReentrantLock();
     private Lock mutexAddObjPropB2Ind = new ReentrantLock();
     private Lock mutexAddDataPropB2Ind = new ReentrantLock();
@@ -95,6 +99,10 @@ public class OWLReferences extends OWLReferencesInterface{
     private Lock mutexRemoveDisjointedInd = new ReentrantLock();
     private Lock mutexAddDisjointedCls = new ReentrantLock();
     private Lock mutexRemoveDisjointedCls = new ReentrantLock();
+    private Lock mutexAddDisjointedDataProp = new ReentrantLock();
+    private Lock mutexRemoveDisjointedDataProp = new ReentrantLock();
+    private Lock mutexAddDisjointedObjectProp = new ReentrantLock();
+    private Lock mutexRemoveDisjointedObjectProp = new ReentrantLock();
 
 	/**
 	 * This constructor just calls the super class constructor: {@link OWLReferencesInterface#OWLReferencesInterface(String, String, String, Boolean, Integer)}
@@ -937,6 +945,132 @@ public class OWLReferences extends OWLReferencesInterface{
             }
         }.call();
     }
+
+
+	/**
+	 * This methods returns all the disjointed classes.
+	 * It relies on {@link OWLEnquirer#getDisjointClasses(String)}.
+	 * @param className the name of the class to search for disjointed classes.
+	 * @return all the disjointed classes.
+	 */
+	public Set<OWLClass> getDisjointClasses(String className){
+		List<Lock> mutexes = getMutexes(mutexReasoner, mutexDisjointClass);
+		return new OWLReferencesCaller<Set<OWLClass>>(mutexes, this) {
+			@Override
+			protected Set<OWLClass> performSynchronisedCall() {
+				return getEnquirer().getDisjointClasses( className);
+			}
+		}.call();
+	}
+	/**
+	 * This methods returns all the disjointed classes.
+	 * It relies on {@link OWLEnquirer#getDisjointClasses(OWLClass)}.
+	 * @param cl the OWL class to search for disjointed classes.
+	 * @return all the disjointed classes.
+	 */
+	public Set<OWLClass> getDisjointClasses(OWLClass cl){
+		List<Lock> mutexes = getMutexes(mutexReasoner, mutexDisjointClass);
+		return new OWLReferencesCaller<Set<OWLClass>>(mutexes, this) {
+			@Override
+			protected Set<OWLClass> performSynchronisedCall() {
+				return getEnquirer().getDisjointClasses( cl);
+			}
+		}.call();
+	}
+
+    /**
+     * This methods returns all the different individuals.
+     * It relies on {@link OWLEnquirer#getDisjointIndividuals(String)}.
+     * @param individualName the name of the individual to search for disjointed individuals.
+     * @return all the disjointed individuals.
+     */
+    public Set<OWLNamedIndividual> getDisjointIndividuals(String individualName){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexDisjointIndividual);
+        return new OWLReferencesCaller<Set<OWLNamedIndividual>>(mutexes, this) {
+            @Override
+            protected Set<OWLNamedIndividual> performSynchronisedCall() {
+                return getEnquirer().getDisjointIndividuals( individualName);
+            }
+        }.call();
+    }
+    /**
+     * This methods returns all the different individuals.
+     * It relies on {@link OWLEnquirer#getDisjointIndividuals(OWLNamedIndividual)}.
+     * @param individual the individual to search for disjointed individuals.
+     * @return all the disjointed individuals.
+     */
+    public Set<OWLNamedIndividual> getDisjointIndividuals(OWLNamedIndividual individual){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexDisjointIndividual);
+        return new OWLReferencesCaller<Set<OWLNamedIndividual>>(mutexes, this) {
+            @Override
+            protected Set<OWLNamedIndividual> performSynchronisedCall() {
+                return getEnquirer().getDisjointIndividuals( individual);
+            }
+        }.call();
+    }
+
+    /**
+     * This methods returns all the different data properties.
+     * It relies on {@link OWLEnquirer#getDisjointDataProperties(String)}.
+     * @param propertyName the name of the data property to search for disjointed data properties.
+     * @return all the disjointed data properties.
+     */
+    public Set<OWLDataProperty> getDisjointDataProperty(String propertyName){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexDisjointDataProperty);
+        return new OWLReferencesCaller<Set<OWLDataProperty>>(mutexes, this) {
+            @Override
+            protected Set<OWLDataProperty> performSynchronisedCall() {
+                return getEnquirer().getDisjointDataProperties( propertyName);
+            }
+        }.call();
+    }
+    /**
+     * This methods returns all the different data properties.
+     * It relies on {@link OWLEnquirer#getDisjointDataProperties(OWLDataProperty)}.
+     * @param property the data property to search for disjointed data properties.
+     * @return all the disjointed data properties.
+     */
+    public Set<OWLDataProperty> getDisjointDataProperty(OWLDataProperty property){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexDisjointDataProperty);
+        return new OWLReferencesCaller<Set<OWLDataProperty>>(mutexes, this) {
+            @Override
+            protected Set<OWLDataProperty> performSynchronisedCall() {
+                return getEnquirer().getDisjointDataProperties( property);
+            }
+        }.call();
+    }
+
+    /**
+     * This methods returns all the different object properties.
+     * It relies on {@link OWLEnquirer#getDisjointObjectProperties(String)}.
+     * @param propertyName the name of the object property to search for disjointed object properties.
+     * @return all the disjointed object properties.
+     */
+    public Set<OWLObjectProperty> getDisjointObjectProperty(String propertyName){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexDisjointObjectProperty);
+        return new OWLReferencesCaller<Set<OWLObjectProperty>>(mutexes, this) {
+            @Override
+            protected Set<OWLObjectProperty> performSynchronisedCall() {
+                return getEnquirer().getDisjointObjectProperties( propertyName);
+            }
+        }.call();
+    }
+    /**
+     * This methods returns all the different object properties.
+     * It relies on {@link OWLEnquirer#getDisjointObjectProperties(OWLObjectProperty)}.
+     * @param property the object property to search for disjointed object properties.
+     * @return all the disjointed object properties.
+     */
+    public Set<OWLObjectProperty> getDisjointObjectProperty(OWLObjectProperty property){
+        List<Lock> mutexes = getMutexes(mutexReasoner, mutexDisjointObjectProperty);
+        return new OWLReferencesCaller<Set<OWLObjectProperty>>(mutexes, this) {
+            @Override
+            protected Set<OWLObjectProperty> performSynchronisedCall() {
+                return getEnquirer().getDisjointObjectProperties( property);
+            }
+        }.call();
+    }
+
 
 
     /**
@@ -2729,23 +2863,23 @@ public class OWLReferences extends OWLReferencesInterface{
 	
 	// ------------------------------------------------------------   methods for DISJOINT individuals
 	/**
-	 * This method calls {@link OWLManipulator#setDisjointIndividualName(Set)}
+	 * This method calls {@link OWLManipulator#makeDisjointIndividualName(Set)}
 	 * in order to create (buffers and/or add) the disjoint axiom with respect to the individuals
 	 * specified as input though their name. 
 	 * @param individualNames the set of names of individuals to make disjointed.
 	 * @return the changes to be done in order to add the disjoint individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange makeDisjointIndividualName( Set< String> individualNames){
+	public OWLOntologyChange makeDisjointIndividualNames(Set< String> individualNames){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjointedInd);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
 			protected OWLOntologyChange performSynchronisedCall() {
-				return getManipulator().setDisjointIndividualName( individualNames);
+				return getManipulator().makeDisjointIndividualName( individualNames);
 			}
 		}.call();
 	}
 	/**
-	 * This method calls {@link OWLManipulator#setDisjointIndividuals(Set)}
+	 * This method calls {@link OWLManipulator#makeDisjointIndividuals(Set)}
 	 * in order to create (buffers and/or add) the disjoint axiom with respect to the 
 	 * individuals set specified as input. 
 	 * @param individuals the set of individuals to make disjointed.
@@ -2756,7 +2890,7 @@ public class OWLReferences extends OWLReferencesInterface{
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
 			protected OWLOntologyChange performSynchronisedCall() {
-				return getManipulator().setDisjointIndividuals( individuals);
+				return getManipulator().makeDisjointIndividuals( individuals);
 			}
 		}.call();
 	}
@@ -2768,7 +2902,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param individualNames the set of names of individuals to make not disjointed anymore.
 	 * @return the changes to be done in order to remove the disjoint individual axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange removeDisjointIndividualName( Set< String> individualNames){
+	public OWLOntologyChange removeDisjointIndividualNames(Set< String> individualNames){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjointedInd);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -2801,7 +2935,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param classesName the set of names of class to make disjointed.
 	 * @return the changes to be done in order to add the disjoint classes axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange makeDisjointClassName( Set< String> classesName){
+	public OWLOntologyChange makeDisjointClassNames(Set< String> classesName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjointedCls);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -2834,7 +2968,7 @@ public class OWLReferences extends OWLReferencesInterface{
 	 * @param classesName the set of names of class to make not disjointed anymore.
 	 * @return the changes to be done in order to remove the disjoint class axiom for all the inputs. (see {@link OWLManipulator} for more info)
 	 */
-	public OWLOntologyChange removeDisjointClassName( Set< String> classesName){
+	public OWLOntologyChange removeDisjointClassNames(Set< String> classesName){
 		List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjointedCls);
 		return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
 			@Override
@@ -2859,6 +2993,146 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
+
+    /**
+     * This method calls {@link OWLManipulator#makeDisjointDataPropertiesName(Set)}
+     * in order to create (buffers and/or add) the disjoint axiom with respect to the data properties
+     * specified as input though their name.
+     * @param propertiesName the set of names of data properties to make disjointed.
+     * @return the changes to be done in order to add the disjoint data property axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange makeDisjointDataPropertiesNames(Set< String> propertiesName){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjointedDataProp);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().makeDisjointDataPropertiesName( propertiesName);
+            }
+        }.call();
+    }
+    /**
+     * This method calls {@link OWLManipulator#makeDisjointDataProperties(Set)}
+     * in order to create (buffers and/or add) the disjoint axiom with respect to the
+     * data property set specified as input.
+     * @param properties the set of data properties to make disjointed.
+     * @return the changes to be done in order to add the disjoint data property axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange makeDisjointDataProperties( Set< OWLDataProperty> properties){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjointedDataProp);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().makeDisjointDataProperties( properties);
+            }
+        }.call();
+    }
+
+    /**
+     * This method calls {@link OWLManipulator#removeDisjointDataPropertyName(Set)}
+     * in order to create (buffers and/or remove) the disjoint axioms (if their exists) with respect to the
+     * data properties specified as input though their name.
+     * @param propertiesName the set of names of data properties to make not disjointed anymore.
+     * @return the changes to be done in order to remove the disjoint data properties axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange removeDisjointDataPropertyNames(Set< String> propertiesName){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjointedDataProp);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeDisjointDataPropertyName( propertiesName);
+            }
+        }.call();
+    }
+    /**
+     * This method calls {@link OWLManipulator#removeDisjointDataProperty(Set)}
+     * in order to create (buffers and/or remove) the disjoint axiom (if their exists) with respect to the
+     * data properties set specified as input.
+     * @param properties the set of data properties to make not disjointed anymore.
+     * @return the changes to be done in order to remove the disjoint data property axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange removeDisjointDataProperties( Set< OWLDataProperty> properties){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjointedDataProp);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeDisjointDataProperty( properties);
+            }
+        }.call();
+    }
+
+    /**
+     * This method calls {@link OWLManipulator#makeDisjointObjectPropertyNames(Set)}
+     * in order to create (buffers and/or add) the disjoint axiom with respect to the object properties
+     * specified as input though their name.
+     * @param propertiesName the set of names of object properties to make disjointed.
+     * @return the changes to be done in order to add the disjoint object property axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange makeDisjointObjectPropertyNames(Set< String> propertiesName){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjointedObjectProp);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().makeDisjointObjectPropertyNames( propertiesName);
+            }
+        }.call();
+    }
+    /**
+     * This method calls {@link OWLManipulator#makeDisjointObjectProperties(Set)}
+     * in order to create (buffers and/or add) the disjoint axiom with respect to the
+     * object property set specified as input.
+     * @param properties the set of object properties to make disjointed.
+     * @return the changes to be done in order to add the disjoint object property axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange makeDisjointObjectProperties( Set< OWLObjectProperty> properties){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDisjointedObjectProp);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().makeDisjointObjectProperties( properties);
+            }
+        }.call();
+    }
+
+    /**
+     * This method calls {@link OWLManipulator#removeDisjointObjectPropertyNames(Set)}
+     * in order to create (buffers and/or remove) the disjoint axioms (if their exists) with respect to the
+     * object properties specified as input though their name.
+     * @param propertiesName the set of names of object properties to make not disjointed anymore.
+     * @return the changes to be done in order to remove the disjoint object properties axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange removeDisjointObjectPropertyNames(Set< String> propertiesName){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjointedObjectProp);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeDisjointObjectPropertyNames( propertiesName);
+            }
+        }.call();
+    }
+    /**
+     * This method calls {@link OWLManipulator#removeDisjointObjectProperties(Set)}
+     * in order to create (buffers and/or remove) the disjoint axiom (if their exists) with respect to the
+     * object properties set specified as input.
+     * @param properties the set of object properties to make not disjointed anymore.
+     * @return the changes to be done in order to remove the disjoint object property axiom for all the inputs.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange removeDisjointObjectProperties( Set< OWLObjectProperty> properties){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDisjointedObjectProp);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeDisjointObjectProperties( properties);
+            }
+        }.call();
+    }
 
 
 

@@ -30,7 +30,7 @@ public class ClassRestriction {
      * Object used to log information about this class instances.
      * Logs are activated by flag: {@link Logger.LoggerFlag#LOG_OWL_ENQUIRER}
      */
-    private Logger logger = new Logger(this, Logger.LoggerFlag.getLogOWLEnquirer() | Logger.LoggerFlag.getLogOWLManipulator());
+    //private Logger logger = new Logger(this, Logger.LoggerFlag.getLogOWLEnquirer() | Logger.LoggerFlag.getLogOWLManipulator());
 
     /**
      * Create a class restriction for a data property and set its
@@ -65,10 +65,12 @@ public class ClassRestriction {
      * @param dataType the range of data of the universal restriction.
      */
     public void setDataOnlyRestriction( OWLDataRange dataType){
-        if( isDataProperty) {
-            this.expressioneType = RESTRICTION_ONLY;
-            this.data = dataType;
-        } else logger.addDebugString( "Cannot set a 'only' data restriction over an object property", true);
+        if ( isDataProperty != null){
+            if( isDataProperty) {
+                this.expressioneType = RESTRICTION_ONLY;
+                this.data = dataType;
+            } //// else logger.addDebugString( "Cannot set a 'only' data restriction over an object property", true);
+        } //// else logger.addDebugString("Null property, nothing has been done!", true);
     }
     /**
      * Initialise to describe existential data property restriction over
@@ -80,10 +82,12 @@ public class ClassRestriction {
      * @param dataType the range of data of the existential restriction.
      */
     public void setDataSomeRestriction( OWLDataRange dataType){
-        if( isDataProperty) {
-            this.expressioneType = RESTRICTION_SOME;
-            this.data = dataType;
-        } else logger.addDebugString( "Cannot set a 'some' data restriction over an object property", true);
+        if( isDataProperty != null) {
+            if (isDataProperty) {
+                this.expressioneType = RESTRICTION_SOME;
+                this.data = dataType;
+            } // else logger.addDebugString("Cannot set a 'some' data restriction over an object property", true);
+        } // else logger.addDebugString("Null property, nothing has been done!", true);
     }
     /**
      * Initialise to describe a data property with a minimal cardinality restriction over
@@ -96,11 +100,13 @@ public class ClassRestriction {
      * @param dataType the range of data of the minimal cardinality restriction.
      */
     public void setDataMinRestriction( int cardinality, OWLDataRange dataType){
-        if( isDataProperty) {
-            this.expressioneType = RESTRICTION_MIN;
-            this.cardinality = cardinality;
-            this.data = dataType;
-        } else logger.addDebugString( "Cannot set a 'min' data restriction over an object property", true);
+        if( isDataProperty != null){
+            if( isDataProperty) {
+                this.expressioneType = RESTRICTION_MIN;
+                this.cardinality = cardinality;
+                this.data = dataType;
+            } // else logger.addDebugString( "Cannot set a 'min' data restriction over an object property", true);
+        } // else logger.addDebugString("Null property, nothing has been done!", true);
     }
     /**
      * Initialise to describe a data property with a maximal cardinality restriction over
@@ -113,11 +119,13 @@ public class ClassRestriction {
      * @param dataType the range of data of the maximal cardinality restriction.
      */
     public void setDataMaxRestriction(int cardinality, OWLDataRange dataType){
-        if( isDataProperty) {
-            this.expressioneType = RESTRICTION_MAX;
-            this.cardinality = cardinality;
-            this.data = dataType;
-        } else logger.addDebugString( "Cannot set a 'max' data restriction over an object property", true);
+        if( isDataProperty != null){
+            if( isDataProperty) {
+                this.expressioneType = RESTRICTION_MAX;
+                this.cardinality = cardinality;
+                this.data = dataType;
+            } // else logger.addDebugString( "Cannot set a 'max' data restriction over an object property", true);
+        } // else logger.addDebugString("Null property, nothing has been done!", true);
     }
     /**
      * Initialise to describe a data property with an exact cardinality restriction over
@@ -130,11 +138,13 @@ public class ClassRestriction {
      * @param dataType the range of data of the exact cardinality restriction.
      */
     public void setDataExactRestriction( int cardinality, OWLDataRange dataType){
-        if( isDataProperty) {
-            this.expressioneType = RESTRICTION_EXACT;
-            this.cardinality = cardinality;
-            this.data = dataType;
-        } else logger.addDebugString( "Cannot set a 'exact' data restriction over an object property", true);
+        if( isDataProperty != null){
+            if( isDataProperty) {
+                this.expressioneType = RESTRICTION_EXACT;
+                this.cardinality = cardinality;
+                this.data = dataType;
+            } // else logger.addDebugString( "Cannot set a 'exact' data restriction over an object property", true);
+        } // else logger.addDebugString("Null property, nothing has been done!", true);
     }
 
     /**
@@ -144,10 +154,12 @@ public class ClassRestriction {
      * @param object the class domain of the universal property restriction.
      */
     public void setObjectOnlyRestriction( OWLClass object){
-        if( ! isDataProperty) {
-            this.expressioneType = RESTRICTION_ONLY;
-            this.object = object;
-        } else logger.addDebugString( "Cannot set a 'only' object restriction over a data property", true);
+        if( isDataProperty != null) {
+            if (!isDataProperty) {
+                this.expressioneType = RESTRICTION_ONLY;
+                this.object = object;
+            } // else logger.addDebugString("Cannot set a 'only' object restriction over a data property", true);
+        } // else logger.addDebugString("Null property, nothing has been done!", true);
     }
     /**
      * Initialise to describe existential object property restriction over
@@ -156,10 +168,12 @@ public class ClassRestriction {
      * @param object the class domain of the existential property restriction.
      */
     public void setObjectSomeRestriction( OWLClass object){
-        if( ! isDataProperty) {
-            this.expressioneType = RESTRICTION_SOME;
-            this.object = object;
-        } else logger.addDebugString( "Cannot set a 'some' object restriction over a data property", true);
+        if( isDataProperty != null){
+            if( ! isDataProperty) {
+                this.expressioneType = RESTRICTION_SOME;
+                this.object = object;
+            } // else logger.addDebugString( "Cannot set a 'some' object restriction over a data property", true);
+        } // else logger.addDebugString("Null property, nothing has been done!", true);
     }
     /**
      * Initialise to describe an object property with a minimal cardinality restriction over
@@ -169,11 +183,13 @@ public class ClassRestriction {
      * @param object the class domain of the minimal cardinality restriction over the property.
      */
     public void setObjectMinRestriction(int cardinality, OWLClass object){
-        if( ! isDataProperty) {
-            this.expressioneType = RESTRICTION_MIN;
-            this.cardinality = cardinality;
-            this.object = object;
-        } else logger.addDebugString( "Cannot set an 'min' object restriction over a data property", true);
+        if( isDataProperty != null){
+            if( ! isDataProperty) {
+                this.expressioneType = RESTRICTION_MIN;
+                this.cardinality = cardinality;
+                this.object = object;
+            } // else logger.addDebugString( "Cannot set an 'min' object restriction over a data property", true);
+        } // else logger.addDebugString("Null property, nothing has been done!", true);
     }
     /**
      * Initialise to describe an object property with a maximal cardinality restriction over
@@ -183,11 +199,13 @@ public class ClassRestriction {
      * @param object the class domain of the maximal cardinality restriction over the property.
      */
     public void setObjectMaxRestriction(int cardinality, OWLClass object){
-        if( ! isDataProperty) {
-            this.expressioneType = RESTRICTION_MAX;
-            this.cardinality = cardinality;
-            this.object = object;
-        } else logger.addDebugString( "Cannot set an 'max' object restriction over a data property", true);
+        if( isDataProperty != null){
+            if( ! isDataProperty) {
+                this.expressioneType = RESTRICTION_MAX;
+                this.cardinality = cardinality;
+                this.object = object;
+            } // else logger.addDebugString( "Cannot set an 'max' object restriction over a data property", true);
+        } // else logger.addDebugString("Null property, nothing has been done!", true);
     }
     /**
      * Initialise to describe an object property with a exact cardinality restriction over
@@ -197,11 +215,13 @@ public class ClassRestriction {
      * @param object the class domain of the exact cardinality restriction over the property.
      */
     public void setObjectExactRestriction(int cardinality, OWLClass object){
-        if( ! isDataProperty) {
-            this.expressioneType = RESTRICTION_EXACT;
-            this.cardinality = cardinality;
-            this.object = object;
-        } else logger.addDebugString( "Cannot set an 'exact' object restriction over a data property", true);
+        if( isDataProperty != null){
+            if( ! isDataProperty) {
+                this.expressioneType = RESTRICTION_EXACT;
+                this.cardinality = cardinality;
+                this.object = object;
+            } // else logger.addDebugString( "Cannot set an 'exact' object restriction over a data property", true);
+        } // else logger.addDebugString("Null property, nothing has been done!", true);
     }
 
     /**
@@ -210,9 +230,11 @@ public class ClassRestriction {
      * @return the data type of the data property restriction.
      */
     public OWLDataRange getDataTypeRestriction(){
-        if( isDataProperty)
-            return data;
-        logger.addDebugString( "a class restriction based on an object property does not have data restrictions.");
+        if ( isDataProperty != null){
+            if( isDataProperty)
+                return data;
+            // else logger.addDebugString( "a class restriction based on an object property does not have data restrictions.");
+        } // else logger.addDebugString("Null property, nothing has been done!", true);
         return null;
     }
 
@@ -222,9 +244,11 @@ public class ClassRestriction {
      * @return the class of the data property restriction.
      */
     public OWLClass getObjectRestriction(){
-        if( ! isDataProperty)
-            return object;
-        logger.addDebugString( "a class restriction based on a data property does not have object restrictions.");
+        if( isDataProperty != null){
+            if( ! isDataProperty)
+                return object;
+            //logger.addDebugString( "a class restriction based on a data property does not have object restrictions.");
+        } // else logger.addDebugString("Null property, nothing has been done!", true);
         return null;
     }
 
@@ -236,7 +260,7 @@ public class ClassRestriction {
     public Integer getCardinality(){
         if( expressioneType >= RESTRICTION_MIN)
             return cardinality;
-        logger.addDebugString( getExpressionTypeName() + " does not have a cardinality.", true);
+        //logger.addDebugString( getExpressionTypeName() + " does not have a cardinality.", true);
         return null;
     }
 
@@ -254,9 +278,11 @@ public class ClassRestriction {
      * {@code Null} otherwise.
      */
     public OWLDataProperty getDataProperty() {
-        if( isDataProperty)
-            return (OWLDataProperty) property;
-        logger.addDebugString( "cannot assign data to object property over: " + OWLReferencesInterface.getOWLName( property), true);
+        if( isDataProperty != null){
+            if( isDataProperty)
+                return (OWLDataProperty) property;
+            //logger.addDebugString( "cannot assign data to object property over: " + OWLReferencesInterface.getOWLName( property), true);
+        } // else logger.addDebugString("Null property, nothing has been done!", true);
         return null;
     }
     /**
@@ -265,9 +291,11 @@ public class ClassRestriction {
      * {@code Null} otherwise.
      */
     public OWLObjectProperty getObjectProperty() {
-        if( ! isDataProperty)
-            return (OWLObjectProperty) property;
-        logger.addDebugString( "cannot assign data to object property over: " + OWLReferencesInterface.getOWLName( property), true);
+        if( isDataProperty != null){
+            if( ! isDataProperty)
+                return (OWLObjectProperty) property;
+            //logger.addDebugString( "cannot assign data to object property over: " + OWLReferencesInterface.getOWLName( property), true);
+        } // else logger.addDebugString("Null property, nothing has been done!", true);
         return null;
     }
 
@@ -378,14 +406,17 @@ public class ClassRestriction {
      * {@link #getObjectRestriction()}.
      */
     public String getObjectName(){
-        if( isDataProperty) {
-            try{
-                return data.toString().substring( data.toString().lastIndexOf('#') + 1, data.toString().length());
-            } catch (Exception e) {
-                return data + "";
+        if( isDataProperty != null){
+            if( isDataProperty) {
+                try{
+                    return data.toString().substring( data.toString().lastIndexOf('#') + 1, data.toString().length());
+                } catch (Exception e) {
+                    return data + "";
+                }
             }
-        }
-        return OWLReferencesInterface.getOWLName( object);
+            return OWLReferencesInterface.getOWLName( object);
+        } // else logger.addDebugString("Null property, cannot give object name!", true);
+        return null;
     }
 
     @Override
@@ -420,9 +451,11 @@ public class ClassRestriction {
     @Override
     public String toString() {
         String out = "Class definition: " + getDefinitionOfName() + " " + getPropertyName();
-        if( isDataProperty)
-            out += " data::";
-        else out += " object::";
+        if( isDataProperty != null) {
+            if (isDataProperty)
+                out += " data::";
+            else out += " object::";
+        } else out = " null::";
         out += " " + getExpressionTypeName();
         if( expressioneType >= RESTRICTION_MIN)
             out += " " + getCardinality();
