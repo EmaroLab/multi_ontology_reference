@@ -459,7 +459,7 @@ public class OWLEnquirer {
         for( OWLObjectProperty p : allProp){ // check if a property belongs to this individual
             Set<OWLNamedIndividual> values = getObjectPropertyB2Individual(individual, p);
             if( ! values.isEmpty())
-                out.add( new ObjectPropertyRelations(individual, p, values, ontoRef));
+                out.add( new ObjectPropertyRelations(individual, p, values));
         }
         return out;
     }
@@ -490,7 +490,7 @@ public class OWLEnquirer {
         for( OWLDataProperty p : allProp){ // check if a property belongs to this individual
             Set<OWLLiteral> values = getDataPropertyB2Individual(individual, p);
             if( ! values.isEmpty())
-                out.add( new DataPropertyRelations(individual, p, values, ontoRef));
+                out.add( new DataPropertyRelations(individual, p, values));
         }
         return out;
     }
