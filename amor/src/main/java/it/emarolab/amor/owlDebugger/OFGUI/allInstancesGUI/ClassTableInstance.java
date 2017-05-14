@@ -1,16 +1,10 @@
 package it.emarolab.amor.owlDebugger.OFGUI.allInstancesGUI;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ToolTipManager;
-import javax.swing.table.AbstractTableModel;
-
 import it.emarolab.amor.owlDebugger.Logger;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
@@ -27,16 +21,16 @@ public class ClassTableInstance extends JPanel implements MouseListener {
     
     private static MyTableModel model;
 
-	private static final String[] columnNames = new String[] {	"Class", "Instances", "Log"};
+    private static final String[] columnNames = new String[] {    "Class", "Instances", "Log"};
 
     
-	// constructor
-	public ClassTableInstance( JFrame jframe) {
-		super( new BorderLayout(0, 0));
-				
+    // constructor
+    public ClassTableInstance( JFrame jframe) {
+        super( new BorderLayout(0, 0));
+
         this.frame = jframe;
-    	
-    	model = new MyTableModel();
+
+        model = new MyTableModel();
         table = new JTable( model);
         table.setPreferredScrollableViewportSize(new Dimension(500, 70));
                 
@@ -57,79 +51,79 @@ public class ClassTableInstance extends JPanel implements MouseListener {
              
         // frame resize listener
         frame.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				double a = e.getComponent().getSize().getWidth() - scrollPane.getVerticalScrollBar().getSize().getWidth();
-				setTableDimensions(( a - 15) * 0.3);
-			}
-		});
+            @Override
+            public void componentResized(ComponentEvent e) {
+                double a = e.getComponent().getSize().getWidth() - scrollPane.getVerticalScrollBar().getSize().getWidth();
+                setTableDimensions(( a - 15) * 0.3);
+            }
+        });
 
         //Add the scroll pane to this panel.
         add( scrollPane, BorderLayout.CENTER);
         
     }
-		
-	// set the preferred dimensions of every cell in accord with the type of table
-	// and the frame dimension
-	public static void setTableDimensions( double tableWidth){
-		table.getColumnModel().getColumn( 0)
-			.setPreferredWidth( ( int) (0.40 * tableWidth)); // Class
-		table.getColumnModel().getColumn( 1)
-			.setPreferredWidth( ( int) (0.40 * tableWidth)); // instances
-		table.getColumnModel().getColumn( 2)
-			.setPreferredWidth( ( int) (0.20 * tableWidth)); // follow
-	}
-	
-	public static MyTableModel getModel() {
-		return model;
-	}
-	
-	// call the ontology printer and update the textPane
-	@Override
-	public synchronized void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		int selectionRow = table.getSelectedRow();
-		int selectionCol = table.getSelectedColumn();
-		if( selectionRow != -1 && selectionCol == 2){
-			Logger tmp = Logger.getAllInstances().get( table.getValueAt( selectionRow, 1));
-			Boolean boo = (Boolean) table.getValueAt( selectionRow, selectionCol);
-			table.setValueAt( !boo, selectionRow, selectionCol);
-			tmp.setFlagToFollow( !boo);//.setFlagToFollow( !boo, this);
-			update();
-			model.fireTableDataChanged();
-		}
-		table.repaint();
-	}
-	  
-	public static void saveSelection(){
-		selected = table.getSelectedRow();
-	}
-	
-	public static void restoreSelection(){
-		if( selected < table.getRowCount() && selected >= 0)
-			table.setRowSelectionInterval( selected, selected);
-	}
-	
-	public JTable getTable() {
-		return table;
-	}
-	
-	private static String[] CN ;
-	private static Object[][] D;
-	public synchronized static void update(){ 
-		CN = columnNames;
-		D = Logger.getTableInfo(); 
-	}
-	
-	// table renderer
-	// the last must be "follow"
-	// only the last column is editable
+
+    // set the preferred dimensions of every cell in accord with the type of table
+    // and the frame dimension
+    public static void setTableDimensions( double tableWidth){
+        table.getColumnModel().getColumn( 0)
+            .setPreferredWidth( ( int) (0.40 * tableWidth)); // Class
+        table.getColumnModel().getColumn( 1)
+            .setPreferredWidth( ( int) (0.40 * tableWidth)); // instances
+        table.getColumnModel().getColumn( 2)
+            .setPreferredWidth( ( int) (0.20 * tableWidth)); // follow
+    }
+
+    public static MyTableModel getModel() {
+        return model;
+    }
+
+    // call the ontology printer and update the textPane
+    @Override
+    public synchronized void mouseReleased(MouseEvent arg0) {
+        // TODO Auto-generated method stub
+        int selectionRow = table.getSelectedRow();
+        int selectionCol = table.getSelectedColumn();
+        if( selectionRow != -1 && selectionCol == 2){
+            Logger tmp = Logger.getAllInstances().get( table.getValueAt( selectionRow, 1));
+            Boolean boo = (Boolean) table.getValueAt( selectionRow, selectionCol);
+            table.setValueAt( !boo, selectionRow, selectionCol);
+            tmp.setFlagToFollow( !boo);//.setFlagToFollow( !boo, this);
+            update();
+            model.fireTableDataChanged();
+        }
+        table.repaint();
+    }
+
+    public static void saveSelection(){
+        selected = table.getSelectedRow();
+    }
+
+    public static void restoreSelection(){
+        if( selected < table.getRowCount() && selected >= 0)
+            table.setRowSelectionInterval( selected, selected);
+    }
+
+    public JTable getTable() {
+        return table;
+    }
+
+    private static String[] CN ;
+    private static Object[][] D;
+    public synchronized static void update(){
+        CN = columnNames;
+        D = Logger.getTableInfo();
+    }
+
+    // table renderer
+    // the last must be "follow"
+    // only the last column is editable
     public class MyTableModel extends AbstractTableModel {
         //private String[] columnNames =  CN;
         //private Object[][] data = D;
         
         public MyTableModel(){
-        	update( );
+            update( );
         }
         
         public int getColumnCount() {
@@ -137,7 +131,7 @@ public class ClassTableInstance extends JPanel implements MouseListener {
         }
 
         public int getRowCount() {
-			return D.length; //data.length;
+            return D.length; //data.length;
         }
 
         public String getColumnName(int col) {
@@ -154,8 +148,8 @@ public class ClassTableInstance extends JPanel implements MouseListener {
          * then the last column would contain text ("true"/"false"),
          * rather than a check box.
          */
-		public Class<? extends Object> getColumnClass(int c) {
-        	return getValueAt(0, c).getClass();
+        public Class<? extends Object> getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
         }
 
         public boolean isCellEditable(int row, int col) {
@@ -173,12 +167,12 @@ public class ClassTableInstance extends JPanel implements MouseListener {
 
     // UNIMPLEMENTED METHODS
     @Override
-	public void mouseClicked(MouseEvent e) {}
-	@Override
-	public void mouseEntered(MouseEvent e) {}
-	@Override
-	public void mouseExited(MouseEvent e) {}
-	@Override
-	public void mousePressed(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {}
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+    @Override
+    public void mouseExited(MouseEvent e) {}
+    @Override
+    public void mousePressed(MouseEvent e) {}
 
 }
