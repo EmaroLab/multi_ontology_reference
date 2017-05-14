@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-// TODO : bring up to OWLReferences getSubObjectPropertyOf getSubDataPropertyOf and all its case
+
 // TODO : make an abstract class interface to be implemented for all methods (all have the same shape)
 
 /**
@@ -1464,105 +1464,4 @@ public class OWLEnquirer {
         return out;
     }
 
-    /**
-     * Class used to contain an object property relation associated to an individuals and its value entities.
-     * A {@link ObjectPropertyRelations} object is returned by
-     * {@link OWLEnquirer#getObjectPropertyB2Individual(OWLNamedIndividual)}
-     * and {@link OWLEnquirer#getObjectPropertyB2Individual(String)}.
-     */
-    public class ObjectPropertyRelations {
-        private OWLObjectProperty prop;
-        private OWLNamedIndividual ind;
-        private Set<OWLNamedIndividual> value;
-        private String propName, indName;
-        private Set<String> valueName;
-
-        public ObjectPropertyRelations(OWLNamedIndividual ind, OWLObjectProperty prop, Set<OWLNamedIndividual> value,
-                                       OWLReferencesInterface ontoRef) {
-            this.prop = prop;
-            this.propName = ontoRef.getOWLObjectName(prop);
-            this.ind = ind;
-            this.indName = ontoRef.getOWLObjectName(ind);
-            this.value = value;
-            this.valueName = ontoRef.getOWLObjectName(value);
-        }
-
-        public OWLObjectProperty getProperty() {
-            return prop;
-        }
-
-        public OWLNamedIndividual getIndividual() {
-            return ind;
-        }
-
-        public Set<OWLNamedIndividual> getValues() {
-            return value;
-        }
-
-        public String getPropertyName() {
-            return propName;
-        }
-
-        public String getIndividualName() {
-            return indName;
-        }
-
-        public Set<String> getValuesName() {
-            return valueName;
-        }
-
-        public String toString() {
-            return "\"" + getIndividualName() + "." + getPropertyName() + "( " + getValuesName() + ")";
-        }
-    }
-    /**
-     * Class used to contain a data property relation  associated to an individuals and its literal values.
-     * A {@link DataPropertyRelations} object is returned by
-     * {@link OWLEnquirer#getObjectPropertyB2Individual(OWLNamedIndividual)}
-     * and {@link OWLEnquirer#getObjectPropertyB2Individual(String)}.
-     */
-    public class DataPropertyRelations {
-        private OWLDataProperty prop;
-        private OWLNamedIndividual ind;
-        private Set<OWLLiteral> value;
-        private String propName, indName;
-        private Set<String> valueName;
-
-        public DataPropertyRelations(OWLNamedIndividual ind, OWLDataProperty prop, Set<OWLLiteral> value, OWLReferencesInterface ontoRef) {
-            this.prop = prop;
-            this.propName = ontoRef.getOWLObjectName(prop);
-            this.ind = ind;
-            this.indName = ontoRef.getOWLObjectName(ind);
-            this.value = value;
-            this.valueName = ontoRef.getOWLObjectName(value);
-        }
-
-        public OWLDataProperty getProperty() {
-            return prop;
-        }
-
-        public OWLNamedIndividual getIndividual() {
-            return ind;
-        }
-
-        public Set<OWLLiteral> getValues() {
-            return value;
-        }
-
-        public String getPropertyName() {
-            return propName;
-        }
-
-        public String getIndividualName() {
-            return indName;
-        }
-
-        public Set<String> getValuesName() {
-            return valueName;
-        }
-
-        public String toString() {
-            return "\"" + getIndividualName() + "." + getPropertyName() + "( " + getValuesName() + ")";
-        }
-    }
 }

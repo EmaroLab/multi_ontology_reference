@@ -2,8 +2,6 @@ package it.emarolab.amor.owlInterface;
 
 import it.emarolab.amor.owlDebugger.Logger;
 import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
-import it.emarolab.amor.owlInterface.OWLEnquirer.DataPropertyRelations;
-import it.emarolab.amor.owlInterface.OWLEnquirer.ObjectPropertyRelations;
 import org.apache.jena.query.QuerySolution;
 import org.semanticweb.owlapi.model.*;
 
@@ -1358,7 +1356,22 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
+    /**
+     * This method calls {@link OWLManipulator#addObjectPropertyB2Individual(ObjectPropertyRelations)}
+     * in order to add all the given object properties to an individual.
+     * @param relations the object properties to add.
+     * @return the changes to be done in order to add the data properties to an individual.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public List< OWLOntologyChange> addObjectPropertyB2Individual( ObjectPropertyRelations relations){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddObjPropB2Ind);
+        return new OWLReferencesCaller< List< OWLOntologyChange>>(  mutexes, this) {
+            @Override
+            protected List< OWLOntologyChange> performSynchronisedCall() {
+                return getManipulator().addObjectPropertyB2Individual( relations);
+            }
+        }.call();
+    }
 
 	/**
 	 * This method calls {@link OWLManipulator#addDataPropertyB2Individual(OWLNamedIndividual, OWLDataProperty, OWLLiteral)}
@@ -1391,6 +1404,22 @@ public class OWLReferences extends OWLReferencesInterface{
 			@Override
 			protected OWLOntologyChange performSynchronisedCall() {
 				return getManipulator().addDataPropertyB2Individual( individualName, propertyName, value);
+			}
+		}.call();
+	}
+	/**
+	 * This method calls {@link OWLManipulator#addDataPropertyB2Individual(DataPropertyRelations)}
+	 * in order to add all the given data properties to an individual.
+	 * @param relations the data properties to add.
+	 * @return the changes to be done in order to add the data properties to an individual.
+     * (see {@link OWLManipulator} for more info)
+	 */
+	public List< OWLOntologyChange> addDataPropertyB2Individual( DataPropertyRelations relations){
+		List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddDataPropB2Ind);
+		return new OWLReferencesCaller< List< OWLOntologyChange>>(  mutexes, this) {
+			@Override
+			protected List< OWLOntologyChange> performSynchronisedCall() {
+				return getManipulator().addDataPropertyB2Individual( relations);
 			}
 		}.call();
 	}
@@ -2109,6 +2138,22 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
+    /**
+     * This method calls {@link OWLManipulator#removeObjectPropertyB2Individual(ObjectPropertyRelations)}
+     * in order to remove all the given object properties to an individual.
+     * @param relations the object properties to remove.
+     * @return the changes to be done in order to remove the data properties from an individual.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public List< OWLOntologyChange> removeObjectPropertyB2Individual( ObjectPropertyRelations relations){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveObjPropB2Ind);
+        return new OWLReferencesCaller< List< OWLOntologyChange>>(  mutexes, this) {
+            @Override
+            protected List< OWLOntologyChange> performSynchronisedCall() {
+                return getManipulator().removeObjectPropertyB2Individual( relations);
+            }
+        }.call();
+    }
 
 	/**
 	 * This method calls {@link OWLManipulator#removeDataPropertyB2Individual(OWLNamedIndividual, OWLDataProperty, OWLLiteral)}
@@ -2144,7 +2189,22 @@ public class OWLReferences extends OWLReferencesInterface{
 			}
 		}.call();
 	}
-
+    /**
+     * This method calls {@link OWLManipulator#removeDataPropertyB2Individual(DataPropertyRelations)}
+     * in order to remove all the given data properties to an individual.
+     * @param relations the data properties to remove.
+     * @return the changes to be done in order to remove the data properties from an individual.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public List< OWLOntologyChange> removeDataPropertyB2Individual( DataPropertyRelations relations){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveDataPropB2Ind);
+        return new OWLReferencesCaller< List< OWLOntologyChange>>(  mutexes, this) {
+            @Override
+            protected List< OWLOntologyChange> performSynchronisedCall() {
+                return getManipulator().removeDataPropertyB2Individual( relations);
+            }
+        }.call();
+    }
 
 	/**
 	 * This method calls {@link OWLManipulator#removeIndividualB2Class(OWLNamedIndividual, OWLClass)}

@@ -1,21 +1,15 @@
 package it.emarolab.amor.examples;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import it.emarolab.amor.owlInterface.OWLReferencesInterface;
+import it.emarolab.amor.owlDebugger.Logger;
+import it.emarolab.amor.owlInterface.*;
+import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContainer;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
-import it.emarolab.amor.owlDebugger.Logger;
-import it.emarolab.amor.owlInterface.OWLEnquirer;
-import it.emarolab.amor.owlInterface.OWLEnquirer.DataPropertyRelations;
-import it.emarolab.amor.owlInterface.OWLEnquirer.ObjectPropertyRelations;
-import it.emarolab.amor.owlInterface.OWLLibrary;
-import it.emarolab.amor.owlInterface.OWLReferences;
-import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContainer;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class OWLRefEnquirerExample {
 

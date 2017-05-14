@@ -302,6 +302,38 @@ public class OWLManipulator{
 	}
 
 	/**
+	 * Returns the changes required to add all the object properties and their values to an individual.
+	 * It relies on {@link #addObjectPropertyB2Individual(OWLNamedIndividual, OWLObjectProperty, OWLNamedIndividual)},
+	 * where input parameters are respectively: {@link ObjectPropertyRelations#getIndividual()},
+	 * {@link ObjectPropertyRelations#getProperty()} and all {@link ObjectPropertyRelations#getValues()}.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param relations the container for all the object relations to add.
+	 * @return  changes to the ontology required to add the properties.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public List< OWLOntologyChange> addObjectPropertyB2Individual( ObjectPropertyRelations relations){
+		List< OWLOntologyChange> changes = new ArrayList<>();
+		for ( OWLNamedIndividual l : relations.getValues())
+			changes.add( addObjectPropertyB2Individual( relations.getIndividual(), relations.getProperty(), l));
+		return changes;
+	}
+	/**
+	 * Returns the changes required to add all the object properties and their values to an individual.
+	 * It calls {@link #addObjectPropertyB2Individual(ObjectPropertyRelations)} for all the element in the
+	 * given set.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param relations the container for all the object relations to add.
+	 * @return  changes to the ontology required to add the properties.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public List< OWLOntologyChange> addObjectPropertyB2Individual( Set< ObjectPropertyRelations> relations){
+		List< OWLOntologyChange> changes = new ArrayList<>();
+		for ( ObjectPropertyRelations r : relations)
+			changes.addAll( addObjectPropertyB2Individual( r));
+		return changes;
+	}
+
+	/**
 	 * Returns the changes required to add a data property and its value to an individual.
      * If the individual does not exists, it is created.
      * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
@@ -342,6 +374,39 @@ public class OWLManipulator{
 		OWLLiteral lit = ontoRef.getOWLLiteral( value, null);
 		return( addDataPropertyB2Individual( indiv, prop, lit));
 	}
+
+	/**
+	 * Returns the changes required to add all the data properties and their values to an individual.
+	 * It relies on {@link #addDataPropertyB2Individual(OWLNamedIndividual, OWLDataProperty, OWLLiteral)},
+	 * where input parameters are respectively: {@link DataPropertyRelations#getIndividual()},
+	 * {@link DataPropertyRelations#getProperty()} and all {@link DataPropertyRelations#getValues()}.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param relations the container for all the data relations to add.
+	 * @return  changes to the ontology required to add the properties.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public List< OWLOntologyChange> addDataPropertyB2Individual( DataPropertyRelations relations){
+		List< OWLOntologyChange> changes = new ArrayList<>();
+		for ( OWLLiteral l : relations.getValues())
+			changes.add( addDataPropertyB2Individual( relations.getIndividual(), relations.getProperty(), l));
+		return changes;
+	}
+	/**
+	 * Returns the changes required to add all the data properties and their values to an individual.
+	 * It calls {@link #addDataPropertyB2Individual(DataPropertyRelations)} for all the element in the
+	 * given set.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param relations the container for all the data relations to add.
+	 * @return  changes to the ontology required to add the properties.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public List< OWLOntologyChange> addDataPropertyB2Individual( Set< DataPropertyRelations> relations){
+		List< OWLOntologyChange> changes = new ArrayList<>();
+		for ( DataPropertyRelations r : relations)
+			changes.addAll( addDataPropertyB2Individual( r));
+		return changes;
+	}
+
 
 	/**
 	 * Returns the changes required to classify an individual as belonging to a specific class.
@@ -1021,7 +1086,7 @@ public class OWLManipulator{
     public List<OWLOntologyChange> convertSuperClassesToEquivalentClass(OWLClass cl){
         try {
             long initialTime = System.nanoTime();
-            Set<OWLOntology> onts = new HashSet<>();// todo move to MOR manipulator
+            Set<OWLOntology> onts = new HashSet<>();
             onts.add( ontoRef.getOWLOntology());
             List<OWLOntologyChange> changes = new ConvertSuperClassesToEquivalentClass( ontoRef.getOWLFactory(), cl, onts, ontoRef.getOWLOntology()).getChanges();
             for( OWLOntologyChange c : changes) {
@@ -1083,6 +1148,38 @@ public class OWLManipulator{
 		return( removeObjectPropertyB2Individual( indiv, prop, val));
 	}
 
+    /**
+     * Returns the changes required to remove all the object properties and their values from an individual.
+     * It relies on {@link #removeObjectPropertyB2Individual(OWLNamedIndividual, OWLObjectProperty, OWLNamedIndividual)},
+     * where input parameters are respectively: {@link ObjectPropertyRelations#getIndividual()},
+     * {@link ObjectPropertyRelations#getProperty()} and all {@link ObjectPropertyRelations#getValues()}.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param relations the container for all the object relations to remove.
+     * @return  changes to the ontology required to remove the properties.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public List< OWLOntologyChange> removeObjectPropertyB2Individual( ObjectPropertyRelations relations){
+        List< OWLOntologyChange> changes = new ArrayList<>();
+        for ( OWLNamedIndividual l : relations.getValues())
+            changes.add( removeObjectPropertyB2Individual( relations.getIndividual(), relations.getProperty(), l));
+        return changes;
+    }
+    /**
+     * Returns the changes required to remove all the object properties and their values from an individual.
+     * It calls {@link #removeObjectPropertyB2Individual(ObjectPropertyRelations)} for all the element in the
+     * given set.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param relations the container for all the object relations to remove.
+     * @return  changes to the ontology required to remove the properties.
+     * Returned object can be ignored while working in buffering mode.
+     */
+    public List< OWLOntologyChange> removeObjectPropertyB2Individual( Set< ObjectPropertyRelations> relations){
+        List< OWLOntologyChange> changes = new ArrayList<>();
+        for ( ObjectPropertyRelations r : relations)
+            changes.addAll( removeObjectPropertyB2Individual( r));
+        return changes;
+    }
+
 	/**
 	 * Returns the changes required to remove a data property instance with a specific value from an individual.
      * Unlike addition manipulations, if an entity does not exists, it will not be created automatically. 
@@ -1123,6 +1220,38 @@ public class OWLManipulator{
 		OWLDataProperty prop = ontoRef.getOWLDataProperty( propertyName);
 		OWLLiteral lit = ontoRef.getOWLLiteral( value, null);
 		return( removeDataPropertyB2Individual( indiv, prop, lit));
+	}
+
+	/**
+	 * Returns the changes required to remove all the data properties and their values from an individual.
+	 * It relies on {@link #removeDataPropertyB2Individual(OWLNamedIndividual, OWLDataProperty, OWLLiteral)},
+	 * where input parameters are respectively: {@link DataPropertyRelations#getIndividual()},
+	 * {@link DataPropertyRelations#getProperty()} and all {@link DataPropertyRelations#getValues()}.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param relations the container for all the data relations to remove.
+	 * @return  changes to the ontology required to remove the properties.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public List< OWLOntologyChange> removeDataPropertyB2Individual( DataPropertyRelations relations){
+		List< OWLOntologyChange> changes = new ArrayList<>();
+		for ( OWLLiteral l : relations.getValues())
+			changes.add( removeDataPropertyB2Individual( relations.getIndividual(), relations.getProperty(), l));
+		return changes;
+	}
+	/**
+	 * Returns the changes required to remove all the data properties and their values to an individual.
+	 * It calls {@link #removeDataPropertyB2Individual(DataPropertyRelations)} for all the element in the
+	 * given set.
+	 * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+	 * @param relations the container for all the data relations to remove.
+	 * @return  changes to the ontology required to remove the properties.
+	 * Returned object can be ignored while working in buffering mode.
+	 */
+	public List< OWLOntologyChange> removeDataPropertyB2Individual( Set< DataPropertyRelations> relations){
+		List< OWLOntologyChange> changes = new ArrayList<>();
+		for ( DataPropertyRelations r : relations)
+			changes.addAll( removeDataPropertyB2Individual( r));
+		return changes;
 	}
 
 	/**
