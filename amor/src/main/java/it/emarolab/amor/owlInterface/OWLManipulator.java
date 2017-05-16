@@ -45,6 +45,10 @@ import java.util.*;
 public class OWLManipulator{
 
     /**
+     * An internal tag to represent an class restriction expression.
+     */
+    protected static final int RESTRICTION_CLASS = 0;
+    /**
      * An internal tag to represent an universal restriction expression.
      * (see: {@link ClassExpressionType#OBJECT_ALL_VALUES_FROM})
      */
@@ -332,6 +336,41 @@ public class OWLManipulator{
             changes.addAll( addObjectPropertyB2Individual( r));
         return changes;
     }
+
+
+    /**
+     * Returns the changes required to add an inverse property to an object property.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param prop the name of the direct object property.
+     * @param inverse the name of the inverse object property.
+     * @return the change to be applied to set an inverse property to a direct property.
+     */
+    public OWLOntologyChange addObjectPropertyInverseOf( String prop, String inverse){
+        return addObjectPropertyInverseOf( ontoRef.getOWLObjectProperty( prop), ontoRef.getOWLObjectProperty( inverse));
+    }
+    /**
+     * Returns the changes required to add an inverse property to an object property.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param prop the direct object property.
+     * @param inverse the inverse object property.
+     * @return the change to be applied to set an inverse property to a direct property.
+     */
+    public OWLOntologyChange addObjectPropertyInverseOf( OWLObjectProperty prop, OWLObjectProperty inverse){
+        long initialTime = System.nanoTime();
+        try{
+            OWLInverseObjectPropertiesAxiom inverseOf = ontoRef.getOWLFactory().getOWLInverseObjectPropertiesAxiom(prop, inverse);
+            OWLOntologyChange add = getAddAxiom( inverseOf, manipulationBuffering);
+            if( !manipulationBuffering)
+                applyChanges( add);
+            logger.addDebugString( "add object property (" + ontoRef.getOWLObjectName( prop) + ") inverse of (" + ontoRef.getOWLObjectName( inverse) + ")"
+                    + " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return( add);
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
 
     /**
      * Returns the changes required to add a data property and its value to an individual.
@@ -1053,15 +1092,15 @@ public class OWLManipulator{
      * @param restriction the object describing the class restriction
      * @return the change to be applied
      */
-    public OWLOntologyChange addClassExpression( ClassRestriction restriction){
+    public OWLOntologyChange addClassExpression( SemanticRestriction restriction){
         if ( restriction.restrictsOverDataProperty())
             return addDataClassExpression( restriction.isDefinitionOf(),
                     restriction.getDataProperty(), restriction.getCardinality(),
-                    restriction.getDataTypeRestriction().asOWLDatatype(), restriction.getExpressiontType());
+                    restriction.getDataTypeRestriction().asOWLDatatype(), restriction.getExpressionType());
         else // object property
             return addObjectClassExpression( restriction.isDefinitionOf(),
                     restriction.getObjectProperty(), restriction.getCardinality(),
-                    restriction.getObjectRestriction(), restriction.getExpressiontType());
+                    restriction.getObjectRestriction(), restriction.getExpressionType());
     }
 
     /**
@@ -1102,6 +1141,9 @@ public class OWLManipulator{
             return( null);
         }
     }
+
+
+    
 
 
     // ---------------------------   methods for removing entities to the ontology
@@ -1178,6 +1220,40 @@ public class OWLManipulator{
         for ( ObjectPropertyRelations r : relations)
             changes.addAll( removeObjectPropertyB2Individual( r));
         return changes;
+    }
+
+
+    /**
+     * Returns the changes required to add an inverse property to an object property.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param prop the name of the direct object property.
+     * @param inverse the name of the inverse object property.
+     * @return the change to be applied to set an inverse property to a direct property.
+     */
+    public OWLOntologyChange removeObjectPropertyInverseOf( String prop, String inverse){
+        return removeObjectPropertyInverseOf( ontoRef.getOWLObjectProperty( prop), ontoRef.getOWLObjectProperty( inverse));
+    }
+    /**
+     * Returns the changes required to remove an inverse property to an object property.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param prop the direct object property.
+     * @param inverse the inverse object property.
+     * @return the change to be applied to set an inverse property to a direct property.
+     */
+    public OWLOntologyChange removeObjectPropertyInverseOf( OWLObjectProperty prop, OWLObjectProperty inverse){
+        long initialTime = System.nanoTime();
+        try{
+            OWLInverseObjectPropertiesAxiom inverseOf = ontoRef.getOWLFactory().getOWLInverseObjectPropertiesAxiom(prop, inverse);
+            OWLOntologyChange remove = getRemoveAxiom( inverseOf, manipulationBuffering);
+            if( !manipulationBuffering)
+                applyChanges( remove);
+            logger.addDebugString( "remove object property (" + ontoRef.getOWLObjectName( prop) + ") inverse of (" + ontoRef.getOWLObjectName( inverse) + ")"
+                    + " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return( remove);
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
     }
 
     /**
@@ -1924,15 +2000,15 @@ public class OWLManipulator{
      * @param restriction the object describing the class restriction
      * @return the change to be applied
      */
-    public OWLOntologyChange removeClassExpression( ClassRestriction restriction){
+    public OWLOntologyChange removeClassExpression( SemanticRestriction restriction){
         if ( restriction.restrictsOverDataProperty())
             return removeDataClassExpression( restriction.isDefinitionOf(),
                     restriction.getDataProperty(), restriction.getCardinality(),
-                    restriction.getDataTypeRestriction().asOWLDatatype(), restriction.getExpressiontType());
+                    restriction.getDataTypeRestriction().asOWLDatatype(), restriction.getExpressionType());
         else // object property
             return removeObjectClassExpression( restriction.isDefinitionOf(),
                     restriction.getObjectProperty(), restriction.getCardinality(),
-                    restriction.getObjectRestriction(), restriction.getExpressiontType());
+                    restriction.getObjectRestriction(), restriction.getExpressionType());
     }
 
     // ---------------------------   methods for replace entities to the ontology

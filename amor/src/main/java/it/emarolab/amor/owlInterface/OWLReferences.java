@@ -113,6 +113,8 @@ public class OWLReferences extends OWLReferencesInterface{
     private Lock mutexRemoveEquivalentDataProp = new ReentrantLock();
     private Lock mutexAddEquivalentObjProp = new ReentrantLock();
     private Lock mutexRemoveEquivalentObjProp = new ReentrantLock();
+    private Lock mutexAddObjPropInverse = new ReentrantLock();
+    private Lock mutexRemoveObjPropInverse = new ReentrantLock();
 
     /**
      * This constructor just calls the super class constructor: {@link OWLReferencesInterface#OWLReferencesInterface(String, String, String, Boolean, Integer)}
@@ -762,11 +764,11 @@ public class OWLReferences extends OWLReferencesInterface{
      * @return the container of all the class restrictions and cardinality, for
      * the given class.
      */
-    public Set<ClassRestriction> getClassRestrictions(OWLClass cl){
+    public Set<SemanticRestriction> getClassRestrictions(OWLClass cl){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexClassDefinition);
-        return new OWLReferencesCaller< Set<ClassRestriction>>(  mutexes, this) {
+        return new OWLReferencesCaller< Set<SemanticRestriction>>(  mutexes, this) {
             @Override
-            protected Set<ClassRestriction> performSynchronisedCall() {
+            protected Set<SemanticRestriction> performSynchronisedCall() {
                 return getEnquirer().getClassRestrictions( cl);
             }
         }.call();
@@ -779,11 +781,11 @@ public class OWLReferences extends OWLReferencesInterface{
      * @return the container of all the class restrictions and cardinality, for
      * the given class.
      */
-    public Set<ClassRestriction> getClassRestrictions(String className){
+    public Set<SemanticRestriction> getClassRestrictions(String className){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexClassDefinition);
-        return new OWLReferencesCaller<Set<ClassRestriction>>(  mutexes, this) {
+        return new OWLReferencesCaller<Set<SemanticRestriction>>(  mutexes, this) {
             @Override
-            protected Set<ClassRestriction> performSynchronisedCall() {
+            protected Set<SemanticRestriction> performSynchronisedCall() {
                 return getEnquirer().getClassRestrictions( className);
             }
         }.call();
@@ -1389,6 +1391,42 @@ public class OWLReferences extends OWLReferencesInterface{
             }
         }.call();
     }
+
+    /**
+     * This method calls {@link OWLManipulator#addObjectPropertyInverseOf(OWLObjectProperty, OWLObjectProperty)}
+     * in order to add an inverse object property of a property.
+     * @param direct name of the object property.
+     * @param inverse name of an object property to ad as inverse.
+     * @return the changes to be done in order to add the inverse property of a given property.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange addObjectPropertyInverseOf( String direct, String inverse){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddObjPropInverse);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addObjectPropertyInverseOf( direct, inverse);
+            }
+        }.call();
+    }
+    /**
+     * This method calls {@link OWLManipulator#addObjectPropertyInverseOf(OWLObjectProperty, OWLObjectProperty)}
+     * in order to add an inverse object property of a property.
+     * @param direct the object property.
+     * @param inverse an object property to ad as inverse.
+     * @return the changes to be done in order to add the inverse property of a given property.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange addObjectPropertyInverseOf( OWLObjectProperty direct, OWLObjectProperty inverse){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddObjPropInverse);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addObjectPropertyInverseOf( direct, inverse);
+            }
+        }.call();
+    }
+
 
     /**
      * This method calls {@link OWLManipulator#addDataPropertyB2Individual(OWLNamedIndividual, OWLDataProperty, OWLLiteral)}
@@ -2091,7 +2129,7 @@ public class OWLReferences extends OWLReferencesInterface{
      * @return the changes to be applied in order to make a class being a sub-set of an exact number of
      * properties restricted to a data type.
      */
-    public OWLOntologyChange addClassExpression( ClassRestriction restriction){
+    public OWLOntologyChange addClassExpression( SemanticRestriction restriction){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddCardinalityData);
         return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
             @Override
@@ -2269,6 +2307,41 @@ public class OWLReferences extends OWLReferencesInterface{
             @Override
             protected List< OWLOntologyChange> performSynchronisedCall() {
                 return getManipulator().removeDataPropertyB2Individual( relations);
+            }
+        }.call();
+    }
+
+    /**
+     * This method calls {@link OWLManipulator#removeObjectPropertyInverseOf(String, String)}
+     * in order to remove an inverse object property of a property.
+     * @param direct name of the object property.
+     * @param inverse name of an object property to ad as inverse.
+     * @return the changes to be done in order to remove the inverse property of a given property.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange removeObjectPropertyInverseOf( String direct, String inverse){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveObjPropInverse);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeObjectPropertyInverseOf( direct, inverse);
+            }
+        }.call();
+    }
+    /**
+     * This method calls {@link OWLManipulator#removeObjectPropertyInverseOf(OWLObjectProperty, OWLObjectProperty)}
+     * in order to remove an inverse object property of a property.
+     * @param direct the object property.
+     * @param inverse an object property to ad as inverse.
+     * @return the changes to be done in order to remove the inverse property of a given property.
+     * (see {@link OWLManipulator} for more info)
+     */
+    public OWLOntologyChange removeObjectPropertyInverseOf( OWLObjectProperty direct, OWLObjectProperty inverse){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveObjPropInverse);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeObjectPropertyInverseOf( direct, inverse);
             }
         }.call();
     }
@@ -2968,7 +3041,7 @@ public class OWLReferences extends OWLReferencesInterface{
      * @return the changes to be applied in order to remove the fact that a class
      * is sub-set of a exact number of properties restricted to a data type.
      */
-    public OWLOntologyChange removeClassExpression( ClassRestriction restriction){
+    public OWLOntologyChange removeClassExpression( SemanticRestriction restriction){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddCardinalityData);
         return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
             @Override

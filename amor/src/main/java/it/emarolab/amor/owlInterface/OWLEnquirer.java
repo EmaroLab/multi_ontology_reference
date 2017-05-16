@@ -782,43 +782,43 @@ public class OWLEnquirer {
      * @return the container of all the class restrictions and cardinality, for
      * the given class.
      */
-    public Set<ClassRestriction> getClassRestrictions(OWLClass cl){
-        Set<ClassRestriction> out = new HashSet();
+    public Set<SemanticRestriction> getClassRestrictions(OWLClass cl){
+        Set<SemanticRestriction> out = new HashSet();
         Stream<OWLClassAxiom> axiomStream = ontoRef.getOWLOntology().axioms( cl);
         for (OWLClassAxiom ax :  (Iterable<OWLClassAxiom>) () -> axiomStream.iterator()) {
             Stream<OWLClassExpression> nestedClassStream = ax.nestedClassExpressions();
             for( OWLClassExpression e : (Iterable<OWLClassExpression>) () ->  nestedClassStream.iterator()) {
                 if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_MIN_CARDINALITY) {
                     OWLObjectMinCardinality r = (OWLObjectMinCardinality) e;
-                    ClassRestriction cr = new ClassRestriction( cl, (OWLObjectProperty) r.getProperty());
+                    SemanticRestriction cr = new SemanticRestriction( cl, (OWLObjectProperty) r.getProperty());
                     cr.setObjectMinRestriction( r.getCardinality(), (OWLClass) r.getFiller());
                     out.add( cr);
                     logger.addDebugString( "getting class definition: " + cr);
                 }
                 if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_MAX_CARDINALITY) {
                     OWLObjectMaxCardinality r = (OWLObjectMaxCardinality) e;
-                    ClassRestriction cr = new ClassRestriction( cl, (OWLObjectProperty) r.getProperty());
+                    SemanticRestriction cr = new SemanticRestriction( cl, (OWLObjectProperty) r.getProperty());
                     cr.setObjectMaxRestriction( r.getCardinality(), (OWLClass) r.getFiller());
                     out.add( cr);
                     logger.addDebugString( "getting class definition: " + cr);
                 }
                 if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_EXACT_CARDINALITY) {
                     OWLObjectExactCardinality r = (OWLObjectExactCardinality) e;
-                    ClassRestriction cr = new ClassRestriction( cl, (OWLObjectProperty) r.getProperty());
+                    SemanticRestriction cr = new SemanticRestriction( cl, (OWLObjectProperty) r.getProperty());
                     cr.setObjectExactRestriction( r.getCardinality(), (OWLClass) r.getFiller());
                     out.add( cr);
                     logger.addDebugString( "getting class definition: " + cr);
                 }
                 if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_ALL_VALUES_FROM) {
                     OWLObjectAllValuesFrom r = (OWLObjectAllValuesFrom) e;
-                    ClassRestriction cr = new ClassRestriction( cl, (OWLObjectProperty) r.getProperty());
+                    SemanticRestriction cr = new SemanticRestriction( cl, (OWLObjectProperty) r.getProperty());
                     cr.setObjectOnlyRestriction( (OWLClass) r.getFiller());
                     out.add( cr);
                     logger.addDebugString( "getting class definition: " + cr);
                 }
                 if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_SOME_VALUES_FROM) {
                     OWLObjectSomeValuesFrom r = (OWLObjectSomeValuesFrom) e;
-                    ClassRestriction cr = new ClassRestriction( cl, (OWLObjectProperty) r.getProperty());
+                    SemanticRestriction cr = new SemanticRestriction( cl, (OWLObjectProperty) r.getProperty());
                     cr.setObjectSomeRestriction( (OWLClass) r.getFiller());
                     out.add( cr);
                     logger.addDebugString( "getting class definition: " + cr);
@@ -826,35 +826,35 @@ public class OWLEnquirer {
 
                 if ( e.getClassExpressionType() == ClassExpressionType.DATA_MIN_CARDINALITY) {
                     OWLDataMinCardinality r = (OWLDataMinCardinality) e;
-                    ClassRestriction cr = new ClassRestriction( cl, (OWLDataProperty) r.getProperty());
+                    SemanticRestriction cr = new SemanticRestriction( cl, (OWLDataProperty) r.getProperty());
                      cr.setDataMinRestriction( r.getCardinality(), r.getFiller());
                     out.add( cr);
                     logger.addDebugString( "getting class definition: " + cr);
                 }
                 if ( e.getClassExpressionType() == ClassExpressionType.DATA_MAX_CARDINALITY) {
                     OWLDataMaxCardinality r = (OWLDataMaxCardinality) e;
-                    ClassRestriction cr = new ClassRestriction( cl, (OWLDataProperty) r.getProperty());
+                    SemanticRestriction cr = new SemanticRestriction( cl, (OWLDataProperty) r.getProperty());
                     cr.setDataMaxRestriction( r.getCardinality(), r.getFiller());
                     out.add( cr);
                     logger.addDebugString( "getting class definition: " + cr);
                 }
                 if ( e.getClassExpressionType() == ClassExpressionType.DATA_EXACT_CARDINALITY) {
                     OWLDataExactCardinality r = (OWLDataExactCardinality) e;
-                    ClassRestriction cr = new ClassRestriction( cl, (OWLDataProperty) r.getProperty());
+                    SemanticRestriction cr = new SemanticRestriction( cl, (OWLDataProperty) r.getProperty());
                     cr.setDataExactRestriction( r.getCardinality(), r.getFiller());
                     out.add( cr);
                     logger.addDebugString( "getting class definition: " + cr);
                 }
                 if ( e.getClassExpressionType() == ClassExpressionType.DATA_ALL_VALUES_FROM) {
                     OWLDataAllValuesFrom r = (OWLDataAllValuesFrom) e;
-                    ClassRestriction cr = new ClassRestriction( cl, (OWLDataProperty) r.getProperty());
+                    SemanticRestriction cr = new SemanticRestriction( cl, (OWLDataProperty) r.getProperty());
                     cr.setDataOnlyRestriction( r.getFiller());
                     out.add( cr);
                     logger.addDebugString( "getting class definition: " + cr);
                 }
                 if ( e.getClassExpressionType() == ClassExpressionType.DATA_SOME_VALUES_FROM) {
                     OWLDataSomeValuesFrom r = (OWLDataSomeValuesFrom) e;
-                    ClassRestriction cr = new ClassRestriction( cl, (OWLDataProperty) r.getProperty());
+                    SemanticRestriction cr = new SemanticRestriction( cl, (OWLDataProperty) r.getProperty());
                     cr.setDataSomeRestriction( r.getFiller());
                     out.add( cr);
                     logger.addDebugString( "getting class definition: " + cr);
@@ -872,7 +872,7 @@ public class OWLEnquirer {
      * @return the container of all the class restrictions and cardinality, for
      * the given class.
      */
-    public Set<ClassRestriction> getClassRestrictions(String className){
+    public Set<SemanticRestriction> getClassRestrictions(String className){
         return getClassRestrictions( ontoRef.getOWLClass( className));
     }
 
@@ -1190,9 +1190,6 @@ public class OWLEnquirer {
         logger.addDebugString( "get equivalent object property given in: " + (System.nanoTime() - initialTime) + " [ns]");
         return properties;
     }
-
-
-
 
     /**
      * Returns all the inverse object properties of a given property.

@@ -18,10 +18,10 @@ import static it.emarolab.amor.owlInterface.OWLManipulator.*;
  * {@link ClassExpressionType#OBJECT_EXACT_CARDINALITY}, {@link ClassExpressionType#DATA_EXACT_CARDINALITY}.
  * Where the getters of this containers depends from one of those types, assigned through setters.
  */
-public class ClassRestriction {
+public class SemanticRestriction {
     private OWLClass definitionOf;
     private OWLProperty property;
-    private Boolean isDataProperty;
+    private Boolean isDataProperty; // null if restrict over a class
     private int expressioneType, cardinality;
     private OWLClass object;
     private OWLDataRange data;
@@ -38,7 +38,7 @@ public class ClassRestriction {
      * @param subject the class restricted by this axiom.
      * @param property the data property that restricts the class
      */
-    public ClassRestriction(OWLClass subject, OWLDataProperty property) {
+    public SemanticRestriction(OWLClass subject, OWLDataProperty property) {
         this.definitionOf = subject;
         this.property = property;
         this.isDataProperty = true;
@@ -49,10 +49,21 @@ public class ClassRestriction {
      * @param subject the class restricted by this axiom.
      * @param property the object property that restricts the class
      */
-    public ClassRestriction(OWLClass subject, OWLObjectProperty property) {
+    public SemanticRestriction(OWLClass subject, OWLObjectProperty property) {
         this.definitionOf = subject;
         this.property = property;
         this.isDataProperty = false;
+    }
+    /**
+     * Create a class restriction over a class. This should be used externally on properties domain and range.
+     * @param subject the class restricted by this axiom.
+     * @param restriction the class to restrict with.
+     */
+    public SemanticRestriction(OWLClass subject, OWLClass restriction) {
+        this.definitionOf = subject;
+        this.object = restriction;
+        this.isDataProperty = null;
+        this.expressioneType = RESTRICTION_CLASS;
     }
 
     /**
@@ -244,6 +255,8 @@ public class ClassRestriction {
      * @return the class of the data property restriction.
      */
     public OWLClass getObjectRestriction(){
+        if (expressioneType == RESTRICTION_CLASS)
+            return object;
         if( isDataProperty != null){
             if( ! isDataProperty)
                 return object;
@@ -317,12 +330,12 @@ public class ClassRestriction {
      * or {@link OWLManipulator#RESTRICTION_MAX}.
      * @return the identifier of the expression type.
      */
-    public int getExpressiontType() {
+    public int getExpressionType() {
         return expressioneType;
     }
 
     /**
-     * @return a string identifying the actual {@link #getExpressiontType()}.
+     * @return a string identifying the actual {@link #getExpressionType()}.
      */
     public String getExpressionTypeName(){
         if( isSomeRestriction())
@@ -339,51 +352,72 @@ public class ClassRestriction {
     }
 
     /**
-     * @return {@code true} if the {@link #getExpressiontType()} is {@link OWLManipulator#RESTRICTION_SOME}
+     * @return {@code true} if the {@link #getExpressionType()} is {@link OWLManipulator#RESTRICTION_SOME}
      */
     public boolean isSomeRestriction(){
         return expressioneType == RESTRICTION_SOME;
     }
     /**
-     * @return {@code true} if the {@link #getExpressiontType()} is {@link OWLManipulator#RESTRICTION_ONLY}
+     * @return {@code true} if the {@link #getExpressionType()} is {@link OWLManipulator#RESTRICTION_ONLY}
      */
     public boolean isOnlyRestriction(){
         return expressioneType == RESTRICTION_ONLY;
     }
     /**
-     * @return {@code true} if the {@link #getExpressiontType()} is {@link OWLManipulator#RESTRICTION_MIN}
+     * @return {@code true} if the {@link #getExpressionType()} is {@link OWLManipulator#RESTRICTION_MIN}
      */
     public boolean isMinRestriction(){
         return expressioneType == RESTRICTION_MIN;
     }
     /**
-     * @return {@code true} if the {@link #getExpressiontType()} is {@link OWLManipulator#RESTRICTION_EXACT}
+     * @return {@code true} if the {@link #getExpressionType()} is {@link OWLManipulator#RESTRICTION_EXACT}
      */
     public boolean isExactRestriction(){
         return expressioneType == RESTRICTION_EXACT;
     }
     /**
-     * @return {@code true} if the {@link #getExpressiontType()} is {@link OWLManipulator#RESTRICTION_MAX}
+     * @return {@code true} if the {@link #getExpressionType()} is {@link OWLManipulator#RESTRICTION_MAX}
      */
     public boolean isMaxRestriction(){
         return expressioneType == RESTRICTION_MAX;
     }
+    /**
+     * @return {@code true} if the {@link #getExpressionType()} is {@link OWLManipulator#RESTRICTION_CLASS}
+     */
+    public boolean isClassRestriction(){
+        return expressioneType == RESTRICTION_CLASS;
+    }
 
     /**
      * @return {@code true} if this object has been instantiated
-     * with {@link #ClassRestriction(OWLClass, OWLDataProperty)}.
+     * with {@link #SemanticRestriction(OWLClass, OWLDataProperty)}.
      * {@code False} otherwise.
      */
     public boolean restrictsOverDataProperty(){
+        if ( isDataProperty == null)
+            return false;
         return isDataProperty;
     }
     /**
      * @return {@code true} if this object has been instantiated
-     * with {@link #ClassRestriction(OWLClass, OWLObjectProperty)}.
+     * with {@link #SemanticRestriction(OWLClass, OWLObjectProperty)}.
      * {@code False} otherwise.
      */
     public boolean restrictsOverObjectProperty(){
+        if ( isDataProperty == null)
+            return false;
         return ! isDataProperty;
+    }
+
+    /**
+     * @return {@code true} if this object has been instantiated
+     * with {@link #SemanticRestriction(OWLClass, OWLObjectProperty)}.
+     * {@code False} otherwise.
+     */
+    public boolean restrictsOverClass(){
+        if ( isDataProperty == null)
+            return true;
+        return false;
     }
 
     /**
@@ -422,9 +456,9 @@ public class ClassRestriction {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ClassRestriction)) return false;
+        if (!(o instanceof SemanticRestriction)) return false;
 
-        ClassRestriction that = (ClassRestriction) o;
+        SemanticRestriction that = (SemanticRestriction) o;
 
         if (expressioneType != that.expressioneType) return false;
         if (cardinality != that.cardinality) return false;
