@@ -701,7 +701,7 @@ public class OWLManipulator{
             for( OWLOntologyChange c : changes) {
                 if ( ! manipulationBuffering)
                     applyChanges( c);
-                else changeList.add( c);
+                changeList.add( c);
             }
             logger.addDebugString( "converting super class: " + ontoRef.getOWLObjectName( cl) + " to equivalent class" +
                     " in: " + (System.nanoTime() - initialTime) + " [ns]");
@@ -713,7 +713,301 @@ public class OWLManipulator{
     }
 
 
-    
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make a data property functional.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param propertyName the name of the property to make functional.
+     * @return th change for adding functional directive to a data property.
+     */
+    public OWLOntologyChange addFunctionalDataProperty( String propertyName){
+        return addFunctionalDataProperty( ontoRef.getOWLDataProperty( propertyName));
+    }
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make a data property functional.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param property the property to make functional.
+     * @return th change for adding functional directive to a data property.
+     */
+    public OWLOntologyChange addFunctionalDataProperty( OWLDataProperty property){
+        try{
+            long initialTime = System.nanoTime();
+            OWLFunctionalDataPropertyAxiom funcAx = ontoRef.getOWLFactory().getOWLFunctionalDataPropertyAxiom(property);
+            OWLOntologyChange ad = getAddAxiom(funcAx);
+            if ( ! manipulationBuffering)
+                applyChanges( ad);
+            logger.addDebugString( "add functional data property: " + ontoRef.getOWLObjectName( property) +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return ad;
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property functional.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param propertyName the name of the property to make functional.
+     * @return th change for adding functional directive to an object property.
+     */
+    public OWLOntologyChange addFunctionalObjectProperty( String propertyName){
+        return addFunctionalObjectProperty( ontoRef.getOWLObjectProperty( propertyName));
+    }
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property functional.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param property the property to make functional.
+     * @return th change for adding functional directive to an object property.
+     */
+    public OWLOntologyChange addFunctionalObjectProperty( OWLObjectProperty property){
+        try{
+            long initialTime = System.nanoTime();
+            OWLFunctionalObjectPropertyAxiom funcAx = ontoRef.getOWLFactory().getOWLFunctionalObjectPropertyAxiom(property);
+            OWLOntologyChange ad = getAddAxiom(funcAx);
+            if ( ! manipulationBuffering)
+                applyChanges( ad);
+            logger.addDebugString( "add functional object property: " + ontoRef.getOWLObjectName( property) +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return ad;
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property inverse functional.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param propertyName the name of the property to make functional.
+     * @return th change for adding inverse functional directive to an object property.
+     */
+    public OWLOntologyChange addInverseFunctionalObjectProperty( String propertyName){
+        return addInverseFunctionalObjectProperty( ontoRef.getOWLObjectProperty( propertyName));
+    }
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property inverse functional.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param property the property to make functional.
+     * @return th change for adding inverse functional directive to an object property.
+     */
+    public OWLOntologyChange addInverseFunctionalObjectProperty( OWLObjectProperty property){
+        try{
+            long initialTime = System.nanoTime();
+            OWLInverseFunctionalObjectPropertyAxiom funcAx = ontoRef.getOWLFactory().getOWLInverseFunctionalObjectPropertyAxiom(property);
+            OWLOntologyChange ad = getAddAxiom(funcAx);
+            if ( ! manipulationBuffering)
+                applyChanges( ad);
+            logger.addDebugString( "add inverse functional object property: " + ontoRef.getOWLObjectName( property) +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return ad;
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property transitive.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param propertyName the name of the property to make functional.
+     * @return th change for adding transitive directive to an object property.
+     */
+    public OWLOntologyChange addTransitiveObjectProperty( String propertyName){
+        return addTransitiveObjectProperty( ontoRef.getOWLObjectProperty( propertyName));
+    }
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property transitive.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param property the property to make functional.
+     * @return th change for adding transitive directive to an object property.
+     */
+    public OWLOntologyChange addTransitiveObjectProperty( OWLObjectProperty property){
+        try{
+            long initialTime = System.nanoTime();
+            OWLTransitiveObjectPropertyAxiom funcAx = ontoRef.getOWLFactory().getOWLTransitiveObjectPropertyAxiom(property);
+            OWLOntologyChange ad = getAddAxiom(funcAx);
+            if ( ! manipulationBuffering)
+                applyChanges( ad);
+            logger.addDebugString( "add transitive object property: " + ontoRef.getOWLObjectName( property) +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return ad;
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property symmetric.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param propertyName the name of the property to make functional.
+     * @return th change for adding symmetric directive to an object property.
+     */
+    public OWLOntologyChange addSymmetricObjectProperty( String propertyName){
+        return addSymmetricObjectProperty( ontoRef.getOWLObjectProperty( propertyName));
+    }
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property symmetric.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param property the property to make functional.
+     * @return th change for adding symmetric directive to an object property.
+     */
+    public OWLOntologyChange addSymmetricObjectProperty( OWLObjectProperty property){
+        try{
+            long initialTime = System.nanoTime();
+            OWLSymmetricObjectPropertyAxiom funcAx = ontoRef.getOWLFactory().getOWLSymmetricObjectPropertyAxiom(property);
+            OWLOntologyChange ad = getAddAxiom(funcAx);
+            if ( ! manipulationBuffering)
+                applyChanges( ad);
+            logger.addDebugString( "add symmetric object property: " + ontoRef.getOWLObjectName( property) +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return ad;
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property asymmetric.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param propertyName the name of the property to make functional.
+     * @return th change for adding asymmetric directive to an object property.
+     */
+    public OWLOntologyChange addAsymmetricObjectProperty( String propertyName){
+        return addAsymmetricObjectProperty( ontoRef.getOWLObjectProperty( propertyName));
+    }
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property asymmetric.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param property the property to make functional.
+     * @return th change for adding asymmetric directive to an object property.
+     */
+    public OWLOntologyChange addAsymmetricObjectProperty( OWLObjectProperty property){
+        try{
+            long initialTime = System.nanoTime();
+            OWLAsymmetricObjectPropertyAxiom funcAx = ontoRef.getOWLFactory().getOWLAsymmetricObjectPropertyAxiom(property);
+            OWLOntologyChange ad = getAddAxiom(funcAx);
+            if ( ! manipulationBuffering)
+                applyChanges( ad);
+            logger.addDebugString( "add asymmetric object property: " + ontoRef.getOWLObjectName( property) +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return ad;
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property reflexive.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param propertyName the name of the property to make functional.
+     * @return th change for adding reflexive directive to an object property.
+     */
+    public OWLOntologyChange addReflexiveObjectProperty(String propertyName){
+        return addReflexiveObjectProperty( ontoRef.getOWLObjectProperty( propertyName));
+    }
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property reflexive.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param property the property to make functional.
+     * @return th change for adding reflexive directive to an object property.
+     */
+    public OWLOntologyChange addReflexiveObjectProperty( OWLObjectProperty property){
+        try{
+            long initialTime = System.nanoTime();
+            OWLReflexiveObjectPropertyAxiom funcAx = ontoRef.getOWLFactory().getOWLReflexiveObjectPropertyAxiom(property);
+            OWLOntologyChange ad = getAddAxiom(funcAx);
+            if ( ! manipulationBuffering)
+                applyChanges( ad);
+            logger.addDebugString( "add reflexive object property: " + ontoRef.getOWLObjectName( property) +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return ad;
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property irreflexive.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param propertyName the name of the property to make functional.
+     * @return th change for adding irreflexive directive to an object property.
+     */
+    public OWLOntologyChange addIrreflexiveObjectProperty(String propertyName){
+        return addIrreflexiveObjectProperty( ontoRef.getOWLObjectProperty( propertyName));
+    }
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property irreflexive.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param property the property to make functional.
+     * @return th change for adding irreflexive directive to an object property.
+     */
+    public OWLOntologyChange addIrreflexiveObjectProperty( OWLObjectProperty property){
+        try{
+            long initialTime = System.nanoTime();
+            OWLIrreflexiveObjectPropertyAxiom funcAx = ontoRef.getOWLFactory().getOWLIrreflexiveObjectPropertyAxiom(property);
+            OWLOntologyChange ad = getAddAxiom(funcAx);
+            if ( ! manipulationBuffering)
+                applyChanges( ad);
+            logger.addDebugString( "add irreflexive object property: " + ontoRef.getOWLObjectName( property) +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return ad;
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
 
 
     // ---------------------------   methods for removing entities to the ontology
@@ -1167,6 +1461,303 @@ public class OWLManipulator{
         for ( SemanticRestriction r : restriction)
             out.add( addRestriction( r));
         return out;
+    }
+
+
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make a data property not functional anymore.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param propertyName the name of the property to make functional.
+     * @return th change for removing functional directive to a data property.
+     */
+    public OWLOntologyChange removeFunctionalDataProperty( String propertyName){
+        return removeFunctionalDataProperty( ontoRef.getOWLDataProperty( propertyName));
+    }
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make a data property not functional anymore.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param property the property to make functional.
+     * @return th change for removing functional directive to a data property.
+     */
+    public OWLOntologyChange removeFunctionalDataProperty( OWLDataProperty property){
+        try{
+            long initialTime = System.nanoTime();
+            OWLFunctionalDataPropertyAxiom funcAx = ontoRef.getOWLFactory().getOWLFunctionalDataPropertyAxiom(property);
+            OWLOntologyChange ad = getRemoveAxiom(funcAx);
+            if ( ! manipulationBuffering)
+                applyChanges( ad);
+            logger.addDebugString( "remove functional data property: " + ontoRef.getOWLObjectName( property) +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return ad;
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property not functional anymore.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param propertyName the name of the property to make functional.
+     * @return th change for removing functional directive to an object property.
+     */
+    public OWLOntologyChange removeFunctionalObjectProperty( String propertyName){
+        return removeFunctionalObjectProperty( ontoRef.getOWLObjectProperty( propertyName));
+    }
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property not functional anymore.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param property the property to make functional.
+     * @return th change for removing functional directive to an object property.
+     */
+    public OWLOntologyChange removeFunctionalObjectProperty( OWLObjectProperty property){
+        try{
+            long initialTime = System.nanoTime();
+            OWLFunctionalObjectPropertyAxiom funcAx = ontoRef.getOWLFactory().getOWLFunctionalObjectPropertyAxiom(property);
+            OWLOntologyChange ad = getRemoveAxiom(funcAx);
+            if ( ! manipulationBuffering)
+                applyChanges( ad);
+            logger.addDebugString( "remove functional object property: " + ontoRef.getOWLObjectName( property) +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return ad;
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property not inverse functional anymore.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param propertyName the name of the property to make functional.
+     * @return th change for removing inverse functional directive to an object property.
+     */
+    public OWLOntologyChange removeInverseFunctionalObjectProperty( String propertyName){
+        return removeInverseFunctionalObjectProperty( ontoRef.getOWLObjectProperty( propertyName));
+    }
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property no inverse functional anymore.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param property the property to make functional.
+     * @return th change for remove inverse functional directive to an object property.
+     */
+    public OWLOntologyChange removeInverseFunctionalObjectProperty( OWLObjectProperty property){
+        try{
+            long initialTime = System.nanoTime();
+            OWLInverseFunctionalObjectPropertyAxiom funcAx = ontoRef.getOWLFactory().getOWLInverseFunctionalObjectPropertyAxiom(property);
+            OWLOntologyChange ad = getRemoveAxiom(funcAx);
+            if ( ! manipulationBuffering)
+                applyChanges( ad);
+            logger.addDebugString( "remove inverse functional object property: " + ontoRef.getOWLObjectName( property) +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return ad;
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property no transitive anymore.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param propertyName the name of the property to make functional.
+     * @return th change for removing transitive directive to an object property.
+     */
+    public OWLOntologyChange removeTransitiveObjectProperty( String propertyName){
+        return removeTransitiveObjectProperty( ontoRef.getOWLObjectProperty( propertyName));
+    }
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property no transitive anymore.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param property the property to make functional.
+     * @return th change for adding transitive directive to an object property.
+     */
+    public OWLOntologyChange removeTransitiveObjectProperty( OWLObjectProperty property){
+        try{
+            long initialTime = System.nanoTime();
+            OWLTransitiveObjectPropertyAxiom funcAx = ontoRef.getOWLFactory().getOWLTransitiveObjectPropertyAxiom(property);
+            OWLOntologyChange ad = getRemoveAxiom(funcAx);
+            if ( ! manipulationBuffering)
+                applyChanges( ad);
+            logger.addDebugString( "remove transitive object property: " + ontoRef.getOWLObjectName( property) +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return ad;
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property no symmetric anymore.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param propertyName the name of the property to make functional.
+     * @return th change for removing symmetric directive to an object property.
+     */
+    public OWLOntologyChange removeSymmetricObjectProperty( String propertyName){
+        return removeSymmetricObjectProperty( ontoRef.getOWLObjectProperty( propertyName));
+    }
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property symmetric.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param property the property to make functional.
+     * @return th change for adding symmetric directive to an object property.
+     */
+    public OWLOntologyChange removeSymmetricObjectProperty( OWLObjectProperty property){
+        try{
+            long initialTime = System.nanoTime();
+            OWLSymmetricObjectPropertyAxiom funcAx = ontoRef.getOWLFactory().getOWLSymmetricObjectPropertyAxiom(property);
+            OWLOntologyChange ad = getRemoveAxiom(funcAx);
+            if ( ! manipulationBuffering)
+                applyChanges( ad);
+            logger.addDebugString( "remove symmetric object property: " + ontoRef.getOWLObjectName( property) +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return ad;
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property no asymmetric anymore.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param propertyName the name of the property to make functional.
+     * @return th change for removing asymmetric directive to an object property.
+     */
+    public OWLOntologyChange removeAsymmetricObjectProperty( String propertyName){
+        return removeAsymmetricObjectProperty( ontoRef.getOWLObjectProperty( propertyName));
+    }
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property no asymmetric anymore.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param property the property to make functional.
+     * @return th change for removing asymmetric directive to an object property.
+     */
+    public OWLOntologyChange removeAsymmetricObjectProperty( OWLObjectProperty property){
+        try{
+            long initialTime = System.nanoTime();
+            OWLAsymmetricObjectPropertyAxiom funcAx = ontoRef.getOWLFactory().getOWLAsymmetricObjectPropertyAxiom(property);
+            OWLOntologyChange ad = getRemoveAxiom(funcAx);
+            if ( ! manipulationBuffering)
+                applyChanges( ad);
+            logger.addDebugString( "remove asymmetric object property: " + ontoRef.getOWLObjectName( property) +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return ad;
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property no reflexive anymore.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param propertyName the name of the property to make functional.
+     * @return th change for removing reflexive directive to an object property.
+     */
+    public OWLOntologyChange removeReflexiveObjectProperty(String propertyName){
+        return removeReflexiveObjectProperty( ontoRef.getOWLObjectProperty( propertyName));
+    }
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property no reflexive anymore.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param property the property to make functional.
+     * @return th change for removing reflexive directive to an object property.
+     */
+    public OWLOntologyChange removeReflexiveObjectProperty( OWLObjectProperty property){
+        try{
+            long initialTime = System.nanoTime();
+            OWLReflexiveObjectPropertyAxiom funcAx = ontoRef.getOWLFactory().getOWLReflexiveObjectPropertyAxiom(property);
+            OWLOntologyChange ad = getRemoveAxiom(funcAx);
+            if ( ! manipulationBuffering)
+                applyChanges( ad);
+            logger.addDebugString( "remove reflexive object property: " + ontoRef.getOWLObjectName( property) +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return ad;
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
+    }
+
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property no irreflexive anymore.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param propertyName the name of the property to make functional.
+     * @return th change for remove irreflexive directive to an object property.
+     */
+    public OWLOntologyChange removeIrreflexiveObjectProperty(String propertyName){
+        return removeIrreflexiveObjectProperty( ontoRef.getOWLObjectProperty( propertyName));
+    }
+    /**
+     * It returns the changes to be made in the ontology in order to
+     * make an object property no irreflexive anymore.
+     * The property will be created if it does not exists.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
+     * else they will be applied immediately.
+     * @param property the property to make functional.
+     * @return th change for remove irreflexive directive to an object property.
+     */
+    public OWLOntologyChange removeIrreflexiveObjectProperty( OWLObjectProperty property){
+        try{
+            long initialTime = System.nanoTime();
+            OWLIrreflexiveObjectPropertyAxiom funcAx = ontoRef.getOWLFactory().getOWLIrreflexiveObjectPropertyAxiom(property);
+            OWLOntologyChange ad = getRemoveAxiom(funcAx);
+            if ( ! manipulationBuffering)
+                applyChanges( ad);
+            logger.addDebugString( "remove irreflexive object property: " + ontoRef.getOWLObjectName( property) +
+                    " in: " + (System.nanoTime() - initialTime) + " [ns]");
+            return ad;
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+            return( null);
+        }
     }
 
 

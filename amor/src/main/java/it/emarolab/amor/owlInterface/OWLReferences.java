@@ -120,6 +120,22 @@ public class OWLReferences extends OWLReferencesInterface{
     private Lock mutexRemoveEquivalentObjProp = new ReentrantLock();
     private Lock mutexAddObjPropInverse = new ReentrantLock();
     private Lock mutexRemoveObjPropInverse = new ReentrantLock();
+    private Lock mutexAddFunctionalData = new ReentrantLock();
+    private Lock mutexRemoveFunctionalData = new ReentrantLock();
+    private Lock mutexAddFunctional = new ReentrantLock();
+    private Lock mutexRemoveFunctional = new ReentrantLock();
+    private Lock mutexAddInverseFunctional = new ReentrantLock();
+    private Lock mutexRemoveInverseFunctional = new ReentrantLock();
+    private Lock mutexAddTransitive = new ReentrantLock();
+    private Lock mutexRemoveTransitive = new ReentrantLock();
+    private Lock mutexAddSymmetric = new ReentrantLock();
+    private Lock mutexRemoveSymmetric = new ReentrantLock();
+    private Lock mutexAddAsymmetric = new ReentrantLock();
+    private Lock mutexRemoveAsymmetric = new ReentrantLock();
+    private Lock mutexAddReflexive = new ReentrantLock();
+    private Lock mutexRemoveReflexive = new ReentrantLock();
+    private Lock mutexAddIrreflexive = new ReentrantLock();
+    private Lock mutexRemoveIrreflexive = new ReentrantLock();
 
     /**
      * This constructor just calls the super class constructor: {@link OWLReferencesInterface#OWLReferencesInterface(String, String, String, Boolean, Integer)}
@@ -1817,6 +1833,237 @@ public class OWLReferences extends OWLReferencesInterface{
         }.call();
     }
 
+    /**
+     * Returns the changes for making a functional data property.
+     * @param property the property to manipulate
+     * @return the changes to make the input property functional.
+     */
+    public OWLOntologyChange addFunctionalDataProperty( OWLDataProperty property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddFunctionalData);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addFunctionalDataProperty( property);
+            }
+        }.call();
+    }
+    /**
+     * Returns the changes for making a functional data property.
+     * @param property the name of property to manipulate
+     * @return the changes to make the input property functional.
+     */
+    public OWLOntologyChange addFunctionalDataProperty( String property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddFunctionalData);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addFunctionalDataProperty( property);
+            }
+        }.call();
+    }
+
+    /**
+     * Returns the changes for making a functional object property.
+     * @param property the property to manipulate
+     * @return the changes to make the input property functional.
+     */
+    public OWLOntologyChange addFunctionalObjectProperty( OWLObjectProperty property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddFunctional);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addFunctionalObjectProperty( property);
+            }
+        }.call();
+    }
+    /**
+     * Returns the changes for making a functional data property.
+     * @param property the name of property to manipulate
+     * @return the changes to make th input property functional.
+     */
+    public OWLOntologyChange addFunctionalObjectProperty( String property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddFunctional);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addFunctionalObjectProperty( property);
+            }
+        }.call();
+    }
+
+    /**
+     * Returns the changes for making an inverse functional object property.
+     * @param property the property to manipulate
+     * @return the changes to make the input property inverse functional.
+     */
+    public OWLOntologyChange addInverseFunctionalObjectProperty( OWLObjectProperty property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddInverseFunctional);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addInverseFunctionalObjectProperty( property);
+            }
+        }.call();
+    }
+    /**
+     * Returns the changes for making an inverse functional data property.
+     * @param property the name of property to manipulate
+     * @return the changes to make th input property inverse functional.
+     */
+    public OWLOntologyChange addInverseFunctionalObjectProperty( String property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddInverseFunctional);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addFunctionalObjectProperty( property);
+            }
+        }.call();
+    }
+
+    /**
+     * Returns the changes for making a transitive object property.
+     * @param property the property to manipulate
+     * @return the changes to make the input property transitive.
+     */
+    public OWLOntologyChange addTransitiveObjectProperty( OWLObjectProperty property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddTransitive);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addTransitiveObjectProperty( property);
+            }
+        }.call();
+    }
+    /**
+     * Returns the changes for making a transitive data property.
+     * @param property the name of property to manipulate
+     * @return the changes to make th input property transitive.
+     */
+    public OWLOntologyChange addTransitiveObjectProperty( String property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddTransitive);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addTransitiveObjectProperty( property);
+            }
+        }.call();
+    }
+
+    /**
+     * Returns the changes for making a symmetric object property.
+     * @param property the property to manipulate
+     * @return the changes to make the input property symmetric.
+     */
+    public OWLOntologyChange addSymmetricObjectProperty( OWLObjectProperty property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddSymmetric);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addSymmetricObjectProperty( property);
+            }
+        }.call();
+    }
+    /**
+     * Returns the changes for making a symmetric data property.
+     * @param property the name of property to manipulate
+     * @return the changes to make th input property symmetric.
+     */
+    public OWLOntologyChange addSymmetricObjectProperty( String property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddSymmetric);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addSymmetricObjectProperty( property);
+            }
+        }.call();
+    }
+
+    /**
+     * Returns the changes for making a asymmetric object property.
+     * @param property the property to manipulate
+     * @return the changes to make the input property asymmetric.
+     */
+    public OWLOntologyChange addAsymmetricObjectProperty( OWLObjectProperty property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddAsymmetric);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addAsymmetricObjectProperty( property);
+            }
+        }.call();
+    }
+    /**
+     * Returns the changes for making a asymmetric data property.
+     * @param property the name of property to manipulate
+     * @return the changes to make th input property asymmetric.
+     */
+    public OWLOntologyChange addAsymmetricObjectProperty( String property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddAsymmetric);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addAsymmetricObjectProperty( property);
+            }
+        }.call();
+    }
+
+    /**
+     * Returns the changes for making a reflexive object property.
+     * @param property the property to manipulate
+     * @return the changes to make the input property reflexive.
+     */
+    public OWLOntologyChange addReflexiveObjectProperty( OWLObjectProperty property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddReflexive);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addReflexiveObjectProperty( property);
+            }
+        }.call();
+    }
+    /**
+     * Returns the changes for making a reflexivve data property.
+     * @param property the name of property to manipulate
+     * @return the changes to make th input property reflexive.
+     */
+    public OWLOntologyChange addReflexiveObjectProperty( String property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddReflexive);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addReflexiveObjectProperty( property);
+            }
+        }.call();
+    }
+
+    /**
+     * Returns the changes for making a irreflexive object property.
+     * @param property the property to manipulate
+     * @return the changes to make the input property irreflexive.
+     */
+    public OWLOntologyChange addIrreflexiveObjectProperty( OWLObjectProperty property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddIrreflexive);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addIrreflexiveObjectProperty( property);
+            }
+        }.call();
+    }
+    /**
+     * Returns the changes for making a irreflexivve data property.
+     * @param property the name of property to manipulate
+     * @return the changes to make th input property irreflexive.
+     */
+    public OWLOntologyChange addIrreflexiveObjectProperty( String property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddIrreflexive);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addIrreflexiveObjectProperty( property);
+            }
+        }.call();
+    }
 
     // ------------------------------------------------------------   methods for REMOVING entities
     /**
@@ -2230,6 +2477,240 @@ public class OWLReferences extends OWLReferencesInterface{
             }
         }.call();
     }
+
+
+    /**
+     * Returns the changes for making a no functional data property.
+     * @param property the property to manipulate
+     * @return the changes to make the input property not functional anymore.
+     */
+    public OWLOntologyChange removeFunctionalDataProperty( OWLDataProperty property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveFunctionalData);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeFunctionalDataProperty( property);
+            }
+        }.call();
+    }
+    /**
+     * Returns the changes for making a no functional data property.
+     * @param property the name of property to manipulate
+     * @return the changes to make the input property not functional anymore.
+     */
+    public OWLOntologyChange removeFunctionalDataProperty( String property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveFunctionalData);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeFunctionalDataProperty( property);
+            }
+        }.call();
+    }
+
+    /**
+     * Returns the changes for making a no functional object property.
+     * @param property the property to manipulate
+     * @return the changes to make the input property not functional anymore.
+     */
+    public OWLOntologyChange removeFunctionalObjectProperty( OWLObjectProperty property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveFunctional);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeFunctionalObjectProperty( property);
+            }
+        }.call();
+    }
+    /**
+     * Returns the changes for making a no functional data property.
+     * @param property the name of property to manipulate
+     * @return the changes to make the input property not functional anymore.
+     */
+    public OWLOntologyChange removeFunctionalObjectProperty( String property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveFunctional);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeFunctionalObjectProperty( property);
+            }
+        }.call();
+    }
+
+    /**
+     * Returns the changes for making an no inverse functional object property.
+     * @param property the property to manipulate
+     * @return the changes to make the input property not inverse functional anymore.
+     */
+    public OWLOntologyChange removeInverseFunctionalObjectProperty( OWLObjectProperty property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveInverseFunctional);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeInverseFunctionalObjectProperty( property);
+            }
+        }.call();
+    }
+    /**
+     * Returns the changes for making a no inverse functional data property.
+     * @param property the name of property to manipulate
+     * @return the changes to make th input property not inverse functional anymore.
+     */
+    public OWLOntologyChange removeInverseFunctionalObjectProperty( String property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveInverseFunctional);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeFunctionalObjectProperty( property);
+            }
+        }.call();
+    }
+
+    /**
+     * Returns the changes for making a no transitive object property.
+     * @param property the property to manipulate
+     * @return the changes to make the input property not transitive anymore.
+     */
+    public OWLOntologyChange removeTransitiveObjectProperty( OWLObjectProperty property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveTransitive);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeTransitiveObjectProperty( property);
+            }
+        }.call();
+    }
+    /**
+     * Returns the changes for making a no transitive data property.
+     * @param property the name of property to manipulate
+     * @return the changes to make th input property not transitive anymore.
+     */
+    public OWLOntologyChange removeTransitiveObjectProperty( String property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveTransitive);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeTransitiveObjectProperty( property);
+            }
+        }.call();
+    }
+
+    /**
+     * Returns the changes for making a no symmetric object property.
+     * @param property the property to manipulate
+     * @return the changes to make the input property not symmetric anymore.
+     */
+    public OWLOntologyChange removeSymmetricObjectProperty( OWLObjectProperty property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveSymmetric);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeSymmetricObjectProperty( property);
+            }
+        }.call();
+    }
+    /**
+     * Returns the changes for making a no symmetric data property.
+     * @param property the name of property to manipulate
+     * @return the changes to make th input property not symmetric anymore.
+     */
+    public OWLOntologyChange removeSymmetricObjectProperty( String property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveSymmetric);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeSymmetricObjectProperty( property);
+            }
+        }.call();
+    }
+
+    /**
+     * Returns the changes for making a no asymmetric object property.
+     * @param property the property to manipulate
+     * @return the changes to make the input property not asymmetric anymore.
+     */
+    public OWLOntologyChange removeAsymmetricObjectProperty( OWLObjectProperty property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveAsymmetric);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeAsymmetricObjectProperty( property);
+            }
+        }.call();
+    }
+    /**
+     * Returns the changes for making a no asymmetric data property.
+     * @param property the name of property to manipulate
+     * @return the changes to make th input property not asymmetric anymore.
+     */
+    public OWLOntologyChange removeAsymmetricObjectProperty( String property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveAsymmetric);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeAsymmetricObjectProperty( property);
+            }
+        }.call();
+    }
+
+    /**
+     * Returns the changes for making a no reflexive object property.
+     * @param property the property to manipulate
+     * @return the changes to make the input property no reflexive anymore.
+     */
+    public OWLOntologyChange removeReflexiveObjectProperty( OWLObjectProperty property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveReflexive);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeReflexiveObjectProperty( property);
+            }
+        }.call();
+    }
+    /**
+     * Returns the changes for making a no reflexivve data property.
+     * @param property the name of property to manipulate
+     * @return the changes to make th input property no reflexive anymore.
+     */
+    public OWLOntologyChange removeReflexiveObjectProperty( String property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveReflexive);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeReflexiveObjectProperty( property);
+            }
+        }.call();
+    }
+
+    /**
+     * Returns the changes for making a no irreflexive object property.
+     * @param property the property to manipulate
+     * @return the changes to make the input property no irreflexive anymore.
+     */
+    public OWLOntologyChange removeIrreflexiveObjectProperty( OWLObjectProperty property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveIrreflexive);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeIrreflexiveObjectProperty( property);
+            }
+        }.call();
+    }
+    /**
+     * Returns the changes for making a no irreflexivve data property.
+     * @param property the name of property to manipulate
+     * @return the changes to make th input property not irreflexive anymore.
+     */
+    public OWLOntologyChange removeIrreflexiveObjectProperty( String property){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveIrreflexive);
+        return new OWLReferencesCaller<OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeIrreflexiveObjectProperty( property);
+            }
+        }.call();
+    }
+
 
     // ------------------------------------------------------------   methods for REPLACE entities
     /*

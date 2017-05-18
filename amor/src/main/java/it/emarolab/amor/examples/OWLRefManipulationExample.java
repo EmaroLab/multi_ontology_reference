@@ -20,10 +20,9 @@ public class OWLRefManipulationExample {
         OWLReferences ontoRef = OWLReferencesContainer.newOWLReferenceFromFileWithPellet( OWLREFERENCES_NAME, ONTOLOGY_FILE_PATH, ONTOLOGY_IRI_PATH, true);
 
         // todo adjust also path absolute
-        ontoRef.addRestriction( new SemanticRestriction.DataDomainRestrictedOnAllData(
+        ontoRef.addRestriction( new SemanticRestriction.DataRangeRestricted(
                 ontoRef.getOWLDataProperty( "hasDataProperty_renamed"),
-                ontoRef.getOWLFactory().getBooleanOWLDatatype(),
-                ontoRef.getOWLDataProperty( "hasDataProperty_renamed")
+                ontoRef.getOWLFactory().getBooleanOWLDatatype()
         ));
         System.out.println("£££££ 1 " + ontoRef.getRangeRestriction( ontoRef.getOWLDataProperty( "hasDataProperty_renamed")));
         System.out.println("£££££ 2 " + ontoRef.getDomainRestriction( ontoRef.getOWLDataProperty( "hasDataProperty_renamed")));
