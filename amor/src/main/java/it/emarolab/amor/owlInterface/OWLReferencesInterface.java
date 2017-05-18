@@ -129,8 +129,11 @@ private OWLEnquirer enquirer;
         if (obj != null) {
             String tmp = obj.toString();
             // ex: <http://www.co-ode.org/ontologies/pizza/pizza.owl#America>
+            // ex: http://www.w3.org/2001/XMLSchema#boolean
             int start = tmp.lastIndexOf("#");
             int end = tmp.lastIndexOf(">");
+            if ( end <= 0)
+                end = tmp.length();
             if (start >= 0 & end >= 0)
                 return tmp.substring(start + 1, end);
             else if (tmp.contains("http") & tmp.contains("://")) {
@@ -153,6 +156,7 @@ private OWLEnquirer enquirer;
                         return s.substring(0, end);
                 }
             }
+            return obj.toString(); // if cannot parse return complete name
         }
         staicLogger.addDebugString("Cannot get the OWL name of a null OWL object", true);
         return null;

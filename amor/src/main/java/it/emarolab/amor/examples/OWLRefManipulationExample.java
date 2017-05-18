@@ -2,21 +2,49 @@ package it.emarolab.amor.examples;
 
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContainer;
-import org.semanticweb.owlapi.model.*;
+import it.emarolab.amor.owlInterface.SemanticRestriction;
 
 public class OWLRefManipulationExample {
 
     public static final String OWLREFERENCES_NAME = "refName";
-    public static final String ONTOLOGY_FILE_PATH = "files/ontologies/ontology_manipulation1.owl";
+    public static final String ONTOLOGY_FILE_PATH = "/home/bubx/ros_ws/src/ontology_references/multi_ontology_reference/files/ontologies/ontology_manipulation1.owl";
     public static final String ONTOLOGY_IRI_PATH = "http://www.semanticweb.org/luca-buoncompagni/aMor/examples";
     public static final Boolean BUFFERING_REASONER = true; // if true you must to update manually the reasoner. Otherwise it synchronises itself any time is needed
     public static final Boolean BUFFERING_OWLMANIPULATOR = true; // if true you must to apply changes manually. Otherwise their are applied as soon as possible.
 
     public static void main(String[] args) {
         // 1) let create new ontology with default reasoner (Pellet)
-        OWLReferences ontoRef = OWLReferencesContainer.newOWLReferencesCreated( OWLREFERENCES_NAME, ONTOLOGY_FILE_PATH, ONTOLOGY_IRI_PATH, BUFFERING_REASONER);
-        ontoRef.setOWLManipulatorBuffering( BUFFERING_OWLMANIPULATOR); // if not specified, default value=false {@link OWLManipulator#DEFAULT_CHANGE_BUFFERING}
+        //OWLReferences ontoRef = OWLReferencesContainer.newOWLReferencesCreated( OWLREFERENCES_NAME, ONTOLOGY_FILE_PATH, ONTOLOGY_IRI_PATH, BUFFERING_REASONER);
+        //ontoRef.setOWLManipulatorBuffering( BUFFERING_OWLMANIPULATOR); // if not specified, default value=false {@link OWLManipulator#DEFAULT_CHANGE_BUFFERING}
 
+        OWLReferences ontoRef = OWLReferencesContainer.newOWLReferenceFromFileWithPellet( OWLREFERENCES_NAME, ONTOLOGY_FILE_PATH, ONTOLOGY_IRI_PATH, true);
+
+        // todo adjust also path absolute
+        ontoRef.addRestriction( new SemanticRestriction.DataDomainRestrictedOnAllData(
+                ontoRef.getOWLDataProperty( "hasDataProperty_renamed"),
+                ontoRef.getOWLFactory().getBooleanOWLDatatype(),
+                ontoRef.getOWLDataProperty( "hasDataProperty_renamed")
+        ));
+        System.out.println("£££££ 1 " + ontoRef.getRangeRestriction( ontoRef.getOWLDataProperty( "hasDataProperty_renamed")));
+        System.out.println("£££££ 2 " + ontoRef.getDomainRestriction( ontoRef.getOWLDataProperty( "hasDataProperty_renamed")));
+
+        //System.out.println("£££££ " + ontoRef.getDomainRestriction( ontoRef.getOWLObjectProperty( "hasObjectProperty_renamed")));
+        /*ontoRef.addRestriction(new SemanticRestriction.ObjectDomainRestrictedOnExactData(
+                ontoRef.getOWLObjectProperty( "hasDataProperty_renamed"),
+                ontoRef.getOWLFactory().getBooleanOWLDatatype(),
+                ontoRef.getOWLDataProperty( "hasDataProperty_renamed"),
+                3));
+        ontoRef.addRestriction(new SemanticRestriction.ObjectDomainRestrictedOnClass(
+                ontoRef.getOWLObjectProperty( "hasDataProperty_renamed2"),
+                ontoRef.getOWLClass("subClass")));
+        ontoRef.addRestriction(new SemanticRestriction.ObjectRangeRestrictedOnExactData(
+                ontoRef.getOWLObjectProperty( "hasDataProperty_renamed"),
+                ontoRef.getOWLFactory().getIntegerOWLDatatype()));
+        System.out.println("£££££ " + ontoRef.getDomainRestriction( ontoRef.getOWLObjectProperty( "hasDataProperty_renamed")));
+        //ontoRef.saveOntology("/home/bubx/r.owl");
+*/
+
+        /*
         // note that changes made by the OWLManipulator are such that if an entity (given through its name) exists in the ontology
         // it will be used. On the other hand, if it does not exist a new entity with the specified name will be created.
 
@@ -117,5 +145,8 @@ public class OWLRefManipulationExample {
 
         // also be sure to check how the complete documentation to see how is easy to integrate your manipulation
         // in the system and contribute to the community
+
+
+        */
     }
 }

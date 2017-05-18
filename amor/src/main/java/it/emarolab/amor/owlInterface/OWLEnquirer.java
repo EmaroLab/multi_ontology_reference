@@ -818,7 +818,8 @@ public class OWLEnquirer {
             if( isIncludingInferences()) {
                 Stream<OWLClass> streamReasoned = ontoRef.getOWLReasoner().getEquivalentClasses(cl).entities();
                 for (OWLClass a : (Iterable<OWLClass>) streamReasoned::iterator)
-                    out.add(new ClassRestrictedOnClass(cl, a.asOWLClass()));
+                    if ( ! a.isOWLThing())
+                        out.add(new ClassRestrictedOnClass(cl, a.asOWLClass()));
             }
             return out;
         } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
@@ -867,11 +868,10 @@ public class OWLEnquirer {
             // reason about
             if( isIncludingInferences()) {
                 Stream<Node<OWLClass>> reasoned = ontoRef.getOWLReasoner().getDataPropertyDomains(property, isReturningCompleteDescription()).nodes(); // add flag!!!!
-                for (Node<OWLClass> ax : (Iterable<Node<OWLClass>>) reasoned::iterator) {
-                    for (OWLClass a : (Iterable<OWLClass>) () -> ax.entities().iterator()) {
-                        out.add(new DataDomainRestrictedOnClass(property, a.asOWLClass()));
-                    }
-                }
+                for (Node<OWLClass> ax : (Iterable<Node<OWLClass>>) reasoned::iterator)
+                    for (OWLClass a : (Iterable<OWLClass>) () -> ax.entities().iterator())
+                        if ( ! a.isOWLThing())
+                            out.add(new DataDomainRestrictedOnClass(property, a.asOWLClass()));
             }
             return out;
         } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
@@ -940,11 +940,10 @@ public class OWLEnquirer {
             // reason about
             if( isIncludingInferences()) {
                 Stream<Node<OWLClass>> reasoned = ontoRef.getOWLReasoner().getObjectPropertyDomains(property, isReturningCompleteDescription()).nodes(); // add flag!!!!
-                for (Node<OWLClass> ax : (Iterable<Node<OWLClass>>) reasoned::iterator) {
-                    for (OWLClass a : (Iterable<OWLClass>) () -> ax.entities().iterator()) {
-                        out.add(new ObjectDomainRestrictedOnClass(property, a.asOWLClass()));
-                    }
-                }
+                for (Node<OWLClass> ax : (Iterable<Node<OWLClass>>) reasoned::iterator)
+                    for (OWLClass a : (Iterable<OWLClass>) () -> ax.entities().iterator())
+                        if ( ! a.isOWLThing())
+                            out.add(new ObjectDomainRestrictedOnClass(property, a.asOWLClass()));
             }
             return out;
         } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
@@ -952,7 +951,6 @@ public class OWLEnquirer {
             return null;
         }
     }
-
     /**
      * Returns all the restrictions that are defining a data property range.
      * @param property a data property.
@@ -993,11 +991,10 @@ public class OWLEnquirer {
             // reason about
             if( isIncludingInferences()) {
                 Stream<Node<OWLClass>> reasoned = ontoRef.getOWLReasoner().getObjectPropertyRanges(property, isReturningCompleteDescription()).nodes(); // add flag!!!!
-                for (Node<OWLClass> ax : (Iterable<Node<OWLClass>>) reasoned::iterator) {
-                    for (OWLClass a : (Iterable<OWLClass>) () -> ax.entities().iterator()) {
-                        out.add(new ObjectRangeRestrictedOnClass(property, a.asOWLClass()));
-                    }
-                }
+                for (Node<OWLClass> ax : (Iterable<Node<OWLClass>>) reasoned::iterator)
+                    for (OWLClass a : (Iterable<OWLClass>) () -> ax.entities().iterator())
+                        if ( ! a.isOWLThing())
+                            out.add(new ObjectRangeRestrictedOnClass(property, a.asOWLClass()));
             }
             return out;
         } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){

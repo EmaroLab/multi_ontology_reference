@@ -70,7 +70,10 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     default OWLOntologyChange addRestriction( OWLManipulator ontoManipulator){
         try {
-            return ontoManipulator.getAddAxiom( getAxiom( ontoManipulator.getOwlLibrary()));
+            OWLOntologyChange add = ontoManipulator.getAddAxiom(getAxiom(ontoManipulator.getOwlLibrary()));
+            if( ! ontoManipulator.isChangeBuffering())
+                ontoManipulator.applyChanges(add);
+            return add;
         } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
             ontoManipulator.getOwlLibrary().logInconsistency();
             return null;
@@ -84,7 +87,10 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     default OWLOntologyChange removeRestriction( OWLManipulator ontoManipulator){
         try {
-            return ontoManipulator.getRemoveAxiom( getAxiom( ontoManipulator.getOwlLibrary()));
+            OWLOntologyChange remove = ontoManipulator.getRemoveAxiom(getAxiom(ontoManipulator.getOwlLibrary()));
+            if( ! ontoManipulator.isChangeBuffering())
+                ontoManipulator.applyChanges(remove);
+            return remove;
         } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
             ontoManipulator.getOwlLibrary().logInconsistency();
             return null;
@@ -350,11 +356,11 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
         private static final String CLASS = "CLASS";
         private static final String DATA = "DATA";
         private static final String OBJECT = "OBJECT";
-        private static final String MIN = D + "MIN" + D;
-        private static final String MAX = D + "MAX" + D;
-        private static final String EXACT = D + "EXACT" + D;
-        private static final String SOME = D + "SOME" + D;
-        private static final String ALL = D + "ALL" + D;
+        private static final String MIN = "MIN" + D;
+        private static final String MAX = "MAX" + D;
+        private static final String EXACT = "EXACT" + D;
+        private static final String SOME = "SOME" + D;
+        private static final String ALL = "ALL" + D;
 
         // subj_restriction_prop
         /**
@@ -1418,6 +1424,21 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
         public ApplyingObjectExactRestriction(S subject, OWLClass value, OWLObjectProperty property) {
             super(subject, value, property);
         }
+        public ApplyingObjectExactRestriction(int cardinality) {
+            super(cardinality);
+        }
+        public ApplyingObjectExactRestriction(S subject, OWLClass value, int cardinality) {
+            super(subject, value, cardinality);
+        }
+        public ApplyingObjectExactRestriction(OWLObjectProperty property, int cardinality) {
+            super(property, cardinality);
+        }
+        public ApplyingObjectExactRestriction(S subject, OWLObjectProperty property, int cardinality) {
+            super(subject, property, cardinality);
+        }
+        public ApplyingObjectExactRestriction(S subject, OWLClass value, OWLObjectProperty property, int cardinality) {
+            super(subject, value, property, cardinality);
+        }
         public ApplyingObjectExactRestriction(OWLObjectExactCardinality restriction) {
             super();
             setProperty( restriction.getProperty().asOWLObjectProperty());
@@ -1444,7 +1465,6 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
         public ApplyingObjectSomeRestriction() {
             super();
         }
-
         public ApplyingObjectSomeRestriction(S subject) {
             super(subject);
         }
@@ -1467,6 +1487,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
             setProperty( restriction.getProperty().asOWLObjectProperty());
             setValue( restriction.getFiller().asOWLClass());
         }
+
     }
     /**
      * This class combines {@link ApplyingPropertyRestriction} with the {@link ObjectAllRestriction}
@@ -1900,13 +1921,27 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
         public ClassRestrictedOnExactObject(OWLClass subject, OWLClass value, OWLObjectProperty property) {
             super(subject, value, property);
         }
+        public ClassRestrictedOnExactObject(int cardinality) {
+            super(cardinality);
+        }
+        public ClassRestrictedOnExactObject(OWLClass subject, OWLClass value, int cardinality) {
+            super(subject, value, cardinality);
+        }
+        public ClassRestrictedOnExactObject(OWLObjectProperty property, int cardinality) {
+            super(property, cardinality);
+        }
+        public ClassRestrictedOnExactObject(OWLClass subject, OWLObjectProperty property, int cardinality) {
+            super(subject, property, cardinality);
+        }
+        public ClassRestrictedOnExactObject(OWLClass subject, OWLClass value, OWLObjectProperty property, int cardinality) {
+            super(subject, value, property, cardinality);
+        }
         public ClassRestrictedOnExactObject(OWLObjectExactCardinality restriction) {
             super(restriction);
         }
         public ClassRestrictedOnExactObject(OWLClass subject, OWLObjectExactCardinality restriction) {
             super(subject, restriction);
         }
-
 
         @Override
         protected void setRestrictionType() {
@@ -2370,6 +2405,21 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
         public DataDomainRestrictedOnExactObject(OWLDataProperty subject, OWLClass value, OWLObjectProperty property) {
             super(subject, value, property);
         }
+        public DataDomainRestrictedOnExactObject(int cardinality) {
+            super(cardinality);
+        }
+        public DataDomainRestrictedOnExactObject(OWLDataProperty subject, OWLClass value, int cardinality) {
+            super(subject, value, cardinality);
+        }
+        public DataDomainRestrictedOnExactObject(OWLObjectProperty property, int cardinality) {
+            super(property, cardinality);
+        }
+        public DataDomainRestrictedOnExactObject(OWLDataProperty subject, OWLObjectProperty property, int cardinality) {
+            super(subject, property, cardinality);
+        }
+        public DataDomainRestrictedOnExactObject(OWLDataProperty subject, OWLClass value, OWLObjectProperty property, int cardinality) {
+            super(subject, value, property, cardinality);
+        }
         public DataDomainRestrictedOnExactObject(OWLObjectExactCardinality restriction) {
             super(restriction);
         }
@@ -2403,7 +2453,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
         public DataDomainRestrictedOnSomeObject(OWLDataProperty subject, OWLObjectProperty property) {
             super(subject, property);
         }
-        private DataDomainRestrictedOnSomeObject(OWLDataProperty subject, OWLClass value, OWLObjectProperty property) {
+        public DataDomainRestrictedOnSomeObject(OWLDataProperty subject, OWLClass value, OWLObjectProperty property) {
             super(subject, value, property);
         }
         public DataDomainRestrictedOnSomeObject(OWLObjectSomeValuesFrom restriction) {
@@ -2412,6 +2462,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
         public DataDomainRestrictedOnSomeObject(OWLDataProperty subject, OWLObjectSomeValuesFrom restriction) {
             super(subject, restriction);
         }
+
 
         @Override
         protected void setRestrictionType() {
@@ -2891,6 +2942,21 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
         public ObjectDomainRestrictedOnExactObject(OWLObjectProperty subject, OWLClass value, OWLObjectProperty property) {
             super(subject, value, property);
         }
+        public ObjectDomainRestrictedOnExactObject(int cardinality) {
+            super(cardinality);
+        }
+        public ObjectDomainRestrictedOnExactObject(OWLObjectProperty subject, OWLClass value, int cardinality) {
+            super(subject, value, cardinality);
+        }
+        public ObjectDomainRestrictedOnExactObject(OWLObjectProperty property, int cardinality) {
+            super(property, cardinality);
+        }
+        public ObjectDomainRestrictedOnExactObject(OWLObjectProperty subject, OWLObjectProperty property, int cardinality) {
+            super(subject, property, cardinality);
+        }
+        public ObjectDomainRestrictedOnExactObject(OWLObjectProperty subject, OWLClass value, OWLObjectProperty property, int cardinality) {
+            super(subject, value, property, cardinality);
+        }
         public ObjectDomainRestrictedOnExactObject(OWLObjectExactCardinality restriction) {
             super(restriction);
         }
@@ -3364,6 +3430,21 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
         }
         public ObjectRangeRestrictedOnExactObject(OWLObjectProperty subject, OWLClass value, OWLObjectProperty property) {
             super(subject, value, property);
+        }
+        public ObjectRangeRestrictedOnExactObject(int cardinality) {
+            super(cardinality);
+        }
+        public ObjectRangeRestrictedOnExactObject(OWLObjectProperty subject, OWLClass value, int cardinality) {
+            super(subject, value, cardinality);
+        }
+        public ObjectRangeRestrictedOnExactObject(OWLObjectProperty property, int cardinality) {
+            super(property, cardinality);
+        }
+        public ObjectRangeRestrictedOnExactObject(OWLObjectProperty subject, OWLObjectProperty property, int cardinality) {
+            super(subject, property, cardinality);
+        }
+        public ObjectRangeRestrictedOnExactObject(OWLObjectProperty subject, OWLClass value, OWLObjectProperty property, int cardinality) {
+            super(subject, value, property, cardinality);
         }
         public ObjectRangeRestrictedOnExactObject(OWLObjectExactCardinality restriction) {
             super(restriction);

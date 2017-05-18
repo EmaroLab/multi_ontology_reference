@@ -1,20 +1,10 @@
 <?xml version="1.0"?>
-
-
-<!DOCTYPE rdf:RDF [
-    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
-    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
-    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
-    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
-    <!ENTITY examples "http://www.semanticweb.org/luca-buoncompagni/aMor/examples#" >
-]>
-
-
 <rdf:RDF xmlns="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#"
      xml:base="http://www.semanticweb.org/luca-buoncompagni/aMor/examples"
      xmlns:examples="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples"/>
@@ -34,54 +24,54 @@
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#coneCardinality -->
 
-    <owl:AnnotationProperty rdf:about="&examples;coneCardinality">
-        <rdfs:subPropertyOf rdf:resource="&examples;shapeCardinality"/>
+    <owl:AnnotationProperty rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#coneCardinality">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#shapeCardinality"/>
     </owl:AnnotationProperty>
     
 
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#cylinderCardinality -->
 
-    <owl:AnnotationProperty rdf:about="&examples;cylinderCardinality">
-        <rdfs:subPropertyOf rdf:resource="&examples;shapeCardinality"/>
+    <owl:AnnotationProperty rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#cylinderCardinality">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#shapeCardinality"/>
     </owl:AnnotationProperty>
     
 
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#orientableCardinality -->
 
-    <owl:AnnotationProperty rdf:about="&examples;orientableCardinality">
-        <rdfs:subPropertyOf rdf:resource="&examples;shapeCardinality"/>
+    <owl:AnnotationProperty rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#orientableCardinality">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#shapeCardinality"/>
     </owl:AnnotationProperty>
     
 
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#planeCardinality -->
 
-    <owl:AnnotationProperty rdf:about="&examples;planeCardinality">
-        <rdfs:subPropertyOf rdf:resource="&examples;shapeCardinality"/>
+    <owl:AnnotationProperty rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#planeCardinality">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#shapeCardinality"/>
     </owl:AnnotationProperty>
     
 
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#primitiveCardinality -->
 
-    <owl:AnnotationProperty rdf:about="&examples;primitiveCardinality">
-        <rdfs:subPropertyOf rdf:resource="&examples;shapeCardinality"/>
+    <owl:AnnotationProperty rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#primitiveCardinality">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#shapeCardinality"/>
     </owl:AnnotationProperty>
     
 
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#shapeCardinality -->
 
-    <owl:AnnotationProperty rdf:about="&examples;shapeCardinality"/>
+    <owl:AnnotationProperty rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#shapeCardinality"/>
     
 
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#sphereCardinality -->
 
-    <owl:AnnotationProperty rdf:about="&examples;sphereCardinality">
-        <rdfs:subPropertyOf rdf:resource="&examples;shapeCardinality"/>
+    <owl:AnnotationProperty rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#sphereCardinality">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#shapeCardinality"/>
     </owl:AnnotationProperty>
     
 
@@ -99,7 +89,14 @@
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#hasObjectProperty_renamed -->
 
-    <owl:ObjectProperty rdf:about="&examples;hasObjectProperty_renamed"/>
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#hasObjectProperty_renamed">
+        <rdfs:domain>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#hasObjectProperty_renamed"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#superClass"/>
+            </owl:Restriction>
+        </rdfs:domain>
+    </owl:ObjectProperty>
     
 
 
@@ -114,9 +111,15 @@
     
 
 
+    <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#hap -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#hap"/>
+    
+
+
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#hasDataProperty_renamed -->
 
-    <owl:DatatypeProperty rdf:about="&examples;hasDataProperty_renamed"/>
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#hasDataProperty_renamed"/>
     
 
 
@@ -133,27 +136,27 @@
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#ClassRenamed -->
 
-    <owl:Class rdf:about="&examples;ClassRenamed">
-        <sphereCardinality rdf:datatype="&xsd;int">1</sphereCardinality>
-        <cylinderCardinality rdf:datatype="&xsd;int">1</cylinderCardinality>
-        <orientableCardinality rdf:datatype="&xsd;int">1</orientableCardinality>
-        <shapeCardinality rdf:datatype="&xsd;int">1</shapeCardinality>
-        <primitiveCardinality rdf:datatype="&xsd;int">1</primitiveCardinality>
-        <coneCardinality rdf:datatype="&xsd;int">1</coneCardinality>
-        <planeCardinality rdf:datatype="&xsd;int">1</planeCardinality>
+    <owl:Class rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#ClassRenamed">
+        <coneCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</coneCardinality>
+        <cylinderCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</cylinderCardinality>
+        <orientableCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</orientableCardinality>
+        <planeCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</planeCardinality>
+        <primitiveCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</primitiveCardinality>
+        <shapeCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</shapeCardinality>
+        <sphereCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</sphereCardinality>
     </owl:Class>
     
 
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#subClass -->
 
-    <owl:Class rdf:about="&examples;subClass"/>
+    <owl:Class rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#subClass"/>
     
 
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#superClass -->
 
-    <owl:Class rdf:about="&examples;superClass"/>
+    <owl:Class rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#superClass"/>
     
 
 
@@ -170,59 +173,59 @@
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#NEW_individualObjectPropertyValue -->
 
-    <owl:NamedIndividual rdf:about="&examples;NEW_individualObjectPropertyValue"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#NEW_individualObjectPropertyValue"/>
     
 
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#RENAMED_individual -->
 
-    <owl:NamedIndividual rdf:about="&examples;RENAMED_individual">
-        <hasDataProperty_renamed rdf:datatype="&xsd;boolean">false</hasDataProperty_renamed>
-        <hasObjectProperty_renamed rdf:resource="&examples;NEW_individualObjectPropertyValue"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#RENAMED_individual">
+        <hasObjectProperty_renamed rdf:resource="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#NEW_individualObjectPropertyValue"/>
+        <hasDataProperty_renamed rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</hasDataProperty_renamed>
     </owl:NamedIndividual>
     
 
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#ind1 -->
 
-    <owl:NamedIndividual rdf:about="&examples;ind1">
-        <rdf:type rdf:resource="&examples;subClass"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#ind1">
+        <rdf:type rdf:resource="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#subClass"/>
     </owl:NamedIndividual>
     
 
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#ind2 -->
 
-    <owl:NamedIndividual rdf:about="&examples;ind2">
-        <rdf:type rdf:resource="&examples;superClass"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#ind2">
+        <rdf:type rdf:resource="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#superClass"/>
     </owl:NamedIndividual>
     
 
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#newIndividualName1 -->
 
-    <owl:Thing rdf:about="&examples;newIndividualName1">
-        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+    <owl:Thing rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#newIndividualName1">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
     </owl:Thing>
     
 
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#newIndividualName2 -->
 
-    <owl:Thing rdf:about="&examples;newIndividualName2">
-        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+    <owl:Thing rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#newIndividualName2">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
     </owl:Thing>
     
 
 
     <!-- http://www.semanticweb.org/luca-buoncompagni/aMor/examples#newIndividualName3 -->
 
-    <owl:NamedIndividual rdf:about="&examples;newIndividualName3">
-        <rdf:type rdf:resource="&examples;ClassRenamed"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#newIndividualName3">
+        <rdf:type rdf:resource="http://www.semanticweb.org/luca-buoncompagni/aMor/examples#ClassRenamed"/>
     </owl:NamedIndividual>
 </rdf:RDF>
 
 
 
-<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+<!-- Generated by the OWL API (version 4.2.6.20160910-2108) https://github.com/owlcs/owlapi -->
 

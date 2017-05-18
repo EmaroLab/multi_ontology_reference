@@ -42,14 +42,14 @@ public class BufferingTest {
             javaCnt = Integer.valueOf( ontoCnt.getLiteral());
 
         // 4) assign a new id for couple of times and apply owl manipulator changes (if flag is true)
-        assignIncrementalId( ontoRef, X1_IND, javaCnt);             // id1 = INITIAL_CNT,         cnt = INITIAL_CNT + 1;
-        assignIncrementalId( ontoRef, X2_IND, javaCnt);                // id2 = INITIAL_CNT,         cnt = INITIAL_CNT + 1;
+        assignIncrementalId( ontoRef, X1_IND, javaCnt);              // id1 = INITIAL_CNT,         cnt = INITIAL_CNT + 1;
+        assignIncrementalId( ontoRef, X2_IND, javaCnt);              // id2 = INITIAL_CNT,         cnt = INITIAL_CNT + 1;
         javaCnt = assignIncrementalId( ontoRef, X3_IND, javaCnt);    // id3 = INITIAL_CNT,         cnt = INITIAL_CNT + 1;
         applyChanges( ontoRef); // this considers BUFFERING_MANIPULATOR flag
 
         // 5) do something similar to (3) for testing purposes
-        assignIncrementalId( ontoRef, X1_IND, javaCnt);                // id1 = INITIAL_CNT + 1,     cnt = INITIAL_CNT + 2;
-        assignIncrementalId( ontoRef, X2_IND, javaCnt);                // id2 = INITIAL_CNT + 1,     cnt = INITIAL_CNT + 2;
+        assignIncrementalId( ontoRef, X1_IND, javaCnt);              // id1 = INITIAL_CNT + 1,     cnt = INITIAL_CNT + 2;
+        assignIncrementalId( ontoRef, X2_IND, javaCnt);              // id2 = INITIAL_CNT + 1,     cnt = INITIAL_CNT + 2;
         javaCnt = assignIncrementalId( ontoRef, X3_IND, javaCnt);    // id3 = INITIAL_CNT + 1,     cnt = INITIAL_CNT + 2;
         applyChanges( ontoRef); // this considers BUFFERING_MANIPULATOR flag
 
