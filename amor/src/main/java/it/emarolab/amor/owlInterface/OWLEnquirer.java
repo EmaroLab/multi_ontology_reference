@@ -540,6 +540,7 @@ public class OWLEnquirer {
                 ontoRef.logInconsistency();
             }
         }
+        out.remove( ontoRef.getOWLFactory().getOWLBottomObjectProperty());
         logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
         return( out);
     }
@@ -584,6 +585,7 @@ public class OWLEnquirer {
                 ontoRef.logInconsistency();
             }
         }
+        out.remove( ontoRef.getOWLFactory().getOWLTopObjectProperty());
         logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
         return( out);
     }
@@ -628,6 +630,7 @@ public class OWLEnquirer {
                 ontoRef.logInconsistency();
             }
         }
+        out.remove( ontoRef.getOWLFactory().getOWLBottomDataProperty());
         logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
         return( out);
     }
@@ -672,6 +675,7 @@ public class OWLEnquirer {
                 ontoRef.logInconsistency();
             }
         }
+        out.remove( ontoRef.getOWLFactory().getOWLTopDataProperty());
         logger.addDebugString( "get sub classes of given in: " + (System.nanoTime() - initialTime) + " [ns]");
         return( out);
     }
@@ -1320,8 +1324,6 @@ public class OWLEnquirer {
 
     /**
      * Returns all the inverse object properties of a given property.
-     * If no inverse property are fount it returns the given property.
-     *
      * @param propertyName the name of the property from which retrieve its inverses.
      * @return the inverse properties of the given property.
      */
@@ -1330,8 +1332,6 @@ public class OWLEnquirer {
     }
     /**
      * Returns all the inverse object properties of a given property.
-     * If no inverse property are fount it returns the given property.
-     *
      * @param property the property from which retrieve its inverses.
      * @return the inverse properties of the given property.
      */
@@ -1348,10 +1348,6 @@ public class OWLEnquirer {
             Stream<OWLObjectPropertyExpression> reasoned = ontoRef.getOWLReasoner().getInverseObjectProperties(property).entities();
             reasoned.forEach(e -> prInverse.add(e.asOWLObjectProperty()));
         }
-
-        if (prInverse.isEmpty()) // if no any inverse property return the given property
-            prInverse.add( property);
-
         return prInverse;
     }
 

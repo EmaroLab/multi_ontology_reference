@@ -30,9 +30,11 @@ repositories {
 
 dependencies {
 
-    //compile group: 'org.openrdf.sesame', name: 'sesame-model', version: '2.7.0'
+    //runtime group: 'org.openrdf.sesame', name: 'sesame-model', version: '2.7.14'
+
+    //compile group: 'net.sourceforge.owlapi', name: 'org.semanticweb.hermit', version: '1.3.8.510'
 
     compile group: 'com.github.galigator.openllet', name: 'openllet-owlapi', version: '2.5.1'
-    compile group: 'net.sourceforge.owlapi', name: 'owlapi-distribution', version: '5.0.2'
+    compile group: 'net.sourceforge.owlapi', name: 'owlapi-distribution', version: '5.0.5'
 }
 
