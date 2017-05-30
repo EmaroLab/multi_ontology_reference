@@ -1224,10 +1224,14 @@ public class OWLEnquirer {
         Set<OWLClass> classes = new HashSet<>();
 
         Stream<OWLClassExpression> stream = EntitySearcher.getEquivalentClasses( cl, ontoRef.getOWLOntology());
-        Set<OWLClassExpression> set = stream.collect( Collectors.toSet());
+        //Set<OWLClassExpression> set = stream.collect( Collectors.toSet());
 
-        if( set != null)
-            classes.addAll(set.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
+        //if( set != null)
+            stream.forEach( (c) -> {
+                if (c.isOWLClass())
+                    classes.add(c.asOWLClass());
+            });
+        //classes.addAll(set.stream().map(AsOWLClass::asOWLClass).collect(Collectors.toList()));
 
         if( isIncludingInferences()) {
             try {
