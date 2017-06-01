@@ -105,7 +105,5 @@ public class Benchmarks {
 //
 //
 
-
-        // todo: cheep track of changes in queries and benchmarks in the 'files/benchmarks' directory
     }
 }
