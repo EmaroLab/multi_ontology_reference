@@ -7,14 +7,19 @@ import it.emarolab.amor.owlDebugger.Logger.LoggerFlag;
 import it.emarolab.amor.owlInterface.SemanticRestriction.*;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.InfModel;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.mindswap.pellet.KnowledgeBase;
 import org.mindswap.pellet.jena.PelletInfGraph;
+import org.semanticweb.owlapi.formats.TurtleDocumentFormat;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.search.EntitySearcher;
 
+import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -1451,7 +1456,7 @@ public class OWLEnquirer {
      */
     public List<QuerySolution> sparql(String query, Long timeOut) {
         try {
-            // get objects
+            /*// get objects
             KnowledgeBase kb = ((PelletReasoner) ontoRef.getOWLReasoner()).getKB();
             PelletInfGraph graph = new org.mindswap.pellet.jena.PelletReasoner().bind(kb);
             InfModel model = ModelFactory.createInfModel(graph);
@@ -1472,10 +1477,54 @@ public class OWLEnquirer {
                 solutions.add(r);
             }
             logger.addDebugString("SPARQL query:" + System.getProperty("line.separator") + queryLog + System.getProperty("line.separator") + ResultSetFormatter.asText(result));
+            return solutions;*/
+
+            List<QuerySolution> solutions = new ArrayList<>();
+            try {
+                try (QueryExecution qexec = QueryExecutionFactory.create(QueryFactory.create(query), getModel( ontoRef.getOWLOntology()))) {
+                    String queryLog = qexec.getQuery() + System.getProperty("line.separator") + "[TimeOut:";
+
+                    if (timeOut != null) { // apply time out
+                        if (timeOut > 0) {
+                            qexec.setTimeout(timeOut); // TODO: it does not seems to work with pellet SELECT queries
+                            queryLog += timeOut + "ms].";
+                        } else queryLog += "NONE].";
+                    } else queryLog += "NONE].";
+
+                    ResultSet res = qexec.execSelect();
+                    while (res.hasNext()) {
+                        QuerySolution r = res.next();
+                        solutions.add(r);
+                        //System.out.println( "£££ "+ r);
+                    }
+                    System.out.println("SPARQL query:" + System.getProperty("line.separator") + queryLog + System.getProperty("line.separator") + solutions);//ResultSetFormatter.asText(res));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
             return solutions;
         } catch (QueryCancelledException e) {
             logger.addDebugString("SPARQL timed out !!");
             return null;
+        }
+    }
+    public Model getModel(final OWLOntology ontology) {
+        Model model = ModelFactory.createDefaultModel();
+
+        try (PipedInputStream is = new PipedInputStream(); PipedOutputStream os = new PipedOutputStream(is)) {
+            new Thread(() -> {
+                try {
+                    ontology.getOWLOntologyManager().saveOntology(ontology, new TurtleDocumentFormat(), os);
+                    os.close();
+                } catch (OWLOntologyStorageException | IOException e) {
+                    e.printStackTrace();
+                }
+            }).start(); // blocking runnable
+            model.read(is, null, "TURTLE");
+            return model;
+        } catch (Exception e) {
+            throw new RuntimeException("Could not convert OWL API ontology to JENA API model.", e);
         }
     }
     /**
