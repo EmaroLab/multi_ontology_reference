@@ -216,18 +216,18 @@ private OWLEnquirer enquirer;
             case 0: //OWLReferencesContainer.COMMAND_CREATE
                 this.setIriFilePath( IRI.create( filePath));
                 this.setManager(); // creates and sets the filed that you can retrieve from getOWLManager();
-                this.createOntology(); // creates and set the field taht you can retrieve from getOWLOntology();
+                this.createOntology(); // creates and set the field that you can retrieve from getOWLOntology();
                 break;
             case 1: //OWLReferencesContainer.COMMAND_LOAD_FILE
                 this.setIriFilePath( IRI.create( new File( filePath)));
                 this.setManager(); // creates and sets the filed that you can retrieve from getOWLManager();
-                this.loadOntologyFromFile(); // creates and set the field taht you can retrieve from getOWLOntology();
+                this.loadOntologyFromFile(); // creates and set the field that you can retrieve from getOWLOntology();
                 break;
             case 2: //OWLReferencesContainer.COMMAND_LOAD_WEB
-                this.setIriFilePath( IRI.create( ontologyPath)); // in this case the file path should be a WEB URL
+                this.setIriFilePath( IRI.create( filePath));//ontologyPath)); // in this case the file path should be a WEB URL
                 this.setManager(); // creates and sets the filed that you can retrieve from getOWLManager();
-                this.loadOntologyFromWeb(); // creates and set the field taht you can retrieve from getOWLOntology();
-                this.setIriFilePath( IRI.create( filePath));
+                this.loadOntologyFromWeb(); // creates and set the field that you can retrieve from getOWLOntology();
+                //this.setIriFilePath( IRI.create( filePath));
                 break;
             default : logger.addDebugString( "Cannot initialise OWL References with the given command: " + command, true);
             }

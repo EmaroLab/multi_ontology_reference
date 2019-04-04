@@ -1451,7 +1451,7 @@ public class OWLEnquirer {
      * {@code timeOut &lt;=0}. Once timeout is reached, all solutions found up to that point are returned.
      *
      * @param query   a string defining the query in SPARQL query syntax.
-     * @param timeOut timeout for the query.
+     * @param timeOut timeout for the query (not all query support it).
      * @return list of solutions.
      */
     public List<QuerySolution> sparql(String query, Long timeOut) {
@@ -1486,10 +1486,16 @@ public class OWLEnquirer {
 
                     if (timeOut != null) { // apply time out
                         if (timeOut > 0) {
-                            qexec.setTimeout(timeOut); // TODO: it does not seems to work with pellet SELECT queries
+                            qexec.setTimeout( timeOut); // TODO: it does not seems to work with pellet SELECT queries
                             queryLog += timeOut + "ms].";
-                        } else queryLog += "NONE].";
-                    } else queryLog += "NONE].";
+                        } else {
+                            queryLog += "NONE].";
+                            qexec.setTimeout( 0);
+                        }
+                    } else {
+                        queryLog += "NONE].";
+                        qexec.setTimeout( 0);
+                    }
 
                     ResultSet res = qexec.execSelect();
                     while (res.hasNext()) {

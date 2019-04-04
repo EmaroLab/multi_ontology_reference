@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class OWLRefEnquirerExample {
-
+    
     public static final String OWLREFERENCES_NAME = "refName";
     public static final String ONTOLOGY_FILE_PATH = "http://protege.stanford.edu/ontologies/pizza/pizza.owl";
     public static final String ONTOLOGY_IRI_PATH = "http://www.co-ode.org/ontologies/pizza/pizza.owl";
