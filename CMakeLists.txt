@@ -25,5 +25,10 @@ catkin_package()
 
 # Change this to match the maven group name you have specified in the 
 # allprojects closure the root build.gradle
-install(DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_MAVEN_DESTINATION}/it/emarolab/${PROJECT_NAME}/ 
-        DESTINATION ${CATKIN_GLOBAL_MAVEN_DESTINATION}/it/emarolab/${PROJECT_NAME})
+#install(DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_MAVEN_DESTINATION}/it/emarolab/${PROJECT_NAME}/ 
+#        DESTINATION ${CATKIN_GLOBAL_MAVEN_DESTINATION}/it/emarolab/${PROJECT_NAME})
+
+#fix of the above command for supporting `catkin_make install` 
+#(thanks Taha Elsenosy for suggesting this correctionon in the issue: https://github.com/EmaroLab/multi_ontology_reference/issues/6)
+install(DIRECTORY ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/ 
+       DESTINATION ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME})

@@ -736,13 +736,14 @@ private OWLEnquirer enquirer;
         }
 
         /**
+         *
          * This method remove an instance from the internal map {@link #allReferences}.
          * This is automatically done when {@link OWLReferencesInterface#finalize()} method is called.
          * @param instance the OWL reference to be removed from the internal map.
          * @return {@code false} if the map does not contain an object with name {@link OWLReferencesInterface#getReferenceName()}
          * and no action was taken. {@code true} otherwise.
          */
-        private static Boolean removeInstance(OWLReferencesInterface instance){
+        public static Boolean removeInstance(OWLReferencesInterface instance){
             String refName = instance.getReferenceName();
             if( isInstance( refName)){
                 allReferences.remove( refName);
@@ -750,6 +751,13 @@ private OWLEnquirer enquirer;
             }
             logger.addDebugString( "Exception: cannot remove an Ontology with referencing name: " + refName, true);
             return (false);
+        }
+
+        /**
+         * @return the map containing all the load ontology references with respect to the given ontology name.
+         */
+        public static Map<String, OWLReferencesInterface> getAllReferences() {
+            return allReferences;
         }
 
         /**

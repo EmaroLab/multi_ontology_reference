@@ -136,6 +136,9 @@ public class OWLReferences extends OWLReferencesInterface{
     private Lock mutexRemoveReflexive = new ReentrantLock();
     private Lock mutexAddIrreflexive = new ReentrantLock();
     private Lock mutexRemoveIrreflexive = new ReentrantLock();
+    private Lock mutexConvertSuperRestriction = new ReentrantLock();
+    private Lock mutexConvertEquivalentRestriction = new ReentrantLock();
+    private Lock mutexConvertSuperClass = new ReentrantLock();
 
     /**
      * This constructor just calls the super class constructor: {@link OWLReferencesInterface#OWLReferencesInterface(String, String, String, Boolean, Integer)}
@@ -783,14 +786,14 @@ public class OWLReferences extends OWLReferencesInterface{
      * with respect to data and object properties.
      * @param cl the class from which get the restriction and cardinality limits.
      * @return the container of all the class restrictions and cardinality, for
-     * the given class.
+     * the given class. Each element of the set is another set containing conjunctionon of axioms.
      */
-    public Set<ApplyingRestriction> getRestrictions(OWLClass cl){
+    public Set< Set<ApplyingRestriction>> getRestrictions(OWLClass cl){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexClassRestriction);
-        return new OWLReferencesCaller< Set<ApplyingRestriction>>(  mutexes, this) {
+        return new OWLReferencesCaller< Set< Set<ApplyingRestriction>>>(  mutexes, this) {
             @Override
-            protected Set<ApplyingRestriction> performSynchronisedCall() {
-                return getEnquirer().getRestriction( cl);
+            protected Set< Set<ApplyingRestriction>> performSynchronisedCall() {
+                return getEnquirer().getRestrictions( cl);
             }
         }.call();
     }
@@ -1831,6 +1834,69 @@ public class OWLReferences extends OWLReferencesInterface{
                 return getManipulator().convertSuperClassesToEquivalentClass( className);
             }
         }.call();
+    }
+
+    /**
+     * Given a class {@code C}, it uses {@link org.semanticweb.owlapi.change.ConvertEquivalentClassesToSuperClasses}
+     * to convert all the conjunctions defining a class {@code C} to super classes of {@code C}
+     * @param cl the class to be converted from sub classing to equivalent expression.
+     * @return the changes to be applied in order to make all the sub axioms of a class being
+     * the conjunction of its equivalent expression.
+     */
+    public List<OWLOntologyChange> convertEquivalentClassesToSuperClasses( OWLClass cl) {
+        final List mutexes = this.getMutexes(this.mutexReasoner, this.mutexConvertSuperClass);
+        return (List)(new OWLReferences.OWLReferencesCaller(mutexes, this) {
+            protected List<OWLOntologyChange> performSynchronisedCall() {
+                return OWLReferences.this.getManipulator().convertEquivalentClassesToSuperClasses(cl);
+            }
+        }).call();
+    }
+    /**
+     * Given the name of a class {@code C}, it uses {@link org.semanticweb.owlapi.change.ConvertEquivalentClassesToSuperClasses}
+     * to convert all the conjunctions defining a class {@code C} to super classes of {@code C}
+     * @param className the name of the class to be converted from sub classing to equivalent expression.
+     * @return the changes to be applied in order to make all the sub axioms of a class being
+     * the conjunction of its equivalent expression.
+     */
+    public List<OWLOntologyChange> convertEquivalentClassesToSuperClasses(final String className) {
+        final List mutexes = this.getMutexes(this.mutexReasoner, this.mutexConvertSuperClass);
+        return (List)(new OWLReferences.OWLReferencesCaller(mutexes, this) {
+            protected List<OWLOntologyChange> performSynchronisedCall() {
+                return OWLReferences.this.getManipulator().convertEquivalentClassesToSuperClasses(className);
+            }
+        }).call();
+    }
+    /**
+     * Given a class {@code C}, it uses {@link org.semanticweb.owlapi.change.ConvertSuperClassesToEquivalentClass}
+     * and {@link SemanticRestriction} to make a class equivalent to a conduction of restrictions
+     * @param cl the class to be defined.
+     * @param restrictions the restrictions that will define the class.
+     * @return the changes to be applied in order to make all the sub axioms of a class being
+     * the subclassing.
+     */
+    public List<OWLOntologyChange> convertSuperClassesToEquivalentClass(final OWLClass cl, final Set<? extends SemanticRestriction> restrictions) {
+        final List mutexes = this.getMutexes(this.mutexReasoner, this.mutexConvertEquivalentRestriction);
+        return (List)(new OWLReferences.OWLReferencesCaller(mutexes, this) {
+            protected List<OWLOntologyChange> performSynchronisedCall() {
+                return OWLReferences.this.getManipulator().convertSuperClassesToEquivalentClass(cl, restrictions);
+            }
+        }).call();
+    }
+    /**
+     * Given a class {@code C}, it uses {@link org.semanticweb.owlapi.change.ConvertEquivalentClassesToSuperClasses}
+     * and {@link SemanticRestriction} to make class defined as the conjunction of restrictions into the child of some super classes.
+     * @param cl the class to be undefined.
+     * @param restrictions the restrictions that will not define the class anymore, but they will be super classes.
+     * @return the changes to be applied in order to make all the sub axioms of a class being
+     * the definition.
+     */
+    public List<OWLOntologyChange> convertEquivalentClassesToSuperClasses(final OWLClass cl, final Set<? extends SemanticRestriction> restrictions) {
+        final List mutexes = this.getMutexes(this.mutexReasoner, this.mutexConvertSuperRestriction);
+        return (List)(new OWLReferences.OWLReferencesCaller(mutexes, this) {
+            protected List<OWLOntologyChange> performSynchronisedCall() {
+                return OWLReferences.this.getManipulator().convertEquivalentClassesToSuperClasses(cl, restrictions);
+            }
+        }).call();
     }
 
     /**
