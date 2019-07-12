@@ -11,10 +11,11 @@
 + Out-of-the-box support for OWL reasoners. Easy to add more.
 + Based on latest standards: Java 8 and OWL API 5.
 
-[DOWNLOAD .jar](https://github.com/EmaroLab/multi_ontology_reference/releases/tag/1.0.0)
+[DOWNLOAD .jar](https://github.com/EmaroLab/multi_ontology_reference/releases)
 
 The jar file can be included in any project making use of ontologies, not necessarily ROS-based.
 Nevertheless, if you are working under [ROS](http://www.ros.org/), we advice to clone the repository and build it as a ROS library project. If you are a ROS user, consider using ([**ARMOR**](https://github.com/EmaroLab/armor)), an ontology management service built on AMOR.
+For standalone project AMOR can be used via Gradle.
 
 **master** and **OWL-api5** branches are based on OWL-api 5 and Java 8. They currently support only [*Openllet*](https://github.com/Galigator/openllet), an open source fork of the Pellet reasoner. More will be added as more reasoners are ported to OWL api 5.
 
