@@ -175,7 +175,10 @@ private OWLEnquirer enquirer;
             if (o instanceof OWLObject) {
                 OWLObject owlObj = (OWLObject) o;
                 out.add(getOWLName(owlObj));
-            } else staicLogger.addDebugString("Cannot get the name of a non OWL object. Given entity: " + o, true);
+            } else {
+                staicLogger.addDebugString("Cannot get the name of a non OWL object. Given entity: " + o, false);
+                out.add(o.toString());
+            }
         }
         return out;
     }

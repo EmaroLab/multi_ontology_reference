@@ -139,7 +139,7 @@ class EditorRun extends JFrame implements Runnable{
                         switch( replacing){
                         case 0 :
                             synchronized( ontoRef.getOWLManager()){
-                                ChangeApplied changes = ontoRef.getOWLManager().removeAxiom(ontoRef.getOWLOntology(), replacingAxiom);
+                                ChangeApplied changes = ontoRef.getOWLOntology().removeAxiom(replacingAxiom);
                                 //ontoRef.getOWLManager().applyChanges(changes);
                                 changes = ontoRef.getOWLManager().addAxiom(ontoRef.getOWLOntology(), getDataTypeAxiom());
                                 //ontoRef.getOWLManager().applyChanges(changes);
@@ -147,7 +147,7 @@ class EditorRun extends JFrame implements Runnable{
                             break;
                         case 1 :
                             synchronized( ontoRef.getOWLManager()){
-                                ChangeApplied changes = ontoRef.getOWLManager().removeAxiom( ontoRef.getOWLOntology(), replacingAxiom);
+                                ChangeApplied changes = ontoRef.getOWLOntology().removeAxiom( replacingAxiom);
                                 //ontoRef.getOWLManager().applyChanges(changes);
                                 changes = ontoRef.getOWLManager().addAxiom(ontoRef.getOWLOntology(), getObjPropAxiom());
                                 //ontoRef.getOWLManager().applyChanges(changes);
@@ -223,7 +223,7 @@ class EditorRun extends JFrame implements Runnable{
             @Override
             public void mouseReleased(MouseEvent e) {
                 //if( doit_dataRem){
-                    ChangeApplied changes = ontoRef.getOWLManager().removeAxiom(ontoRef.getOWLOntology(), getDataTypeAxiom());
+                    ChangeApplied changes = ontoRef.getOWLOntology().removeAxiom( getDataTypeAxiom());
                     //ontoRef.getOWLManager().applyChanges(changes);
                 //ClassExchange.getOWLReasoner().flush();
                 ///doit_dataRem = false;
@@ -334,7 +334,7 @@ class EditorRun extends JFrame implements Runnable{
             @Override
             public void mouseReleased(MouseEvent e) {
                 //if( doit_objRem){
-                    ChangeApplied changes = ontoRef.getOWLManager().removeAxiom( ontoRef.getOWLOntology(), getObjPropAxiom());
+                    ChangeApplied changes = ontoRef.getOWLOntology().removeAxiom( getObjPropAxiom());
                     //ontoRef.getOWLManager().applyChanges(changes);
 
                 //doit_objRem = false;

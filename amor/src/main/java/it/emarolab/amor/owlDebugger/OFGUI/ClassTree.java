@@ -24,6 +24,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.semanticweb.owlapi.util.OWLAPIStreamUtils.asSet;
+
 public class ClassTree implements TreeSelectionListener {
 
     private static JTree tree;
@@ -218,7 +220,7 @@ public class ClassTree implements TreeSelectionListener {
             // manage not string for owl:Thing
             if( superClass.equals( ClassExchange.Things)){
                 topClass = ontoRef.getOWLFactory().getOWLThing().asOWLClass();
-                Set<OWLClass> tmpInf = ontoRef.getOWLReasoner().getSubClasses(topClass, false).getFlattened();
+                Set<OWLClass> tmpInf = asSet(ontoRef.getOWLReasoner().getSubClasses(topClass, false).entities());
 
                 //notInferedCl = topClass.getSubClasses( ontoRef.getOWLOntology());
                 Stream<OWLClassExpression> notInferedClStream = EntitySearcher.getSubClasses( topClass, ontoRef.getOWLOntology());
@@ -230,7 +232,7 @@ public class ClassTree implements TreeSelectionListener {
             } else {
                 //topClass = ontoRef.getOWLFactory().getOWLClass( superClass, ontoRef.getPrefixFormat());
                 topClass = ontoRef.getOWLFactory().getOWLClass( ontoRef.getPrefixFormat(superClass));
-                inferedCl = ontoRef.getOWLReasoner().getSubClasses(topClass, false).getFlattened();
+                inferedCl = asSet(ontoRef.getOWLReasoner().getSubClasses(topClass, false).entities());
 
                 //notInferedCl = topClass.getSubClasses(ontoRef.getOWLOntology());
                 Stream<OWLClassExpression> notInferedClStream = EntitySearcher.getSubClasses( topClass, ontoRef.getOWLOntology());
@@ -265,7 +267,7 @@ public class ClassTree implements TreeSelectionListener {
 
                         // coming back up to the root of the tree NN EFFICIENTE add inferred individual
                         boolean init = true;
-                        Set<OWLNamedIndividual> inferedIndividual = ontoRef.getOWLReasoner().getInstances(infNo, false).getFlattened();
+                        Set<OWLNamedIndividual> inferedIndividual = asSet(ontoRef.getOWLReasoner().getInstances(infNo, false).entities());
                         if( ! inferedIndividual .isEmpty())
                         for(OWLIndividual infInd : inferedIndividual){
                             if( ! infInd.equals( ontoRef.getOWLFactory().getOWLAnonymousIndividual())) {

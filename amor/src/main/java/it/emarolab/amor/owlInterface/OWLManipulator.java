@@ -15,6 +15,8 @@ import org.semanticweb.owlapi.util.OWLEntityRenamer;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static org.semanticweb.owlapi.util.OWLAPIStreamUtils.asSet;
+
 
 // TODO :  SWRL
 // TODO : move mutex management from owl reference to here, and make this an interface
@@ -2013,7 +2015,7 @@ public class OWLManipulator{
     public List<OWLOntologyChange> renameEntity( OWLEntity entity, IRI newIRI){
         long initialTime = System.nanoTime();
         String oldName = ontoRef.getOWLObjectName( entity);
-        OWLEntityRenamer renamer = new OWLEntityRenamer( ontoRef.getOWLManager(), ontoRef.getOWLManager().getOntologies());
+        OWLEntityRenamer renamer = new OWLEntityRenamer( ontoRef.getOWLManager(), asSet(ontoRef.getOWLManager().ontologies()));
         List<OWLOntologyChange> changes = renamer.changeIRI( entity, newIRI);
         if( !manipulationBuffering)
             applyChanges( changes);
@@ -2032,7 +2034,7 @@ public class OWLManipulator{
     public List<OWLOntologyChange> renameEntity( OWLEntity entity, String newName){
         long initialTime = System.nanoTime();
         String oldName = ontoRef.getOWLObjectName( entity);
-        OWLEntityRenamer renamer = new OWLEntityRenamer( ontoRef.getOWLManager(), ontoRef.getOWLManager().getOntologies());
+        OWLEntityRenamer renamer = new OWLEntityRenamer( ontoRef.getOWLManager(), asSet(ontoRef.getOWLManager().ontologies()));
         IRI newIRI = IRI.create( ontoRef.getIriOntologyPath() + "#" + newName);
         List<OWLOntologyChange> changes = renamer.changeIRI( entity, newIRI);
         if( !manipulationBuffering)

@@ -6,6 +6,7 @@ import it.emarolab.amor.owlDebugger.OFGUI.ClassExchange;
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.search.EntitySearcher;
 
@@ -20,6 +21,8 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static org.semanticweb.owlapi.util.OWLAPIStreamUtils.asSet;
 
 /**
  * This is like TableDemo, except that it substitutes a
@@ -488,7 +491,7 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
             Multimap<OWLDataPropertyExpression, OWLLiteral> nonInfStream = EntitySearcher.getDataPropertyValues( ind, ontoRef.getOWLOntology());
             nonInf = nonInfStream.asMap();
 
-            allDataProperty = ontoRef.getOWLOntology().getDataPropertiesInSignature( true);
+            allDataProperty = asSet(ontoRef.getOWLOntology().dataPropertiesInSignature(Imports.fromBoolean(true)));
         }
 
         // get not asserted data property
@@ -558,7 +561,7 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
             Multimap<OWLObjectPropertyExpression, OWLIndividual> nonInfStream = EntitySearcher.getObjectPropertyValues( ind, ontoRef.getOWLOntology());
             nonInf = nonInfStream.asMap();
 
-            allDataProperty = ontoRef.getOWLOntology().getObjectPropertiesInSignature( true);
+            allDataProperty = asSet(ontoRef.getOWLOntology().objectPropertiesInSignature(Imports.fromBoolean(true)));
         }
 
         // get not asserted object property
@@ -578,7 +581,7 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
         Map<OWLDataPropertyExpression, Set<OWLLiteral>> inf = new HashMap<OWLDataPropertyExpression, Set<OWLLiteral>>();
         synchronized (ontoRef.getOWLReasoner()) {
             for ( OWLObjectProperty dataProp : allDataProperty){
-                Set<OWLNamedIndividual> a = ontoRef.getOWLReasoner().getObjectPropertyValues(ind, dataProp).getFlattened();
+                Set<OWLNamedIndividual> a = asSet(ontoRef.getOWLReasoner().getObjectPropertyValues(ind, dataProp).entities());
                 for ( OWLNamedIndividual value : a){
                     temp.add( ClassExchange.imObjPropIcon);
                     temp.add( OWLReferencesInterface.getOWLName( dataProp));
@@ -610,8 +613,8 @@ public class ClassTableIndividual extends JPanel implements MouseListener {
         Set<OWLClass> classes;
         synchronized (ontoRef.getOWLReasoner()) {
             OWLNamedIndividual ind = ontoRef.getOWLFactory().getOWLNamedIndividual( ontoRef.getPrefixFormat( individualname));
-            nonInf = ind.getClassesInSignature();
-            classes = ontoRef.getOWLReasoner().getTypes(ind, false).getFlattened();
+            nonInf = asSet(ind.classesInSignature());
+            classes = asSet(ontoRef.getOWLReasoner().getTypes(ind, false).entities());
         }
 
         // get not asserted class

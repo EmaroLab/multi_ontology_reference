@@ -9,6 +9,8 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Set;
 
+import static org.semanticweb.owlapi.util.OWLAPIStreamUtils.asSet;
+
 
 public class ClassRootManager {
 
@@ -26,7 +28,7 @@ public class ClassRootManager {
     public static ArrayList<String> settRootWiev(){
         OWLReferences ontoRef = ClassExchange.getOntoRef();
         // update root class combo box items
-        Set<OWLClass> allClass = ontoRef.getOWLOntology().getClassesInSignature();
+        Set<OWLClass> allClass = asSet(ontoRef.getOWLOntology().classesInSignature());
         String tmp;
         ArrayList<String> allClbox = new ArrayList<String>();
         allClbox.add( ClassExchange.Things); // care about OWLThing
