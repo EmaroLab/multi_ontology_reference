@@ -794,7 +794,7 @@ public class OWLEnquirer {
      * @param cl an OWL class.
      * @return non-ordered set of all restrictions that are defining the class.
      */
-    public Set< Set<ApplyingRestriction>> getRestrictions(OWLClass cl){
+    public Set< Set<ApplyingRestriction>> getClassRestrictions(OWLClass cl){
         try{
             Set< Set< ApplyingRestriction>> outs = new HashSet<>();
             Stream< OWLClassAxiom> axiomStream = ontoRef.getOWLOntology().axioms( cl);
@@ -835,7 +835,7 @@ public class OWLEnquirer {
                             out.add(new ClassRestrictedOnSomeData(cl, (OWLDataSomeValuesFrom) e));
                             validRestriction = true;
                         } else if (e.getClassExpressionType() == ClassExpressionType.OWL_CLASS)
-                            if (!e.asOWLClass().equals(cl))
+                            if ( ! e.asOWLClass().equals(cl))
                                 out.add(new ClassRestrictedOnClass(cl, e.asOWLClass()));
                     }
                     if ( validRestriction)
@@ -862,47 +862,61 @@ public class OWLEnquirer {
      * @param property a data property.
      * @return non-ordered set of all restrictions that are in the given property domain.
      */
-    public Set< ApplyingRestriction> getDomainRestriction( OWLDataProperty property){
+    public Set< Set< ApplyingRestriction>> getDataDomainRestrictions(OWLDataProperty property){
         try{
-            Set< ApplyingRestriction> out = new HashSet<>();
+            Set< Set< ApplyingRestriction>> outs = new HashSet<>();
             Stream<OWLDataPropertyDomainAxiom> axiomStream = ontoRef.getOWLOntology().dataPropertyDomainAxioms(property);
             for (OWLDataPropertyDomainAxiom ax :  (Iterable<OWLDataPropertyDomainAxiom>) axiomStream::iterator) {
+                boolean validRestriction = false;
+                Set< ApplyingRestriction> out = new HashSet<>();
                 Stream<OWLClassExpression> nestedClassStream = ax.getDomain().nestedClassExpressions();
-                for( OWLClassExpression e : (Iterable<OWLClassExpression>) nestedClassStream::iterator) {
-                    if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_MIN_CARDINALITY)
+                for (OWLClassExpression e : (Iterable<OWLClassExpression>) nestedClassStream::iterator) {
+                    if (e.getClassExpressionType() == ClassExpressionType.OBJECT_MIN_CARDINALITY) {
                         out.add(new DataDomainRestrictedOnMinObject(property, (OWLObjectMinCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_MAX_CARDINALITY)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.OBJECT_MAX_CARDINALITY) {
                         out.add(new DataDomainRestrictedOnMaxObject(property, (OWLObjectMaxCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_EXACT_CARDINALITY)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.OBJECT_EXACT_CARDINALITY) {
                         out.add(new DataDomainRestrictedOnExactObject(property, (OWLObjectExactCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_ALL_VALUES_FROM)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.OBJECT_ALL_VALUES_FROM) {
                         out.add(new DataDomainRestrictedOnAllObject(property, (OWLObjectAllValuesFrom) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_SOME_VALUES_FROM)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.OBJECT_SOME_VALUES_FROM) {
                         out.add(new DataDomainRestrictedOnSomeObject(property, (OWLObjectSomeValuesFrom) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.DATA_MIN_CARDINALITY)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.DATA_MIN_CARDINALITY) {
                         out.add(new DataDomainRestrictedOnMinData(property, (OWLDataMinCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.DATA_MAX_CARDINALITY)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.DATA_MAX_CARDINALITY) {
                         out.add(new DataDomainRestrictedOnMaxData(property, (OWLDataMaxCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.DATA_EXACT_CARDINALITY)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.DATA_EXACT_CARDINALITY) {
                         out.add(new DataDomainRestrictedOnExactData(property, (OWLDataExactCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.DATA_ALL_VALUES_FROM)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.DATA_ALL_VALUES_FROM) {
                         out.add(new DataDomainRestrictedOnAllData(property, (OWLDataAllValuesFrom) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.DATA_SOME_VALUES_FROM)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.DATA_SOME_VALUES_FROM) {
                         out.add(new DataDomainRestrictedOnSomeData(property, (OWLDataSomeValuesFrom) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.OWL_CLASS)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.OWL_CLASS)
                         out.add(new DataDomainRestrictedOnClass(property, e.asOWLClass()));
                 }
+                //if ( validRestriction)
+                    outs.add( out);
             }
 
             // reason about
-            if( isIncludingInferences()) {
+            /*if( isIncludingInferences()) {
                 Stream<Node<OWLClass>> reasoned = ontoRef.getOWLReasoner().getDataPropertyDomains(property, isReturningCompleteDescription()).nodes(); // add flag!!!!
                 for (Node<OWLClass> ax : (Iterable<Node<OWLClass>>) reasoned::iterator)
                     for (OWLClass a : (Iterable<OWLClass>) () -> ax.entities().iterator())
                         if ( ! a.isOWLThing())
                             out.add(new DataDomainRestrictedOnClass(property, a.asOWLClass()));
-            }
-            return out;
+            }*/
+            return outs;
         } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
             ontoRef.logInconsistency();
             return null;
@@ -913,7 +927,7 @@ public class OWLEnquirer {
      * @param property a data property.
      * @return non-ordered set of all restrictions that are in the given property range.
      */
-    public Set<ApplyingRestriction> getRangeRestriction( OWLDataProperty property){
+    public Set<ApplyingRestriction> getDataRangeRestrictions(OWLDataProperty property){
         try {
             Set< ApplyingRestriction> out = new HashSet<>();
             Stream<OWLDataPropertyRangeAxiom> axiomStream = ontoRef.getOWLOntology().dataPropertyRangeAxioms(property);
@@ -934,47 +948,61 @@ public class OWLEnquirer {
      * @param property an object property.
      * @return non-ordered set of all restrictions that are in the given property domain.
      */
-    public Set<ApplyingRestriction> getDomainRestriction( OWLObjectProperty property){
+    public Set< Set< ApplyingRestriction>> getObjectDomainRestrictions(OWLObjectProperty property){
         try{
-            Set< ApplyingRestriction> out = new HashSet<>();
+            Set< Set< ApplyingRestriction>> outs = new HashSet<>();
             Stream<OWLObjectPropertyDomainAxiom> axiomStream = ontoRef.getOWLOntology().objectPropertyDomainAxioms(property);
             for (OWLObjectPropertyDomainAxiom ax :  (Iterable<OWLObjectPropertyDomainAxiom>) axiomStream::iterator) {
+                boolean validRestriction = false;
+                Set<ApplyingRestriction> out = new HashSet<>();
                 Stream<OWLClassExpression> nestedClassStream = ax.getDomain().nestedClassExpressions();
-                for( OWLClassExpression e : (Iterable<OWLClassExpression>) nestedClassStream::iterator) {
-                    if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_MIN_CARDINALITY)
+                for (OWLClassExpression e : (Iterable<OWLClassExpression>) nestedClassStream::iterator) {
+                    if (e.getClassExpressionType() == ClassExpressionType.OBJECT_MIN_CARDINALITY) {
                         out.add(new ObjectDomainRestrictedOnMinObject(property, (OWLObjectMinCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_MAX_CARDINALITY)
+                        validRestriction = true;
+                    }  else if (e.getClassExpressionType() == ClassExpressionType.OBJECT_MAX_CARDINALITY) {
                         out.add(new ObjectDomainRestrictedOnMaxObject(property, (OWLObjectMaxCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_EXACT_CARDINALITY)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.OBJECT_EXACT_CARDINALITY) {
                         out.add(new ObjectDomainRestrictedOnExactObject(property, (OWLObjectExactCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_ALL_VALUES_FROM)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.OBJECT_ALL_VALUES_FROM) {
                         out.add(new ObjectDomainRestrictedOnAllObject(property, (OWLObjectAllValuesFrom) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_SOME_VALUES_FROM)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.OBJECT_SOME_VALUES_FROM) {
                         out.add(new ObjectDomainRestrictedOnSomeObject(property, (OWLObjectSomeValuesFrom) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.DATA_MIN_CARDINALITY)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.DATA_MIN_CARDINALITY) {
                         out.add(new ObjectDomainRestrictedOnMinData(property, (OWLDataMinCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.DATA_MAX_CARDINALITY)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.DATA_MAX_CARDINALITY) {
                         out.add(new ObjectDomainRestrictedOnMaxData(property, (OWLDataMaxCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.DATA_EXACT_CARDINALITY)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.DATA_EXACT_CARDINALITY) {
                         out.add(new ObjectDomainRestrictedOnExactData(property, (OWLDataExactCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.DATA_ALL_VALUES_FROM)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.DATA_ALL_VALUES_FROM) {
                         out.add(new ObjectDomainRestrictedOnAllData(property, (OWLDataAllValuesFrom) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.DATA_SOME_VALUES_FROM)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.DATA_SOME_VALUES_FROM) {
                         out.add(new ObjectDomainRestrictedOnSomeData(property, (OWLDataSomeValuesFrom) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.OWL_CLASS)
+                        validRestriction = true;
+                    } else if (e.getClassExpressionType() == ClassExpressionType.OWL_CLASS)
                         out.add(new ObjectDomainRestrictedOnClass(property, e.asOWLClass()));
                 }
+                //if ( validRestriction)
+                    outs.add( out);
             }
 
             // reason about
-            if( isIncludingInferences()) {
+            /*if( isIncludingInferences()) {
                 Stream<Node<OWLClass>> reasoned = ontoRef.getOWLReasoner().getObjectPropertyDomains(property, isReturningCompleteDescription()).nodes(); // add flag!!!!
                 for (Node<OWLClass> ax : (Iterable<Node<OWLClass>>) reasoned::iterator)
                     for (OWLClass a : (Iterable<OWLClass>) () -> ax.entities().iterator())
                         if ( ! a.isOWLThing())
                             out.add(new ObjectDomainRestrictedOnClass(property, a.asOWLClass()));
-            }
-            return out;
+            }*/
+            return outs;
         } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
             ontoRef.logInconsistency();
             return null;
@@ -985,47 +1013,61 @@ public class OWLEnquirer {
      * @param property a data property.
      * @return non-ordered set of all restrictions that are in the given property range.
      */
-    public Set<ApplyingRestriction> getRangeRestriction( OWLObjectProperty property){
+    public Set< Set<ApplyingRestriction>> getObjectRangeRestrictions(OWLObjectProperty property){
         try{
-            Set< ApplyingRestriction> out = new HashSet<>();
+            Set< Set< ApplyingRestriction>> outs = new HashSet<>();
             Stream<OWLObjectPropertyRangeAxiom> axiomStream = ontoRef.getOWLOntology().objectPropertyRangeAxioms(property);
             for (OWLObjectPropertyRangeAxiom ax :  (Iterable<OWLObjectPropertyRangeAxiom>) axiomStream::iterator) {
+                boolean validRestriction = false;
+                Set<ApplyingRestriction> out = new HashSet<>();
                 Stream<OWLClassExpression> nestedClassStream = ax.getRange().nestedClassExpressions();
                 for( OWLClassExpression e : (Iterable<OWLClassExpression>) nestedClassStream::iterator) {
-                    if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_MIN_CARDINALITY)
+                    if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_MIN_CARDINALITY) {
                         out.add(new ObjectRangeRestrictedOnMinObject(property, (OWLObjectMinCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_MAX_CARDINALITY)
+                        validRestriction = true;
+                    } else if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_MAX_CARDINALITY) {
                         out.add(new ObjectRangeRestrictedOnMaxObject(property, (OWLObjectMaxCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_EXACT_CARDINALITY)
+                        validRestriction = true;
+                    } else if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_EXACT_CARDINALITY) {
                         out.add(new ObjectRangeRestrictedOnExactObject(property, (OWLObjectExactCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_ALL_VALUES_FROM)
+                        validRestriction = true;
+                    } else if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_ALL_VALUES_FROM) {
                         out.add(new ObjectRangeRestrictedOnAllObject(property, (OWLObjectAllValuesFrom) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_SOME_VALUES_FROM)
+                        validRestriction = true;
+                    } else if ( e.getClassExpressionType() == ClassExpressionType.OBJECT_SOME_VALUES_FROM) {
                         out.add(new ObjectRangeRestrictedOnSomeObject(property, (OWLObjectSomeValuesFrom) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.DATA_MIN_CARDINALITY)
+                        validRestriction = true;
+                    } else if ( e.getClassExpressionType() == ClassExpressionType.DATA_MIN_CARDINALITY) {
                         out.add(new ObjectRangeRestrictedOnMinData(property, (OWLDataMinCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.DATA_MAX_CARDINALITY)
+                        validRestriction = true;
+                    } else if ( e.getClassExpressionType() == ClassExpressionType.DATA_MAX_CARDINALITY) {
                         out.add(new ObjectRangeRestrictedOnMaxData(property, (OWLDataMaxCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.DATA_EXACT_CARDINALITY)
+                        validRestriction = true;
+                    } else if ( e.getClassExpressionType() == ClassExpressionType.DATA_EXACT_CARDINALITY) {
                         out.add(new ObjectRangeRestrictedOnExactData(property, (OWLDataExactCardinality) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.DATA_ALL_VALUES_FROM)
+                        validRestriction = true;
+                    } else if ( e.getClassExpressionType() == ClassExpressionType.DATA_ALL_VALUES_FROM) {
                         out.add(new ObjectRangeRestrictedOnAllData(property, (OWLDataAllValuesFrom) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.DATA_SOME_VALUES_FROM)
+                        validRestriction = true;
+                    } else if ( e.getClassExpressionType() == ClassExpressionType.DATA_SOME_VALUES_FROM) {
                         out.add(new ObjectRangeRestrictedOnSomeData(property, (OWLDataSomeValuesFrom) e));
-                    else if ( e.getClassExpressionType() == ClassExpressionType.OWL_CLASS)
+                        validRestriction = true;
+                    } else if ( e.getClassExpressionType() == ClassExpressionType.OWL_CLASS)
                         out.add(new ObjectRangeRestrictedOnClass(property, e.asOWLClass()));
                 }
+                //if ( validRestriction)
+                    outs.add( out);
             }
 
             // reason about
-            if( isIncludingInferences()) {
+            /*if( isIncludingInferences()) {
                 Stream<Node<OWLClass>> reasoned = ontoRef.getOWLReasoner().getObjectPropertyRanges(property, isReturningCompleteDescription()).nodes(); // add flag!!!!
                 for (Node<OWLClass> ax : (Iterable<Node<OWLClass>>) reasoned::iterator)
                     for (OWLClass a : (Iterable<OWLClass>) () -> ax.entities().iterator())
                         if ( ! a.isOWLThing())
                             out.add(new ObjectRangeRestrictedOnClass(property, a.asOWLClass()));
-            }
-            return out;
+            }*/
+            return outs;
         } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
             getOwlLibrary().logInconsistency();
             return null;

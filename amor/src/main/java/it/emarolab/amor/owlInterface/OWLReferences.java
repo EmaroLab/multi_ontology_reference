@@ -788,12 +788,12 @@ public class OWLReferences extends OWLReferencesInterface{
      * @return the container of all the class restrictions and cardinality, for
      * the given class. Each element of the set is another set containing conjunctionon of axioms.
      */
-    public Set< Set<ApplyingRestriction>> getRestrictions(OWLClass cl){
+    public Set< Set<ApplyingRestriction>> getClassRestrictions(OWLClass cl){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexClassRestriction);
         return new OWLReferencesCaller< Set< Set<ApplyingRestriction>>>(  mutexes, this) {
             @Override
             protected Set< Set<ApplyingRestriction>> performSynchronisedCall() {
-                return getEnquirer().getRestrictions( cl);
+                return getEnquirer().getClassRestrictions( cl);
             }
         }.call();
     }
@@ -806,12 +806,12 @@ public class OWLReferences extends OWLReferencesInterface{
      * @return the container of all the property domain restrictions and cardinality, for
      * the given class.
      */
-    public Set<ApplyingRestriction> getDomainRestriction(OWLDataProperty property){
+    public Set< Set<ApplyingRestriction>> getDataDomainRestrictions(OWLDataProperty property){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexDataDomainRestriction);
-        return new OWLReferencesCaller< Set<ApplyingRestriction>>(  mutexes, this) {
+        return new OWLReferencesCaller< Set< Set<ApplyingRestriction>>>(  mutexes, this) {
             @Override
-            protected Set<ApplyingRestriction> performSynchronisedCall() {
-                return getEnquirer().getDomainRestriction( property);
+            protected Set< Set<ApplyingRestriction>> performSynchronisedCall() {
+                return getEnquirer().getDataDomainRestrictions( property);
             }
         }.call();
     }
@@ -823,12 +823,12 @@ public class OWLReferences extends OWLReferencesInterface{
      * @return the container of all the property domain restrictions and cardinality, for
      * the given class.
      */
-    public Set<ApplyingRestriction> getDomainRestriction(OWLObjectProperty property){
+    public Set< Set<ApplyingRestriction>> getObjectDomainRestrictions(OWLObjectProperty property){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexObjectDomainRestriction);
-        return new OWLReferencesCaller< Set<ApplyingRestriction>>(  mutexes, this) {
+        return new OWLReferencesCaller< Set< Set<ApplyingRestriction>>>(  mutexes, this) {
             @Override
-            protected Set<ApplyingRestriction> performSynchronisedCall() {
-                return getEnquirer().getDomainRestriction( property);
+            protected Set< Set<ApplyingRestriction>> performSynchronisedCall() {
+                return getEnquirer().getObjectDomainRestrictions( property);
             }
         }.call();
     }
@@ -841,12 +841,12 @@ public class OWLReferences extends OWLReferencesInterface{
      * @return the container of all the property range restrictions and cardinality, for
      * the given class.
      */
-    public Set<ApplyingRestriction> getRangeRestriction(OWLDataProperty property){
+    public Set<ApplyingRestriction> getDataRangeRestrictions(OWLDataProperty property){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexDataRangeRestriction);
         return new OWLReferencesCaller< Set<ApplyingRestriction>>(  mutexes, this) {
             @Override
             protected Set<ApplyingRestriction> performSynchronisedCall() {
-                return getEnquirer().getRangeRestriction( property);
+                return getEnquirer().getDataRangeRestrictions( property);
             }
         }.call();
     }
@@ -858,12 +858,12 @@ public class OWLReferences extends OWLReferencesInterface{
      * @return the container of all the property range restrictions and cardinality, for
      * the given class.
      */
-    public Set<ApplyingRestriction> getRangeRestriction(OWLObjectProperty property){
+    public Set< Set<ApplyingRestriction>> getObjectRangeRestrictions(OWLObjectProperty property){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexObjectRangeRestriction);
-        return new OWLReferencesCaller< Set<ApplyingRestriction>>(  mutexes, this) {
+        return new OWLReferencesCaller< Set< Set<ApplyingRestriction>>>(  mutexes, this) {
             @Override
-            protected Set<ApplyingRestriction> performSynchronisedCall() {
-                return getEnquirer().getRangeRestriction( property);
+            protected Set< Set<ApplyingRestriction>> performSynchronisedCall() {
+                return getEnquirer().getObjectRangeRestrictions( property);
             }
         }.call();
     }

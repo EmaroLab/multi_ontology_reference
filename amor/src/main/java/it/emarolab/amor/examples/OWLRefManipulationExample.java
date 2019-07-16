@@ -3,6 +3,7 @@ package it.emarolab.amor.examples;
 import it.emarolab.amor.owlInterface.OWLReferences;
 import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContainer;
 import it.emarolab.amor.owlInterface.SemanticRestriction;
+import org.semanticweb.owlapi.model.*;
 
 public class OWLRefManipulationExample {
 
@@ -24,11 +25,12 @@ public class OWLRefManipulationExample {
                 ontoRef.getOWLDataProperty( "hasDataProperty_renamed"),
                 ontoRef.getOWLFactory().getBooleanOWLDatatype()
         ));
-        System.out.println("£££££ 1 " + ontoRef.getRangeRestriction( ontoRef.getOWLDataProperty( "hasDataProperty_renamed")));
-        System.out.println("£££££ 2 " + ontoRef.getDomainRestriction( ontoRef.getOWLDataProperty( "hasDataProperty_renamed")));
 
-        //System.out.println("£££££ " + ontoRef.getDomainRestriction( ontoRef.getOWLObjectProperty( "hasObjectProperty_renamed")));
-        /*ontoRef.addRestriction(new SemanticRestriction.ObjectDomainRestrictedOnExactData(
+        /*System.out.println("£££££ 1 " + ontoRef.getDataRangeRestrictions( ontoRef.getOWLDataProperty( "hasDataProperty_renamed")));
+        System.out.println("£££££ 2 " + ontoRef.getDataDomainRestrictions( ontoRef.getOWLDataProperty( "hasDataProperty_renamed")));
+
+        //System.out.println("£££££ " + ontoRef.getObjectDomainRestrictions( ontoRef.getOWLObjectProperty( "hasObjectProperty_renamed")));
+        ontoRef.addRestriction(new SemanticRestriction.ObjectDomainRestrictedOnExactData(
                 ontoRef.getOWLObjectProperty( "hasDataProperty_renamed"),
                 ontoRef.getOWLFactory().getBooleanOWLDatatype(),
                 ontoRef.getOWLDataProperty( "hasDataProperty_renamed"),
@@ -39,11 +41,9 @@ public class OWLRefManipulationExample {
         ontoRef.addRestriction(new SemanticRestriction.ObjectRangeRestrictedOnExactData(
                 ontoRef.getOWLObjectProperty( "hasDataProperty_renamed"),
                 ontoRef.getOWLFactory().getIntegerOWLDatatype()));
-        System.out.println("£££££ " + ontoRef.getDomainRestriction( ontoRef.getOWLObjectProperty( "hasDataProperty_renamed")));
-        //ontoRef.saveOntology("/home/bubx/r.owl");
-*/
+        System.out.println("£££££ " + ontoRef.getObjectDomainRestrictions( ontoRef.getOWLObjectProperty( "hasDataProperty_renamed")));
+        //ontoRef.saveOntology("/home/bubx/r.owl");*/
 
-        /*
         // note that changes made by the OWLManipulator are such that if an entity (given through its name) exists in the ontology
         // it will be used. On the other hand, if it does not exist a new entity with the specified name will be created.
 
@@ -144,8 +144,5 @@ public class OWLRefManipulationExample {
 
         // also be sure to check how the complete documentation to see how is easy to integrate your manipulation
         // in the system and contribute to the community
-
-
-        */
     }
 }
