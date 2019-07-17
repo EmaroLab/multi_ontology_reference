@@ -1796,7 +1796,7 @@ public class OWLReferences extends OWLReferencesInterface{
         return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
             @Override
             protected List<OWLOntologyChange> performSynchronisedCall() {
-                return getManipulator().addRestriction( restriction);
+                return getManipulator().addRestrictions( restriction);
             }
         }.call();
     }

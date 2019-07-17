@@ -673,11 +673,62 @@ public class OWLManipulator{
      * @param restriction the restrictions to add.
      * @return th change for adding the restrictions.
      */
-    public List< OWLOntologyChange> addRestriction( Set<SemanticRestriction> restriction){
-        List<OWLOntologyChange> out = new ArrayList<>();
-        for ( SemanticRestriction r : restriction)
-            out.add( addRestriction( r));
-        return out;
+    public OWLOntologyChange addRestrictions(Set<SemanticRestriction> restriction){
+        try {
+            Set<OWLClassExpression> expressions = new HashSet<>();
+            int cnt = 0, type = 0;
+            OWLObject subject = null;
+            for ( SemanticRestriction r : restriction) {
+                if ( restriction.size() == 1){
+                    return addRestriction( r);
+                }
+                if ( cnt == 0) {
+                    if ( r instanceof SemanticRestriction.RestrictOnClass)
+                        type = 1;
+                    else if ( r instanceof SemanticRestriction.RestrictOnDataPropertyRange)
+                        type = 2;
+                    else if ( r instanceof SemanticRestriction.RestrictOnObjectPropertyRange)
+                        type = 3;
+                    else if ( r instanceof SemanticRestriction.RestrictOnObjectPropertyDomain)
+                        type = 4;
+                    cnt++;
+                    subject = r.getSubject();
+                }
+                expressions.add( r.getRestriction( ontoRef));
+            }
+            OWLClassExpression intersection = ontoRef.getOWLFactory().getOWLObjectIntersectionOf(expressions);
+            ontoRef.getOWLFactory().getOWLDataIntersectionOf()
+
+            OWLDataRange
+
+            OWLAxiom axiom = null;
+            if ( restriction.size() > 1) {
+                switch (type) {
+                    case 1:
+                        axiom = ontoRef.getOWLFactory().getOWLSubClassOfAxiom((OWLClassExpression) subject, intersection);
+                        break;
+                    case 2:
+                        axiom = ontoRef.getOWLFactory().getOWLDataPropertyRangeAxiom((OWLDataProperty) subject, (OWLDataRange) intersection);
+                        break;
+                    case 3:
+                        axiom = ontoRef.getOWLFactory().getOWLObjectPropertyRangeAxiom((OWLObjectPropertyExpression) subject, intersection);
+                        break;
+                    case 4:
+                        axiom = ontoRef.getOWLFactory().getOWLObjectPropertyDomainAxiom((OWLObjectPropertyExpression) subject, intersection);
+                        break;
+                }
+                if ( axiom != null) {
+                    OWLOntologyChange adding = getAddAxiom( axiom, manipulationBuffering);
+                    if( !manipulationBuffering)
+                        applyChanges( adding);
+                    logger.addDebugString( "add restrictions " + restriction);
+                    return adding;
+                }
+            }
+        } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
+            ontoRef.logInconsistency();
+        }
+        return null;
     }
 
 

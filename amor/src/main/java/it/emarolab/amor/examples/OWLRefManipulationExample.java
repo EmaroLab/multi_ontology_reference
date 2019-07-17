@@ -30,15 +30,15 @@ public class OWLRefManipulationExample {
         System.out.println("£££££ 2 " + ontoRef.getDataDomainRestrictions( ontoRef.getOWLDataProperty( "hasDataProperty_renamed")));
 
         //System.out.println("£££££ " + ontoRef.getObjectDomainRestrictions( ontoRef.getOWLObjectProperty( "hasObjectProperty_renamed")));
-        ontoRef.addRestriction(new SemanticRestriction.ObjectDomainRestrictedOnExactData(
+        ontoRef.addRestrictions(new SemanticRestriction.ObjectDomainRestrictedOnExactData(
                 ontoRef.getOWLObjectProperty( "hasDataProperty_renamed"),
                 ontoRef.getOWLFactory().getBooleanOWLDatatype(),
                 ontoRef.getOWLDataProperty( "hasDataProperty_renamed"),
                 3));
-        ontoRef.addRestriction(new SemanticRestriction.ObjectDomainRestrictedOnClass(
+        ontoRef.addRestrictions(new SemanticRestriction.ObjectDomainRestrictedOnClass(
                 ontoRef.getOWLObjectProperty( "hasDataProperty_renamed2"),
                 ontoRef.getOWLClass("subClass")));
-        ontoRef.addRestriction(new SemanticRestriction.ObjectRangeRestrictedOnExactData(
+        ontoRef.addRestrictions(new SemanticRestriction.ObjectRangeRestrictedOnExactData(
                 ontoRef.getOWLObjectProperty( "hasDataProperty_renamed"),
                 ontoRef.getOWLFactory().getIntegerOWLDatatype()));
         System.out.println("£££££ " + ontoRef.getObjectDomainRestrictions( ontoRef.getOWLObjectProperty( "hasDataProperty_renamed")));
