@@ -1791,12 +1791,30 @@ public class OWLReferences extends OWLReferencesInterface{
      * @param restriction the definition of the restriction to add.
      * @return the changes to be applied in order to add the specified restriction in the ontology
      */
-    public List<OWLOntologyChange> addRestrictions( Set<SemanticRestriction> restriction){
+    public List<OWLOntologyChange> addRestriction( Set<SemanticRestriction> restriction){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRestriction);
         return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
             @Override
             protected List<OWLOntologyChange> performSynchronisedCall() {
-                return getManipulator().addRestrictions( restriction);
+                return getManipulator().addRestriction( restriction);
+            }
+        }.call();
+    }
+
+    /**
+     * Returns the changes to add a restriction as sub class definition as well
+     * as data or object property domain or range. See {@link SemanticRestriction}
+     * hierarchy for more info.
+     * It adds all the given restrictions as a conjunction of expression of the same axiom.
+     * @param restriction the definition of the restriction to add.
+     * @return the changes to be applied in order to add the specified restriction in the ontology
+     */
+    public OWLOntologyChange addRestrictionAxiom( Set<SemanticRestriction> restriction){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRestriction);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().addRestrictionAxiom( restriction);
             }
         }.call();
     }
@@ -2534,7 +2552,7 @@ public class OWLReferences extends OWLReferencesInterface{
      * @param restriction the definition of the restriction to add.
      * @return the changes to be applied in order to remove the specified restriction in the ontology
      */
-    public List<OWLOntologyChange> removeRestrictions( Set<SemanticRestriction> restriction){
+    public List<OWLOntologyChange> removeRestriction( Set<SemanticRestriction> restriction){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveRestriction);
         return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
             @Override
@@ -2544,6 +2562,23 @@ public class OWLReferences extends OWLReferencesInterface{
         }.call();
     }
 
+    /**
+     * Returns the changes to remove a restriction as sub class definition as well
+     * as data or object property domain or range. See {@link SemanticRestriction}
+     * hierarchy for more info.
+     * It removes all the given restrictions as a conjunction of expression of the same axiom.
+     * @param restriction the definition of the restriction to remove.
+     * @return the changes to be applied in order to remove the specified restriction in the ontology
+     */
+    public OWLOntologyChange removeRestrictionAxiom( Set<SemanticRestriction> restriction){
+        List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveRestriction);
+        return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
+            @Override
+            protected OWLOntologyChange performSynchronisedCall() {
+                return getManipulator().removeRestrictionAxiom( restriction);
+            }
+        }.call();
+    }
 
     /**
      * Returns the changes for making a no functional data property.

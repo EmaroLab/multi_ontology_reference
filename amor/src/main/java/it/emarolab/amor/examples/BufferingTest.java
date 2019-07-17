@@ -62,9 +62,6 @@ public class BufferingTest {
         // 7) reason (if it is buffer)
         reason( ontoRef);
 
-        // 8) show results
-        ontoRef.printOntologyOnConsole();
-
         System.err.println( ontoRef.getIndividualB2Thing());
 
         ontoRef.saveOntology();

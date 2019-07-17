@@ -673,62 +673,114 @@ public class OWLManipulator{
      * @param restriction the restrictions to add.
      * @return th change for adding the restrictions.
      */
-    public OWLOntologyChange addRestrictions(Set<SemanticRestriction> restriction){
+    public List< OWLOntologyChange> addRestriction( Set<SemanticRestriction> restriction){
+        List<OWLOntologyChange> out = new ArrayList<>();
+        for ( SemanticRestriction r : restriction)
+            out.add( addRestriction( r));
+        return out;
+    }
+
+    /**
+     * It returns the changes to be made in the ontology in order to add all the
+     * restrictions expressed in a single axiom.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * The give {@link SemanticRestriction} should be all of the same type and with the same `subject`.
+     * @param restriction the restrictions to add in a single axiom.
+     * @return th change for adding the restrictions.
+     */
+    public OWLOntologyChange addRestrictionAxiom(Set<SemanticRestriction> restriction){
+        return addRemoveRestrictions( true, restriction);
+    }
+    private OWLOntologyChange addRemoveRestrictions(boolean toAdd, Set<SemanticRestriction> restriction){
         try {
             Set<OWLClassExpression> expressions = new HashSet<>();
-            int cnt = 0, type = 0;
+            Set<OWLDataRange> ranges = new HashSet<>();
+            int type = 0;
             OWLObject subject = null;
             for ( SemanticRestriction r : restriction) {
-                if ( restriction.size() == 1){
-                    return addRestriction( r);
+                if (restriction.size() == 1) {
+                    if ( toAdd)
+                        return addRestriction(r);
+                    else return removeRestriction(r);
                 }
-                if ( cnt == 0) {
-                    if ( r instanceof SemanticRestriction.RestrictOnClass)
-                        type = 1;
-                    else if ( r instanceof SemanticRestriction.RestrictOnDataPropertyRange)
-                        type = 2;
-                    else if ( r instanceof SemanticRestriction.RestrictOnObjectPropertyRange)
-                        type = 3;
-                    else if ( r instanceof SemanticRestriction.RestrictOnObjectPropertyDomain)
-                        type = 4;
-                    cnt++;
-                    subject = r.getSubject();
-                }
-                expressions.add( r.getRestriction( ontoRef));
-            }
-            OWLClassExpression intersection = ontoRef.getOWLFactory().getOWLObjectIntersectionOf(expressions);
-            ontoRef.getOWLFactory().getOWLDataIntersectionOf()
 
-            OWLDataRange
+                if (r instanceof SemanticRestriction.RestrictOnClass) {
+                    if (checkRestrictionType(1, type))
+                        type = 1;
+                } else if (r instanceof SemanticRestriction.RestrictOnDataPropertyRange) {
+                    if (checkRestrictionType(2, type))
+                        type = 2;
+                } else if (r instanceof SemanticRestriction.RestrictOnDataPropertyDomain) {
+                    if( checkRestrictionType(3, type))
+                        type = 3;
+                } else if ( r instanceof SemanticRestriction.RestrictOnObjectPropertyRange) {
+                    if( checkRestrictionType(4, type))
+                        type = 4;
+                } else if ( r instanceof SemanticRestriction.RestrictOnObjectPropertyDomain) {
+                    if( checkRestrictionType(5, type))
+                        type = 5;
+                }
+
+                if (subject == null)
+                    subject = r.getSubject();
+                else if( ! subject.equals( r.getSubject()))
+                    logger.addDebugString( "restriction should have all the same subject", true);
+
+
+                if ( type == 2 | type == 3)
+                    ranges.add((OWLDataRange) r.getValue());
+                else expressions.add( r.getRestriction( ontoRef));
+            }
+
+            OWLDataIntersectionOf intersectionRange = null;
+            OWLObjectIntersectionOf intersection = null;
+            if ( ! restriction.isEmpty()) {
+                if (type == 1 | type == 2)
+                    intersectionRange = ontoRef.getOWLFactory().getOWLDataIntersectionOf(ranges);
+                else intersection = ontoRef.getOWLFactory().getOWLObjectIntersectionOf(expressions);
+            }
 
             OWLAxiom axiom = null;
-            if ( restriction.size() > 1) {
+            if ( intersection != null | intersectionRange != null) {
                 switch (type) {
                     case 1:
                         axiom = ontoRef.getOWLFactory().getOWLSubClassOfAxiom((OWLClassExpression) subject, intersection);
                         break;
                     case 2:
-                        axiom = ontoRef.getOWLFactory().getOWLDataPropertyRangeAxiom((OWLDataProperty) subject, (OWLDataRange) intersection);
+                        axiom = ontoRef.getOWLFactory().getOWLDataPropertyRangeAxiom((OWLDataProperty) subject, intersectionRange);
                         break;
                     case 3:
-                        axiom = ontoRef.getOWLFactory().getOWLObjectPropertyRangeAxiom((OWLObjectPropertyExpression) subject, intersection);
+                        axiom = ontoRef.getOWLFactory().getOWLDataPropertyRangeAxiom((OWLDataProperty) subject, intersectionRange);
                         break;
                     case 4:
+                        axiom = ontoRef.getOWLFactory().getOWLObjectPropertyRangeAxiom((OWLObjectPropertyExpression) subject, intersection);
+                        break;
+                    case 5:
                         axiom = ontoRef.getOWLFactory().getOWLObjectPropertyDomainAxiom((OWLObjectPropertyExpression) subject, intersection);
                         break;
                 }
                 if ( axiom != null) {
-                    OWLOntologyChange adding = getAddAxiom( axiom, manipulationBuffering);
+                    OWLOntologyChange changes;
+                    if ( toAdd)
+                        changes = getAddAxiom( axiom, manipulationBuffering);
+                    else changes = getRemoveAxiom( axiom, manipulationBuffering);
                     if( !manipulationBuffering)
-                        applyChanges( adding);
-                    logger.addDebugString( "add restrictions " + restriction);
-                    return adding;
+                        applyChanges( changes);
+                    logger.addDebugString( "add restrictions axioms " + restriction);
+                    return changes;
                 }
             }
         } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
             ontoRef.logInconsistency();
         }
         return null;
+    }
+    private boolean checkRestrictionType(int type, int previousTyype){
+        if ( type != 0)
+            return true;
+        if ( type != previousTyype)
+            logger.addDebugString( "restriction should be all of the same type", true);
+        return false;
     }
 
 
@@ -1633,14 +1685,14 @@ public class OWLManipulator{
      * on class definition as well as data or object property domain and range.
      * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
      * @param restriction the restriction to reomve.
-     * @return th change for remove the restriction.
+     * @return th change for removing the restriction.
      */
     public OWLOntologyChange removeRestriction( SemanticRestriction restriction){
         return restriction.removeRestriction( this);
     }
     /**
      * It returns the changes to be made in the ontology in order to remove all the
-     * given restrictions.
+     * restrictions as a single axiom.
      * See {@link SemanticRestriction} for information on how to remove restriction
      * on class definition ({@link #convertSuperClassesToEquivalentClass(OWLClass)} should also be called),
      * as well as data or object property domain and range.
@@ -1653,6 +1705,18 @@ public class OWLManipulator{
         for ( SemanticRestriction r : restriction)
             out.add( addRestriction( r));
         return out;
+    }
+
+    /**
+     * It returns the changes to be made in the ontology in order to remove all the
+     * restrictions expressed in a single axiom.
+     * The give {@link SemanticRestriction} should be all of the same type and with the same `subject`.
+     * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
+     * @param restriction the restrictions to remove from in a single axiom.
+     * @return th change for removing the restrictions.
+     */
+    public OWLOntologyChange removeRestrictionAxiom(Set<SemanticRestriction> restriction){
+        return addRemoveRestrictions( false, restriction);
     }
 
 
@@ -1749,7 +1813,7 @@ public class OWLManipulator{
      * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
      * else they will be applied immediately.
      * @param property the property to make functional.
-     * @return th change for remove inverse functional directive to an object property.
+     * @return th change for removing inverse functional directive to an object property.
      */
     public OWLOntologyChange removeInverseFunctionalObjectProperty( OWLObjectProperty property){
         try{
@@ -1922,7 +1986,7 @@ public class OWLManipulator{
      * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
      * else they will be applied immediately.
      * @param propertyName the name of the property to make functional.
-     * @return th change for remove irreflexive directive to an object property.
+     * @return th change for removing irreflexive directive to an object property.
      */
     public OWLOntologyChange removeIrreflexiveObjectProperty(String propertyName){
         return removeIrreflexiveObjectProperty( ontoRef.getOWLObjectProperty( propertyName));
@@ -1934,7 +1998,7 @@ public class OWLManipulator{
      * Changes will be buffered if {@link #isChangeBuffering()} is {@code true},
      * else they will be applied immediately.
      * @param property the property to make functional.
-     * @return th change for remove irreflexive directive to an object property.
+     * @return th change for removing irreflexive directive to an object property.
      */
     public OWLOntologyChange removeIrreflexiveObjectProperty( OWLObjectProperty property){
         try{

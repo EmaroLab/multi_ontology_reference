@@ -611,11 +611,11 @@ private OWLEnquirer enquirer;
         }
     }
 
-    /**
+    /*
      * It prints the ontology on the java console using Manchester syntax.
      */
-    public void printOntologyOnConsole() {
-        /*try{
+    /*public void printOntologyOnConsole() {
+        //try{
             long initialTime = System.nanoTime();
             ManchesterOWLSyntaxOntologyFormat manSyntaxFormat = new ManchesterOWLSyntaxOntologyFormat();
             OWLOntologyManager man = this.getOWLManager();
@@ -630,9 +630,8 @@ private OWLEnquirer enquirer;
             e.printStackTrace();
         } catch( org.semanticweb.owlapi.reasoner.InconsistentOntologyException e){
             this.logInconsistency();
-        }*/
-        System.err.println("The ontology printing on console has not been ported to owl 5 yet !!!");
-    }
+        }
+    }*/
 
     /**
      * Stores the reasoner and buffering mode, no further actions are taken by this method.

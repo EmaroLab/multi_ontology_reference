@@ -5,11 +5,13 @@ import it.emarolab.amor.owlInterface.OWLReferencesInterface.OWLReferencesContain
 import it.emarolab.amor.owlInterface.SemanticRestriction;
 import org.semanticweb.owlapi.model.*;
 
+import java.util.HashSet;
+
 public class OWLRefManipulationExample {
 
     public static final String OWLREFERENCES_NAME = "refName";
-    public static final String ONTOLOGY_FILE_PATH = "/home/bubx/ros_ws/src/ontology_references/multi_ontology_reference/files/ontologies/ontology_manipulation1.owl";
-    public static final String ONTOLOGY_IRI_PATH = "http://www.semanticweb.org/luca-buoncompagni/aMor/examples";
+    public static final String ONTOLOGY_FILE_PATH = "../files/ontologies/ontology_manipulation.owl";
+    public static final String ONTOLOGY_IRI_PATH = "http://www.semanticweb.org/emarolab/aMor/examples";
     public static final Boolean BUFFERING_REASONER = true; // if true you must to update manually the reasoner. Otherwise it synchronises itself any time is needed
     public static final Boolean BUFFERING_OWLMANIPULATOR = true; // if true you must to apply changes manually. Otherwise their are applied as soon as possible.
 
@@ -25,24 +27,6 @@ public class OWLRefManipulationExample {
                 ontoRef.getOWLDataProperty( "hasDataProperty_renamed"),
                 ontoRef.getOWLFactory().getBooleanOWLDatatype()
         ));
-
-        /*System.out.println("£££££ 1 " + ontoRef.getDataRangeRestrictions( ontoRef.getOWLDataProperty( "hasDataProperty_renamed")));
-        System.out.println("£££££ 2 " + ontoRef.getDataDomainRestrictions( ontoRef.getOWLDataProperty( "hasDataProperty_renamed")));
-
-        //System.out.println("£££££ " + ontoRef.getObjectDomainRestrictions( ontoRef.getOWLObjectProperty( "hasObjectProperty_renamed")));
-        ontoRef.addRestrictions(new SemanticRestriction.ObjectDomainRestrictedOnExactData(
-                ontoRef.getOWLObjectProperty( "hasDataProperty_renamed"),
-                ontoRef.getOWLFactory().getBooleanOWLDatatype(),
-                ontoRef.getOWLDataProperty( "hasDataProperty_renamed"),
-                3));
-        ontoRef.addRestrictions(new SemanticRestriction.ObjectDomainRestrictedOnClass(
-                ontoRef.getOWLObjectProperty( "hasDataProperty_renamed2"),
-                ontoRef.getOWLClass("subClass")));
-        ontoRef.addRestrictions(new SemanticRestriction.ObjectRangeRestrictedOnExactData(
-                ontoRef.getOWLObjectProperty( "hasDataProperty_renamed"),
-                ontoRef.getOWLFactory().getIntegerOWLDatatype()));
-        System.out.println("£££££ " + ontoRef.getObjectDomainRestrictions( ontoRef.getOWLObjectProperty( "hasDataProperty_renamed")));
-        //ontoRef.saveOntology("/home/bubx/r.owl");*/
 
         // note that changes made by the OWLManipulator are such that if an entity (given through its name) exists in the ontology
         // it will be used. On the other hand, if it does not exist a new entity with the specified name will be created.
@@ -80,9 +64,6 @@ public class OWLRefManipulationExample {
 
         // 8) apply all the changes made (it have effects only if BUFFERING_MANIPULATOR=true, otherwise are applied by default)
         ontoRef.applyOWLManipulatorChanges();
-
-        // 9) print the ontology to check the changes (or save it if you prefer)
-        ontoRef.printOntologyOnConsole();
 
         // 10) [REMOVE_IND] let remove an individual from the ontology
         ontoRef.removeIndividual( "newIndividualName0");
@@ -134,9 +115,66 @@ public class OWLRefManipulationExample {
         //ontoRef.applyOWLManipulatorChanges(); // the API may not work with buffering manipulator. So, synchronise it before to rename
         ontoRef.renameEntity( objProp, "hasObjectProperty_renamed");
 
+
+        // 22) add and remove property range and domain
+        System.out.println("query data range " + ontoRef.getDataRangeRestrictions( ontoRef.getOWLDataProperty( "hasDataProperty_res")));
+        System.out.println("query data domain " + ontoRef.getDataDomainRestrictions( ontoRef.getOWLDataProperty( "hasDataProperty_res")));
+        System.out.println("query object range " + ontoRef.getObjectRangeRestrictions( ontoRef.getOWLObjectProperty( "hasObjectProperty_res")));
+        System.out.println("query object domain " + ontoRef.getObjectDomainRestrictions( ontoRef.getOWLObjectProperty( "hasObjectProperty_res")));
+
+        // manipulate data range and domain axioms
+        ontoRef.addRestriction(new SemanticRestriction.DataDomainRestrictedOnExactData(
+                ontoRef.getOWLDataProperty( "hasDataProperty_res"),
+                ontoRef.getOWLFactory().getBooleanOWLDatatype(),
+                ontoRef.getOWLDataProperty( "restrictionProp"),
+                3));
+        SemanticRestriction.DataDomainRestrictedOnClass resData = new SemanticRestriction.DataDomainRestrictedOnClass(
+                ontoRef.getOWLDataProperty("hasDataProperty_res"),
+                ontoRef.getOWLClass("subClass"));
+        ontoRef.addRestriction( resData);
+        ontoRef.addRestriction(new SemanticRestriction.DataDomainRestrictedOnSomeData(
+                ontoRef.getOWLDataProperty( "hasDataProperty_res"),
+                ontoRef.getOWLFactory().getBooleanOWLDatatype(),
+                ontoRef.getOWLDataProperty( "restrictionProp2")));
+        System.out.println("change data domain " + ontoRef.getDataDomainRestrictions( ontoRef.getOWLDataProperty( "hasDataProperty_res")));
+        ontoRef.removeRestriction( resData);
+        System.out.println("remove data range " + ontoRef.getDataDomainRestrictions( ontoRef.getOWLDataProperty( "hasDataProperty_res")));
+
+        // manipulate object range and domain axioms
+        HashSet<SemanticRestriction> restr = new HashSet<>();
+        restr.add( new SemanticRestriction.ObjectDomainRestrictedOnMinObject(
+                ontoRef.getOWLObjectProperty( "hasObjectProperty_res"),
+                ontoRef.getOWLClass( "ResCls"),
+                ontoRef.getOWLObjectProperty( "restrictionProp3"),
+                3));
+        SemanticRestriction.ObjectDomainRestrictedOnClass resObj = new SemanticRestriction.ObjectDomainRestrictedOnClass(
+                ontoRef.getOWLObjectProperty("hasObjectProperty_res"),
+                ontoRef.getOWLClass("subClass"));
+        restr.add( resObj);
+        restr.add(new SemanticRestriction.ObjectDomainRestrictedOnMaxObject(
+                ontoRef.getOWLObjectProperty( "hasObjectProperty_res"),
+                ontoRef.getOWLClass( "ResCls"),
+                ontoRef.getOWLObjectProperty( "restrictionProp4"),
+                3));
+        ontoRef.addRestriction(restr);
+        System.out.println("change object domain " + ontoRef.getObjectDomainRestrictions( ontoRef.getOWLObjectProperty( "hasObjectProperty_res")));
+        ontoRef.removeRestriction( resObj);
+        System.out.println("remove object range " + ontoRef.getObjectDomainRestrictions( ontoRef.getOWLObjectProperty( "hasObjectProperty_res")));
+
+        // manipulate data range and domain conjunction of axioms
+        HashSet<SemanticRestriction> restrAxiom = new HashSet<>(); // all elements must involve domain or range and the same subject
+        restrAxiom.add( new SemanticRestriction.ObjectDomainRestrictedOnMinObject(  // domain
+                ontoRef.getOWLObjectProperty( "hasObjectProperty_res_ax"), // subject
+                ontoRef.getOWLClass( "ResCls"),
+                ontoRef.getOWLObjectProperty( "restrictionProp3"),
+                3));
+        restrAxiom.add(new SemanticRestriction.ObjectDomainRestrictedOnClass(  // domain
+                ontoRef.getOWLObjectProperty( "hasObjectProperty_res_ax"), // subject
+                ontoRef.getOWLClass( "ResCls")));
+        ontoRef.addRestrictionAxiom( restrAxiom);
+
         // print the ontology and save for manipulation check
-        ontoRef.printOntologyOnConsole();
-        ontoRef.saveOntology( "amor/files/ontologies/ontology_manipulation.owl");
+        ontoRef.saveOntology( "../files/ontologies/ontology_manipulation1.owl");
 
         System.out.println( "DONE !!");
 

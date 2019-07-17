@@ -21,16 +21,13 @@ public class OWLRefDebuggingExample {
         String filePath = "http://protege.stanford.edu/ontologies/pizza/pizza.owl";
         OWLReferences ontoRef = OWLReferencesContainer.newOWLReferenceFromWeb( ontoRefName, filePath, pizzaOntologyIri, bufferingReasoner);
 
-        // 3) you may want to print the ontology.
-        ontoRef.printOntologyOnConsole();
-
-        // 4) [PERAMETER] the system comes with a simple GUI from which it is possible to see the state of the ontology
+        // 3) [PERAMETER] the system comes with a simple GUI from which it is possible to see the state of the ontology
         // during run time as well as make some basic changes. Be aware that the GUI is not stable yet!
         //NOT PORTED TO OWL API 5 JET
          Thread t = new Thread( new GuiRunner( ontoRefName));
         t.start();
 
-        // 5) be sure to see all logs!
+        // 4) be sure to see all logs!
         Logger.flush();
 
         // wait to give the possibility to interact with the GUI

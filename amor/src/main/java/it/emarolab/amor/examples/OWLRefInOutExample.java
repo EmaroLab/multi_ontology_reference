@@ -46,8 +46,6 @@ public class OWLRefInOutExample {
         String filePath2 = "http://protege.stanford.edu/ontologies/pizza/pizza.owl";
         String pizzaOntologyIri = "http://protege.stanford.edu/ontologies/pizza/pizza.owl";
         OWLReferences ontoRef2 = OWLReferencesContainer.newOWLReferenceFromWebWithHermit( ontoRefName2, filePath2, pizzaOntologyIri, true);
-        // print the ontlogy for debugging
-        ontoRef2.printOntologyOnConsole();
         // if you do not change the file path it will use filePath2 that may is not what you are looking for in the case of loading from web.
         ontoRef2.saveOntology( ONTOLOGY_FILE_BASE + "test_loadFromWeb.owl");
 
