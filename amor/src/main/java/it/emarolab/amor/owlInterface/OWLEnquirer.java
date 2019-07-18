@@ -866,32 +866,33 @@ public class OWLEnquirer {
         try{
             Set< Set< ApplyingRestriction>> outs = new HashSet<>();
             Stream<OWLDataPropertyDomainAxiom> axiomStream = ontoRef.getOWLOntology().dataPropertyDomainAxioms(property);
+            Set< ApplyingRestriction> out = new HashSet<>();
             for (OWLDataPropertyDomainAxiom ax :  (Iterable<OWLDataPropertyDomainAxiom>) axiomStream::iterator) {
-                Set< ApplyingRestriction> out = new HashSet<>();
-                Stream<OWLClassExpression> nestedClassStream = ax.getDomain().nestedClassExpressions();
-                for (OWLClassExpression e : (Iterable<OWLClassExpression>) nestedClassStream::iterator) {
-                    if (e.getClassExpressionType() == ClassExpressionType.OBJECT_MIN_CARDINALITY)
+                Set<OWLClassExpression> conj = ax.asOWLSubClassOfAxiom().getSuperClass().asConjunctSet();
+                for( OWLClassExpression e : conj){
+                    if (e.getClassExpressionType() == ClassExpressionType.OBJECT_MIN_CARDINALITY) {
                         out.add(new DataDomainRestrictedOnMinObject(property, (OWLObjectMinCardinality) e));
-                    else if (e.getClassExpressionType() == ClassExpressionType.OBJECT_MAX_CARDINALITY)
+                    } else if (e.getClassExpressionType() == ClassExpressionType.OBJECT_MAX_CARDINALITY) {
                         out.add(new DataDomainRestrictedOnMaxObject(property, (OWLObjectMaxCardinality) e));
-                    else if (e.getClassExpressionType() == ClassExpressionType.OBJECT_EXACT_CARDINALITY)
+                    } else if (e.getClassExpressionType() == ClassExpressionType.OBJECT_EXACT_CARDINALITY) {
                         out.add(new DataDomainRestrictedOnExactObject(property, (OWLObjectExactCardinality) e));
-                    else if (e.getClassExpressionType() == ClassExpressionType.OBJECT_ALL_VALUES_FROM)
+                    } else if (e.getClassExpressionType() == ClassExpressionType.OBJECT_ALL_VALUES_FROM) {
                         out.add(new DataDomainRestrictedOnAllObject(property, (OWLObjectAllValuesFrom) e));
-                    else if (e.getClassExpressionType() == ClassExpressionType.OBJECT_SOME_VALUES_FROM)
+                    } else if (e.getClassExpressionType() == ClassExpressionType.OBJECT_SOME_VALUES_FROM) {
                         out.add(new DataDomainRestrictedOnSomeObject(property, (OWLObjectSomeValuesFrom) e));
-                    else if (e.getClassExpressionType() == ClassExpressionType.DATA_MIN_CARDINALITY)
+                    } else if (e.getClassExpressionType() == ClassExpressionType.DATA_MIN_CARDINALITY) {
                         out.add(new DataDomainRestrictedOnMinData(property, (OWLDataMinCardinality) e));
-                    else if (e.getClassExpressionType() == ClassExpressionType.DATA_MAX_CARDINALITY)
+                    } else if (e.getClassExpressionType() == ClassExpressionType.DATA_MAX_CARDINALITY) {
                         out.add(new DataDomainRestrictedOnMaxData(property, (OWLDataMaxCardinality) e));
-                    else if (e.getClassExpressionType() == ClassExpressionType.DATA_EXACT_CARDINALITY)
+                    } else if (e.getClassExpressionType() == ClassExpressionType.DATA_EXACT_CARDINALITY) {
                         out.add(new DataDomainRestrictedOnExactData(property, (OWLDataExactCardinality) e));
-                    else if (e.getClassExpressionType() == ClassExpressionType.DATA_ALL_VALUES_FROM)
+                    } else if (e.getClassExpressionType() == ClassExpressionType.DATA_ALL_VALUES_FROM) {
                         out.add(new DataDomainRestrictedOnAllData(property, (OWLDataAllValuesFrom) e));
-                    else if (e.getClassExpressionType() == ClassExpressionType.DATA_SOME_VALUES_FROM)
+                    } else if (e.getClassExpressionType() == ClassExpressionType.DATA_SOME_VALUES_FROM) {
                         out.add(new DataDomainRestrictedOnSomeData(property, (OWLDataSomeValuesFrom) e));
-                    else if (e.getClassExpressionType() == ClassExpressionType.OWL_CLASS)
+                    } else if (e.getClassExpressionType() == ClassExpressionType.OWL_CLASS) {
                         out.add(new DataDomainRestrictedOnClass(property, e.asOWLClass()));
+                    }
                 }
                 outs.add( out);
             }

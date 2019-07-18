@@ -1773,9 +1773,10 @@ public class OWLReferences extends OWLReferencesInterface{
      * as data or object property domain or range. See {@link SemanticRestriction}
      * hierarchy for more info.
      * @param restriction the definition of the restriction to add.
+     * @param <S> the type of the restriction.
      * @return the changes to be applied in order to add the specified restriction in the ontology
      */
-    public OWLOntologyChange addRestriction( SemanticRestriction restriction){
+    public <S extends SemanticRestriction> OWLOntologyChange addRestriction( S restriction){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRestriction);
         return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
             @Override
@@ -1791,7 +1792,7 @@ public class OWLReferences extends OWLReferencesInterface{
      * @param restriction the definition of the restriction to add.
      * @return the changes to be applied in order to add the specified restriction in the ontology
      */
-    public List<OWLOntologyChange> addRestriction( Set<SemanticRestriction> restriction){
+    public List<OWLOntologyChange> addRestriction( Set<? extends SemanticRestriction> restriction){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRestriction);
         return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
             @Override
@@ -1809,7 +1810,7 @@ public class OWLReferences extends OWLReferencesInterface{
      * @param restriction the definition of the restriction to add.
      * @return the changes to be applied in order to add the specified restriction in the ontology
      */
-    public OWLOntologyChange addRestrictionAxiom( Set<SemanticRestriction> restriction){
+    public OWLOntologyChange addRestrictionAxiom( Set<? extends SemanticRestriction> restriction){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexAddRestriction);
         return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
             @Override
@@ -2534,9 +2535,10 @@ public class OWLReferences extends OWLReferencesInterface{
      * as data or object property domain or range. See {@link SemanticRestriction}
      * hierarchy for more info.
      * @param restriction the definition of the restriction to add.
+     * @param <S> the type of the restriciton.
      * @return the changes to be applied in order to remove the specified restriction in the ontology
      */
-    public OWLOntologyChange removeRestriction( SemanticRestriction restriction){
+    public <S extends SemanticRestriction> OWLOntologyChange removeRestriction( S restriction){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveRestriction);
         return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
             @Override
@@ -2552,7 +2554,7 @@ public class OWLReferences extends OWLReferencesInterface{
      * @param restriction the definition of the restriction to add.
      * @return the changes to be applied in order to remove the specified restriction in the ontology
      */
-    public List<OWLOntologyChange> removeRestriction( Set<SemanticRestriction> restriction){
+    public List<OWLOntologyChange> removeRestriction( Set<? extends SemanticRestriction> restriction){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveRestriction);
         return new OWLReferencesCaller< List<OWLOntologyChange>>(  mutexes, this) {
             @Override
@@ -2570,7 +2572,7 @@ public class OWLReferences extends OWLReferencesInterface{
      * @param restriction the definition of the restriction to remove.
      * @return the changes to be applied in order to remove the specified restriction in the ontology
      */
-    public OWLOntologyChange removeRestrictionAxiom( Set<SemanticRestriction> restriction){
+    public OWLOntologyChange removeRestrictionAxiom( Set<? extends SemanticRestriction> restriction){
         List< Lock> mutexes = getMutexes( mutexReasoner, mutexRemoveRestriction);
         return new OWLReferencesCaller< OWLOntologyChange>(  mutexes, this) {
             @Override

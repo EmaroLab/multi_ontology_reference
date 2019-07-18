@@ -658,9 +658,10 @@ public class OWLManipulator{
      * as well as data or object property domain and range.
      * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
      * @param restriction the restriction to add.
+     * @param <S> the type of the restriction.
      * @return th change for adding the restriction.
      */
-    public OWLOntologyChange addRestriction( SemanticRestriction restriction){
+    public <S extends SemanticRestriction> OWLOntologyChange addRestriction(S restriction){
         return restriction.addRestriction( this);
     }
     /**
@@ -671,11 +672,12 @@ public class OWLManipulator{
      * as well as data or object property domain and range.
      * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
      * @param restriction the restrictions to add.
+     * @param <S> the type of the restriction.
      * @return th change for adding the restrictions.
      */
-    public List< OWLOntologyChange> addRestriction( Set<SemanticRestriction> restriction){
+    public <S extends SemanticRestriction> List< OWLOntologyChange> addRestriction( Set<S> restriction){
         List<OWLOntologyChange> out = new ArrayList<>();
-        for ( SemanticRestriction r : restriction)
+        for ( S r : restriction)
             out.add( addRestriction( r));
         return out;
     }
@@ -686,18 +688,19 @@ public class OWLManipulator{
      * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
      * The give {@link SemanticRestriction} should be all of the same type and with the same `subject`.
      * @param restriction the restrictions to add in a single axiom.
+     * @param <S> the type of the restriction.
      * @return th change for adding the restrictions.
      */
-    public OWLOntologyChange addRestrictionAxiom(Set<SemanticRestriction> restriction){
+    public <S extends SemanticRestriction> OWLOntologyChange addRestrictionAxiom(Set<S> restriction){
         return addRemoveRestrictions( true, restriction);
     }
-    private OWLOntologyChange addRemoveRestrictions(boolean toAdd, Set<SemanticRestriction> restriction){
+    private <S extends SemanticRestriction> OWLOntologyChange addRemoveRestrictions(boolean toAdd, Set<S> restriction){
         try {
             Set<OWLClassExpression> expressions = new HashSet<>();
             Set<OWLDataRange> ranges = new HashSet<>();
             int type = 0;
             OWLObject subject = null;
-            for ( SemanticRestriction r : restriction) {
+            for ( S r : restriction) {
                 if (restriction.size() == 1) {
                     if ( toAdd)
                         return addRestriction(r);
@@ -726,8 +729,7 @@ public class OWLManipulator{
                 else if( ! subject.equals( r.getSubject()))
                     logger.addDebugString( "restriction should have all the same subject", true);
 
-
-                if ( type == 2 | type == 3)
+                if ( type == 2)
                     ranges.add((OWLDataRange) r.getValue());
                 else expressions.add( r.getRestriction( ontoRef));
             }
@@ -735,7 +737,7 @@ public class OWLManipulator{
             OWLDataIntersectionOf intersectionRange = null;
             OWLObjectIntersectionOf intersection = null;
             if ( ! restriction.isEmpty()) {
-                if (type == 1 | type == 2)
+                if (type == 2)
                     intersectionRange = ontoRef.getOWLFactory().getOWLDataIntersectionOf(ranges);
                 else intersection = ontoRef.getOWLFactory().getOWLObjectIntersectionOf(expressions);
             }
@@ -750,7 +752,7 @@ public class OWLManipulator{
                         axiom = ontoRef.getOWLFactory().getOWLDataPropertyRangeAxiom((OWLDataProperty) subject, intersectionRange);
                         break;
                     case 3:
-                        axiom = ontoRef.getOWLFactory().getOWLDataPropertyRangeAxiom((OWLDataProperty) subject, intersectionRange);
+                        axiom = ontoRef.getOWLFactory().getOWLDataPropertyDomainAxiom((OWLDataProperty) subject, intersection);
                         break;
                     case 4:
                         axiom = ontoRef.getOWLFactory().getOWLObjectPropertyRangeAxiom((OWLObjectPropertyExpression) subject, intersection);
@@ -861,6 +863,14 @@ public class OWLManipulator{
         }
     }
 
+    /**
+     * Given a class {@code C}, it uses {@link org.semanticweb.owlapi.change.ConvertSuperClassesToEquivalentClass}
+     * to convert all the super class axioms of {@code C} into a conjunctions of equivalent class expressions.
+     * in the definition of the class itself.
+     * @param cl the class to be converted from super to equivalent class expression.
+     * @param restrictions the restrictions to be converted from super to equivalent class expression.
+     * @return the changes to be applied in order to make all the super class being defined with a conjunction of equivalentclass axioms.
+     */
     public List<OWLOntologyChange> convertSuperClassesToEquivalentClass(OWLClass cl, Set<? extends SemanticRestriction> restrictions) {
         try {
             long e = System.nanoTime();
@@ -894,6 +904,14 @@ public class OWLManipulator{
         }
     }
 
+    /**
+     * Given a class {@code C}, it uses {@link org.semanticweb.owlapi.change.ConvertEquivalentClassesToSuperClasses}
+     * to convert all the equivalent axioms of {@code C} into a conjunctions of super class expressions.
+     * in the definition of the class itself.
+     * @param cl the class to be converted from equivalent to super class expression.
+     * @param restrictions the restrictions to be converted from equivalent to super class expression.
+     * @return the changes to be applied in order to make all the equivalent class being defined with a conjunction of super class axioms.
+     */
     public List<OWLOntologyChange> convertEquivalentClassesToSuperClasses(OWLClass cl, Set<? extends SemanticRestriction> restrictions) {
         try {
             long e = System.nanoTime();
@@ -1684,10 +1702,11 @@ public class OWLManipulator{
      * See {@link SemanticRestriction} for information on how to add restriction
      * on class definition as well as data or object property domain and range.
      * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
-     * @param restriction the restriction to reomve.
+     * @param restriction the restriction to remove.
+     * @param <S> the type of the restriction.
      * @return th change for removing the restriction.
      */
-    public OWLOntologyChange removeRestriction( SemanticRestriction restriction){
+    public <S extends SemanticRestriction> OWLOntologyChange removeRestriction( S restriction){
         return restriction.removeRestriction( this);
     }
     /**
@@ -1698,11 +1717,12 @@ public class OWLManipulator{
      * as well as data or object property domain and range.
      * Changes will be buffered if {@link #isChangeBuffering()} is {@code true}, else they will be applied immediately.
      * @param restriction the restrictions to add.
+     * @param <S> the type of the restriction.
      * @return th change for adding the restrictions.
      */
-    public List< OWLOntologyChange> removeRestriction( Set<SemanticRestriction> restriction){
+    public <S extends SemanticRestriction> List< OWLOntologyChange> removeRestriction( Set<S> restriction){
         List<OWLOntologyChange> out = new ArrayList<>();
-        for ( SemanticRestriction r : restriction)
+        for ( S r : restriction)
             out.add( addRestriction( r));
         return out;
     }
@@ -1715,7 +1735,7 @@ public class OWLManipulator{
      * @param restriction the restrictions to remove from in a single axiom.
      * @return th change for removing the restrictions.
      */
-    public OWLOntologyChange removeRestrictionAxiom(Set<SemanticRestriction> restriction){
+    public OWLOntologyChange removeRestrictionAxiom(Set<? extends SemanticRestriction> restriction){
         return addRemoveRestrictions( false, restriction);
     }
 
