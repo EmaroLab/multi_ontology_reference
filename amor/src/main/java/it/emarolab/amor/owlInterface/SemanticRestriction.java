@@ -193,7 +193,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      * @param <A> the type of axiom describing the restriction.
      */
     interface ObjectMinRestriction<S extends OWLObject,A extends OWLAxiom>
-            extends PropertyCardinalityRestriction<S,A,OWLObjectProperty,OWLClass>{
+            extends PropertyCardinalityRestriction<S,A,OWLObjectProperty,OWLClassExpression>{
         @Override
         default OWLObjectMinCardinality getRestriction(OWLReferencesInterface ontology) {
             return ontology.getOWLFactory().getOWLObjectMinCardinality( getCardinality(), getProperty(), getValue());
@@ -224,7 +224,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      * @param <A> the type of axiom describing the restriction.
      */
     interface ObjectMaxRestriction<S extends OWLObject,A extends OWLAxiom>
-            extends PropertyCardinalityRestriction<S,A,OWLObjectProperty,OWLClass>{
+            extends PropertyCardinalityRestriction<S,A,OWLObjectProperty,OWLClassExpression>{
         @Override
         default OWLObjectMaxCardinality getRestriction(OWLReferencesInterface ontology) {
             return ontology.getOWLFactory().getOWLObjectMaxCardinality( getCardinality(), getProperty(), getValue());
@@ -255,7 +255,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      * @param <A> the type of axiom describing the restriction.
      */
     interface ObjectExactRestriction<S extends OWLObject,A extends OWLAxiom>
-            extends PropertyCardinalityRestriction<S,A,OWLObjectProperty,OWLClass>{
+            extends PropertyCardinalityRestriction<S,A,OWLObjectProperty,OWLClassExpression>{
         @Override
         default OWLObjectExactCardinality getRestriction(OWLReferencesInterface ontology) {
             return ontology.getOWLFactory().getOWLObjectExactCardinality( getCardinality(), getProperty(), getValue());
@@ -286,7 +286,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      * @param <A> the type of axiom describing the restriction.
      */
     interface ObjectSomeRestriction<S extends OWLObject,A extends OWLAxiom>
-            extends PropertyRestriction<S,A,OWLObjectProperty,OWLClass>{
+            extends PropertyRestriction<S,A,OWLObjectProperty,OWLClassExpression>{
         @Override
         default OWLObjectSomeValuesFrom getRestriction(OWLReferencesInterface ontology) {
             return ontology.getOWLFactory().getOWLObjectSomeValuesFrom( getProperty(), getValue());
@@ -317,7 +317,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      * @param <A> the type of axiom describing the restriction.
      */
     interface ObjectAllRestriction<S extends OWLObject,A extends OWLAxiom>
-            extends PropertyRestriction<S,A,OWLObjectProperty,OWLClass>{
+            extends PropertyRestriction<S,A,OWLObjectProperty,OWLClassExpression>{
         @Override
         default OWLObjectAllValuesFrom getRestriction(OWLReferencesInterface ontology) {
             return ontology.getOWLFactory().getOWLObjectAllValuesFrom( getProperty(), getValue());
@@ -1301,7 +1301,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      * @param <A> the type of axiom describing the restriction.
      */
     abstract class ApplyingObjectMinRestriction<S extends OWLObject,A extends OWLAxiom>
-            extends ApplyingCardinalityRestriction<S,A,OWLObjectProperty,OWLClass>
+            extends ApplyingCardinalityRestriction<S,A,OWLObjectProperty,OWLClassExpression>
             implements ObjectMinRestriction<S,A>{
         public ApplyingObjectMinRestriction() {
             super();
@@ -1337,13 +1337,13 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
             super();
             setProperty( restriction.getProperty().asOWLObjectProperty());
             setCardinality( restriction.getCardinality());
-            setValue( restriction.getFiller().asOWLClass());
+            setValue( restriction.getFiller());//.asOWLClass());
         }
         public ApplyingObjectMinRestriction(S subject, OWLObjectMinCardinality restriction) {
             super(subject);
             setProperty( restriction.getProperty().asOWLObjectProperty());
             setCardinality( restriction.getCardinality());
-            setValue( restriction.getFiller().asOWLClass());
+            setValue( restriction.getFiller());//.asOWLClass());
         }
     }
     /**
@@ -1354,7 +1354,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      * @param <A> the type of axiom describing the restriction.
      */
     abstract class ApplyingObjectMaxRestriction<S extends OWLObject,A extends OWLAxiom>
-            extends ApplyingCardinalityRestriction<S,A,OWLObjectProperty,OWLClass>
+            extends ApplyingCardinalityRestriction<S,A,OWLObjectProperty,OWLClassExpression>
             implements ObjectMaxRestriction<S,A>{
         public ApplyingObjectMaxRestriction() {
             super();
@@ -1390,13 +1390,13 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
             super();
             setProperty( restriction.getProperty().asOWLObjectProperty());
             setCardinality( restriction.getCardinality());
-            setValue( restriction.getFiller().asOWLClass());
+            setValue( restriction.getFiller());//.asOWLClass());
         }
         public ApplyingObjectMaxRestriction(S subject, OWLObjectMaxCardinality restriction) {
             super(subject);
             setProperty( restriction.getProperty().asOWLObjectProperty());
             setCardinality( restriction.getCardinality());
-            setValue( restriction.getFiller().asOWLClass());
+            setValue( restriction.getFiller());//.asOWLClass());
         }
     }
     /**
@@ -1407,7 +1407,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      * @param <A> the type of axiom describing the restriction.
      */
     abstract class ApplyingObjectExactRestriction<S extends OWLObject,A extends OWLAxiom>
-            extends ApplyingCardinalityRestriction<S,A,OWLObjectProperty,OWLClass>
+            extends ApplyingCardinalityRestriction<S,A,OWLObjectProperty,OWLClassExpression>
             implements ObjectExactRestriction<S,A>{
         public ApplyingObjectExactRestriction() {
             super();
@@ -1443,13 +1443,13 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
             super();
             setProperty( restriction.getProperty().asOWLObjectProperty());
             setCardinality( restriction.getCardinality());
-            setValue( restriction.getFiller().asOWLClass());
+            setValue( restriction.getFiller());//.asOWLClass());
         }
         public ApplyingObjectExactRestriction(S subject, OWLObjectExactCardinality restriction) {
             super(subject);
             setProperty( restriction.getProperty().asOWLObjectProperty());
             setCardinality( restriction.getCardinality());
-            setValue( restriction.getFiller().asOWLClass());
+            setValue( restriction.getFiller());//.asOWLClass());
         }
     }
     /**
@@ -1460,7 +1460,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      * @param <A> the type of axiom describing the restriction.
      */
     abstract class ApplyingObjectSomeRestriction<S extends OWLObject,A extends OWLAxiom>
-            extends ApplyingPropertyRestriction<S,A,OWLObjectProperty,OWLClass>
+            extends ApplyingPropertyRestriction<S,A,OWLObjectProperty,OWLClassExpression>
             implements ObjectSomeRestriction<S,A>{
         public ApplyingObjectSomeRestriction() {
             super();
@@ -1480,12 +1480,12 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
         public ApplyingObjectSomeRestriction(OWLObjectSomeValuesFrom restriction) {
             super();
             setProperty( restriction.getProperty().asOWLObjectProperty());
-            setValue( restriction.getFiller().asOWLClass());
+            setValue( restriction.getFiller());//.asOWLClass());
         }
         public ApplyingObjectSomeRestriction(S subject, OWLObjectSomeValuesFrom restriction) {
             super(subject);
             setProperty( restriction.getProperty().asOWLObjectProperty());
-            setValue( restriction.getFiller().asOWLClass());
+            setValue( restriction.getFiller());//.asOWLClass());
         }
 
     }
@@ -1497,7 +1497,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      * @param <A> the type of axiom describing the restriction.
      */
     abstract class ApplyingObjectAllRestriction<S extends OWLObject,A extends OWLAxiom>
-            extends ApplyingPropertyRestriction<S,A,OWLObjectProperty,OWLClass>
+            extends ApplyingPropertyRestriction<S,A,OWLObjectProperty,OWLClassExpression>
             implements ObjectAllRestriction<S,A> {
         public ApplyingObjectAllRestriction() {
             super();
@@ -1517,12 +1517,12 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
         public ApplyingObjectAllRestriction(OWLObjectAllValuesFrom restriction) {
             super();
             setProperty( restriction.getProperty().asOWLObjectProperty());
-            setValue( restriction.getFiller().asOWLClass());
+            setValue( restriction.getFiller());//.asOWLClass());
         }
         public ApplyingObjectAllRestriction(S subject, OWLObjectAllValuesFrom restriction) {
             super(subject);
             setProperty( restriction.getProperty().asOWLObjectProperty());
-            setValue( restriction.getFiller().asOWLClass());
+            setValue( restriction.getFiller());//.asOWLClass());
         }
     }
 
@@ -1803,7 +1803,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class ClassRestrictedOnMinObject
             extends ApplyingObjectMinRestriction<OWLClass,OWLSubClassOfAxiom>
-            implements RestrictOnClass<OWLClass> {
+            implements RestrictOnClass<OWLClassExpression> {
         public ClassRestrictedOnMinObject() {
             super();
         }
@@ -1854,7 +1854,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class ClassRestrictedOnMaxObject
             extends ApplyingObjectMaxRestriction<OWLClass,OWLSubClassOfAxiom>
-            implements RestrictOnClass<OWLClass> {
+            implements RestrictOnClass<OWLClassExpression> {
         public ClassRestrictedOnMaxObject() {
             super();
         }
@@ -1905,7 +1905,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class ClassRestrictedOnExactObject
             extends ApplyingObjectExactRestriction<OWLClass,OWLSubClassOfAxiom>
-            implements RestrictOnClass<OWLClass> {
+            implements RestrictOnClass<OWLClassExpression> {
         public ClassRestrictedOnExactObject() {
             super();
         }
@@ -1956,7 +1956,8 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class ClassRestrictedOnSomeObject
             extends ApplyingObjectSomeRestriction<OWLClass,OWLSubClassOfAxiom>
-            implements RestrictOnClass<OWLClass> {
+            implements RestrictOnClass<OWLClassExpression
+            > {
         public ClassRestrictedOnSomeObject() {
             super();
         }
@@ -1992,7 +1993,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class ClassRestrictedOnAllObject
             extends ApplyingObjectAllRestriction<OWLClass,OWLSubClassOfAxiom>
-            implements RestrictOnClass<OWLClass>{
+            implements RestrictOnClass<OWLClassExpression>{
         public ClassRestrictedOnAllObject() {
             super();
         }
@@ -2287,7 +2288,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class DataDomainRestrictedOnMinObject
             extends ApplyingObjectMinRestriction<OWLDataProperty,OWLDataPropertyDomainAxiom>
-            implements RestrictOnDataPropertyDomain<OWLClass> {
+            implements RestrictOnDataPropertyDomain<OWLClassExpression> {
         public DataDomainRestrictedOnMinObject() {
             super();
         }
@@ -2338,7 +2339,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class DataDomainRestrictedOnMaxObject
             extends ApplyingObjectMaxRestriction<OWLDataProperty,OWLDataPropertyDomainAxiom>
-            implements RestrictOnDataPropertyDomain<OWLClass> {
+            implements RestrictOnDataPropertyDomain<OWLClassExpression> {
         public DataDomainRestrictedOnMaxObject() {
             super();
         }
@@ -2389,7 +2390,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class DataDomainRestrictedOnExactObject
             extends ApplyingObjectExactRestriction<OWLDataProperty,OWLDataPropertyDomainAxiom>
-            implements RestrictOnDataPropertyDomain<OWLClass> {
+            implements RestrictOnDataPropertyDomain<OWLClassExpression> {
         public DataDomainRestrictedOnExactObject() {
             super();
         }
@@ -2440,7 +2441,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class DataDomainRestrictedOnSomeObject
             extends ApplyingObjectSomeRestriction<OWLDataProperty,OWLDataPropertyDomainAxiom>
-            implements RestrictOnDataPropertyDomain<OWLClass> {
+            implements RestrictOnDataPropertyDomain<OWLClassExpression> {
         public DataDomainRestrictedOnSomeObject() {
             super();
         }
@@ -2477,7 +2478,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class DataDomainRestrictedOnAllObject
             extends ApplyingObjectAllRestriction<OWLDataProperty,OWLDataPropertyDomainAxiom>
-            implements RestrictOnDataPropertyDomain<OWLClass>{
+            implements RestrictOnDataPropertyDomain<OWLClassExpression>{
         public DataDomainRestrictedOnAllObject() {
             super();
         }
@@ -2830,7 +2831,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class ObjectDomainRestrictedOnMinObject
             extends ApplyingObjectMinRestriction<OWLObjectProperty,OWLObjectPropertyDomainAxiom>
-            implements RestrictOnObjectPropertyDomain<OWLClass> {
+            implements RestrictOnObjectPropertyDomain<OWLClassExpression> {
         public ObjectDomainRestrictedOnMinObject() {
             super();
         }
@@ -2878,7 +2879,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class ObjectDomainRestrictedOnMaxObject
             extends ApplyingObjectMaxRestriction<OWLObjectProperty,OWLObjectPropertyDomainAxiom>
-            implements RestrictOnObjectPropertyDomain<OWLClass> {
+            implements RestrictOnObjectPropertyDomain<OWLClassExpression> {
         public ObjectDomainRestrictedOnMaxObject() {
             super();
         }
@@ -2926,7 +2927,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class ObjectDomainRestrictedOnExactObject
             extends ApplyingObjectExactRestriction<OWLObjectProperty,OWLObjectPropertyDomainAxiom>
-            implements RestrictOnObjectPropertyDomain<OWLClass>{
+            implements RestrictOnObjectPropertyDomain<OWLClassExpression>{
         public ObjectDomainRestrictedOnExactObject() {
             super();
         }
@@ -2977,7 +2978,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class ObjectDomainRestrictedOnSomeObject
             extends ApplyingObjectSomeRestriction<OWLObjectProperty,OWLObjectPropertyDomainAxiom>
-            implements RestrictOnObjectPropertyDomain<OWLClass> {
+            implements RestrictOnObjectPropertyDomain<OWLClassExpression> {
         public ObjectDomainRestrictedOnSomeObject() {
             super();
         }
@@ -3013,7 +3014,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class ObjectDomainRestrictedOnAllObject
             extends ApplyingObjectAllRestriction<OWLObjectProperty,OWLObjectPropertyDomainAxiom>
-            implements RestrictOnObjectPropertyDomain<OWLClass>{
+            implements RestrictOnObjectPropertyDomain<OWLClassExpression>{
         public ObjectDomainRestrictedOnAllObject() {
             super();
         }
@@ -3319,7 +3320,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class ObjectRangeRestrictedOnMinObject
             extends ApplyingObjectMinRestriction<OWLObjectProperty,OWLObjectPropertyRangeAxiom>
-            implements RestrictOnObjectPropertyRange<OWLClass> {
+            implements RestrictOnObjectPropertyRange<OWLClassExpression> {
         public ObjectRangeRestrictedOnMinObject() {
             super();
         }
@@ -3367,7 +3368,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class ObjectRangeRestrictedOnMaxObject
             extends ApplyingObjectMaxRestriction<OWLObjectProperty,OWLObjectPropertyRangeAxiom>
-            implements RestrictOnObjectPropertyRange<OWLClass> {
+            implements RestrictOnObjectPropertyRange<OWLClassExpression> {
         public ObjectRangeRestrictedOnMaxObject() {
             super();
         }
@@ -3415,7 +3416,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class ObjectRangeRestrictedOnExactObject
             extends ApplyingObjectExactRestriction<OWLObjectProperty,OWLObjectPropertyRangeAxiom>
-            implements RestrictOnObjectPropertyRange<OWLClass> {
+            implements RestrictOnObjectPropertyRange<OWLClassExpression> {
         public ObjectRangeRestrictedOnExactObject() {
             super();
         }
@@ -3466,7 +3467,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class ObjectRangeRestrictedOnSomeObject
             extends ApplyingObjectSomeRestriction<OWLObjectProperty,OWLObjectPropertyRangeAxiom>
-            implements RestrictOnObjectPropertyRange<OWLClass> {
+            implements RestrictOnObjectPropertyRange<OWLClassExpression> {
         public ObjectRangeRestrictedOnSomeObject() {
             super();
         }
@@ -3502,7 +3503,7 @@ public interface SemanticRestriction<S extends OWLObject, A extends OWLAxiom, V 
      */
     class ObjectRangeRestrictedOnAllObject
             extends ApplyingObjectAllRestriction<OWLObjectProperty,OWLObjectPropertyRangeAxiom>
-            implements RestrictOnObjectPropertyRange<OWLClass> {
+            implements RestrictOnObjectPropertyRange<OWLClassExpression> {
         public ObjectRangeRestrictedOnAllObject() {
             super();
         }

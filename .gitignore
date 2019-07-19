@@ -280,6 +280,5 @@ bin/
 
 !gradle-wrapper.jar
 !build.gradle
-!amor-0.1.0.jar
 gradle-app.setting
 
