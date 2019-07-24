@@ -890,10 +890,12 @@ public class OWLManipulator{
             }
 
             OWLObjectIntersectionOf equivalentClass1 = this.ontoRef.getOWLFactory().getOWLObjectIntersectionOf(descs);
-            OWLOntologyChange c2 = this.getAddAxiom(this.ontoRef.getOWLFactory().getOWLEquivalentClassesAxiom(Arrays.asList(new OWLClassExpression[]{cl, equivalentClass1})));
-            changes.add(c2);
-            if(!this.manipulationBuffering) {
-                this.applyChanges(c2);
+            if( ! equivalentClass1.getOperandsAsList().isEmpty()){
+                OWLOntologyChange c2 = this.getAddAxiom(this.ontoRef.getOWLFactory().getOWLEquivalentClassesAxiom(Arrays.asList(new OWLClassExpression[]{cl, equivalentClass1})));
+                changes.add(c2);
+                if(!this.manipulationBuffering) {
+                     this.applyChanges(c2);
+                }
             }
 
             this.logger.addDebugString("converting super class: " + this.ontoRef.getOWLObjectName(cl) + " to equivalent class of restriction " + restrictions + " in: " + (System.nanoTime() - e) + " [ns]");
@@ -903,6 +905,7 @@ public class OWLManipulator{
             return null;
         }
     }
+    
 
     /**
      * Given a class {@code C}, it uses {@link org.semanticweb.owlapi.change.ConvertEquivalentClassesToSuperClasses}
